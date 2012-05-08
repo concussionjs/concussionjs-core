@@ -1,0 +1,15 @@
+<html>
+<head>
+	My First Blog Platform
+</head>
+<body>
+<div data-bind="foreach:myFirstBlogs">
+	title <span data-bind="text:title"></span>&nbsp;content <span data-bind="text:content"></span><br>
+</div>
+<form data-bind="submit:myFirstBlogs_create">
+	title <input data-bind="value:myFirstBlogs_title"> <br>
+	content <input data-bind="value:myFirstBlogs_content">
+	<input type="submit" value="add">
+</form>
+</body>
+</html>

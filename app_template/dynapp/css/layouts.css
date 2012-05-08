@@ -1,0 +1,50 @@
+header {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	
+	/* flex */
+	display: -webkit-box;
+	display: -moz-box;
+	display: box;
+}
+
+header .panel.left {
+	text-align: left;
+	
+	/* flex */
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;
+
+}
+
+header .panel.middle {
+	text-align: center;
+	
+	/* flex */
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;	
+}
+
+header .panel.right {
+	text-align: right;
+	
+	/* flex */
+	-webkit-box-flex: 1;
+	-moz-box-flex: 1;
+	box-flex: 1;	
+}
+
+#searchPanel {
+	position: absolute;
+	top: 46px;
+	left: 0px;
+	width: 240px;
+}
+
+#data {
+	position: absolute;
+}

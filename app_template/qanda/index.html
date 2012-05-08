@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Answers</title>
+	<meta charset="utf-8">
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
+     	<script language="JavaScript" src="http://cloud.github.com/downloads/SteveSanderson/knockout/knockout-2.0.0.js"></script>
+	<script src="js/main.js"></script>
+	<script>
+ 	$(function() {
+		
+		function Tag(data) {
+			var self=this;
+			//alert(data.name);
+			this.name=data.name;
+		}
+
+		function Answer(data) {
+			var self=this;
+			if(!data)
+				return;
+			self.answer=ko.observable(data.answer);
+			self.votes=ko.observable(data.votes);		
+		}
+
+	
+		function Question(data) {
+    			var self = this;
+    			self.id = ko.observable(data._id);
+			self.title = ko.observable(data.title);
+   			self.text = ko.observable(data.text);
+			self.metaTitle = ko.observable();
+			self.answerCount = ko.observable();
+			self.topAnswerVotes = ko.observable("");
+			self.topAnswerText = ko.observable("");
+			self.tags = ko.observableArray([]);
+			self.tagLinks = ko.observable("");
+			if(data.votes)
+			{
+    				this.votes = ko.observable(data.votes);
+			}
+			else
+			{	
+				this.votes = 0;
+			}
+			if(data.tags){
+				self.tags = data.tags;
+				var htmlTagLinks="";	
+				for(i=0;i<self.tags.length;i++)
+				{
+					if(self.tags[i])
+						htmlTagLinks+="<a href='index.html?searchTerm=" + self.tags[i] + "' class='tag'>" + self.tags[i] + "</a>";		
+				}
+				self.tagLinks(htmlTagLinks);
+			}
+			else
+			{
+				this.tags = [];
+			}
+
+			this.metaTitle("<a href='question.html?id=" + data._id +"'>" + data.title + "</a>");
+			
+			if(data.answers.length>0)
+			{
+				self.answers=[];
+				self.answers = $.map(data.answers,function(item){return new Answer(item)});
+				self.answerCount = this.answers.length;
+				self.answers.sort(function(left, right) { return left.votes() == right.votes() ? 0 : (left.votes() < right.votes() ? 1 : -1) });
+				
+				self.topAnswerVotes = self.answers[0].votes();
+				self.topAnswerText = self.answers[0].answer();
+				
+			}
+			else
+			{
+				self.answers=[];
+				self.answerCount = 0;
+			}
+
+		}
+
+		function QuestionListViewModel() {
+    			// Data
+    			var self = this;
+			mySearchTerm=getUrlVars()["searchTerm"];
+			self.searchTerm = ko.observable(mySearchTerm);
+			self.newQuestionTitle = ko.observable();
+			self.newQuestionTags = ko.observable();
+    			self.questions = ko.observableArray([]);
+    			self.noQuestions = ko.observable(false);
+
+			addQuestion = function() {
+				// alert("addQuestion");
+        			$.ajax("/addQuestion", {
+            				data: ko.toJSON(self),
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+						{ 
+							$.getJSON("/questions", function(allData) {
+        							var mappedQuestions = $.map(allData, function(item) { return new Question(item) });
+        							self.questions(mappedQuestions);
+								self.questions.sort(function(left, right) { return left.answerCount == right.answerCount ? 0 : (left.answerCount < right.answerCount ? 1 : -1) })				
+							});
+							self.newQuestionTitle("");
+							self.newQuestionTags("");
+							self.noQuestions(self.questions().length==0);
+
+						}
+        			});
+    			};
+			
+			runSearch = function() {
+
+				$.ajax({ 
+    					url: "/search?searchTerm=" + self.searchTerm(), 
+    					type: "GET", 
+    					contentType: "application/json; charset=utf-8", 
+    					dataType: "text",
+    					cache: false
+				}).success(function (data) {
+    					var mappedQuestions = $.map(JSON.parse(data), function(item) { return new Question(item) });
+        				self.questions(mappedQuestions);
+					self.questions.sort(function(left, right) { return left.answerCount == right.answerCount ? 0 : (left.answerCount < right.answerCount ? 1 : -1) })
+					self.noQuestions(self.questions().length==0);
+				});
+			
+			};
+
+			clearSearch = function() {
+				if($("#search-input").val())
+				{
+					// runSearch();
+				}
+				else
+				{
+					$.ajax({ 
+    						url: "/questions", 
+    						type: "GET", 
+    						contentType: "application/json; charset=utf-8", 
+    						dataType: "text",
+    						cache: false
+					}).success(function (data) {
+    						var mappedQuestions = $.map(JSON.parse(data), function(item) { return new Question(item) });
+        					self.questions(mappedQuestions);
+						self.questions.sort(function(left, right) { return left.answerCount == right.answerCount ? 0 : (left.answerCount < right.answerCount ? 1 : -1) })
+						self.noQuestions(self.questions().length==0);
+					});
+				}
+			};
+
+
+			if(mySearchTerm)
+			{
+				self.searchTerm(mySearchTerm);
+				runSearch();
+			}
+			else
+			{
+				$.getJSON("/questions", function(allData) {
+					//alert(allData[0].text);
+        				var mappedQuestions = $.map(allData, function(item) { return new Question(item) });
+        				self.questions(mappedQuestions);
+					self.questions.sort(function(left, right) { return left.answerCount == right.answerCount ? 0 : (left.answerCount < right.answerCount ? 1 : -1) })				
+					self.noQuestions(self.questions().length==0);
+				});
+
+			}
+			
+		}
+
+		ko.applyBindings(new QuestionListViewModel());
+
+	});
+
+	function getUrlVars() {
+		var vars = {};
+		var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+			vars[key] = value;
+		});
+		return vars;
+	}
+	
+	</script>
+
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="icon" href="images/favicon.png">
+</head>
+<body>
+<!--onsearch="OnSearch(this)"-->
+	<header id="global-header">
+		<div id="global-header-layout">
+			<h1><a href="index.html">Answers</a></h1>
+			<div id="search"><input  type="search" name="search" id="search-input" placeholder="Search for an answer" autofocus list="search-results" data-bind="value:searchTerm, valueUpdate: 'afterkeydown',event:{keyup:runSearch,search:clearSearch}"></div>
+			<div id="question"><a id="question-button">Ask a Question</a></div>
+		</div>
+	</header>
+
+	<section id="main">
+
+		<header id="body-header">
+			<h2>Top Questions</h2>
+			<nav>
+				<a href="javascript:;">Top</a><a href="javascript:;">Newest</a><a href="javascript:;">Unanswered</a>
+			</nav>
+		</header>
+		<div data-bind="if: noQuestions">Sorry. Your search did not return any results.</div>
+		<span class="wrapper" data-bind="foreach: questions">
+		<article>
+			<div class="hbox">
+				<div class="count-box"><span data-bind="text:answerCount">48</span> answers</div>
+				<div class="text-box">
+					<h3 data-bind="html:metaTitle">What does it feel like to work for the president of the United States?</a></h3>
+				</div>
+			</div>
+			<div class="hbox" >
+				<div class="count-box"><span data-bind="text:topAnswerVotes">6</span> votes</div>
+				<div class="text-box" data-bind="text:topAnswerText">
+					<p>It probably helps to start this by answering: how does the White House work? I'm not sure people have a good understanding of that to begin with, and it drives the question above. Disclaimer: This is a very simplified view of a complex organization.
+					<p>It probably helps to start this by answering: how does the White House work? I'm not sure people have a good understanding of that to begin with, and it drives the question above. Disclaimer: This is a very simplified view of a complex organization.
+				</div>
+			</div>
+			<div class="hbox">
+				<div class="count-box"></div>
+				<div class="text-box" data-bind="html:tagLinks"></div>
+			</div>
+		</article>
+		</span>
+	
+
+	</section>
+
+	<section id="new-question">
+
+		<div class="add-question">
+			<h2>Ask a Question</h2>
+			<form data-bind="submit:addQuestion">
+			<table class="form">
+				<tbody>
+					<tr>
+						<th><label for="question-text">I wonder:</label></th>
+						<td><textarea id="question-text" data-bind="value:newQuestionTitle"></textarea></td>
+					</tr>
+					<tr>
+						<th><label for="tags">Tags:</label></th>
+						<td><input type="text" id="tags" data-bind="value:newQuestionTags"/></td>
+					</tr>
+					<tr>
+						<th></th>
+						<td><button id="submit-question">Submit Question</button></td>
+					</tr>
+				</tbody>
+			</table>
+			</form>
+		</div>
+
+	</section>
+
+
+</body>
+</html>

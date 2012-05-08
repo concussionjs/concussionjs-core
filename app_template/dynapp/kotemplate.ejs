@@ -1,0 +1,248 @@
+
+
+<script src="assets/js/libs/jquery-1.7.1.min.js"></script>
+<script language="JavaScript" src="assets/js/libs/knockout-2.0.0.js"></script>
+<script>
+$(function() {
+<%
+try{
+	/*var objects = new Array();
+	objects.push(new Object());
+	objects.push(new Object());
+	objects[0].name='questions';
+	objects[0].type='array';
+	objects[0].fields = new Array();
+	objects[0].fields.push('title');
+	objects[0].fields.push('text');
+	objects[0].fields.push('date');
+	objects[0].fields.push('tags');
+	objects[0].children = new Array();
+	objects[0].children.push(new Object);
+	objects[0].children[0].fields = new Array();
+	objects[0].children[0].name='answers';
+	objects[0].children[0].fields.push('votes');
+	objects[0].children[0].fields.push('text');
+	objects[1].name='articles';
+	objects[1].type='array';
+	objects[1].fields = new Array();
+	objects[1].fields.push('subject');
+	objects[1].fields.push('author');*/
+	objects = myObjects;
+	console.log("objects in ejs ",objects," ",objects.length);	
+	
+	%>
+	// handle children
+	<%
+	
+	function handleChildren(myObject,counter,nextFunction)
+	{
+		
+		if(!myObject)
+			return;
+
+		if(myObject.name.search("_search")>-1)
+		{
+			console.log("inside handleChildren where myObject.name contains _search");
+                        nextFunction(objects[counter+1],counter+1,handleChildren);
+			return;
+		}
+
+		console.log("at top of handle: ",myObject.name);
+		if(myObject.children && myObject.children.length>0)
+		{
+			console.log("I should not be here");
+			for(i=0;i<myObject.children.length;i++)
+			{
+				console.log("inside children loop");
+				handleChildren(myObject.children[i]);
+			}
+		}
+		%>
+			function <%=myObject.name%>(data)
+			{
+				//alert(data);
+				
+				var self = this;
+				<%
+				console.log("inside creating function");
+				if(myObject.fields)
+				{
+					console.log("inside fields");
+					for(j=0;j<myObject.fields.length;j++)
+					{
+						console.log("inside adding fields loop");
+						if(myObject.fields[j]!="_id")
+						{
+					%>
+						self.<%=myObject.fields[j]%>=ko.observable(data.<%=myObject.fields[j]%>);
+					<%
+						}	
+						console.log("after processing adding field");
+					}
+					%>
+						self._id=ko.observable(data._id);
+					<%
+				}
+				if(myObject.children)
+				{
+					console.log("I have children");
+					
+					for(i=0;i<myObject.children.length;i++)
+					{
+						console.log("inside children loop");
+						if(myObject.children[i].fields && myObject.children[i].fields.length>0)
+						{
+						%>
+						if(data.<%=myObject.children[i].name%>)
+							self.<%=myObject.children[i].name%> = $.map(data.<%=myObject.children[i].name%>,function(item){return new <%=myObject.children[i].name%>(item)});
+						<%
+						}
+				
+					}
+					
+					console.log("after loop");
+				}
+
+		%>
+			}
+			
+		<%
+			console.log("before calling next function ");
+		
+			if(objects && counter<objects.length)
+			{
+				console.log("inside calling next function ", objects.length, " ",counter);
+				nextFunction(objects[counter+1],counter+1,handleChildren);
+			}
+		
+		
+	}
+	//console.log("objects.length:",objects.length);
+	var i=0;
+	
+	handleChildren(objects[0],0,handleChildren);
+
+	%>
+
+	function myViewModel()
+	{
+		var self = this;
+		//READ
+	<%
+	console.log("myViewModel: ", objects.length);
+	for(i=0;i<objects.length;i++)
+	{
+		console.log(objects[i]);
+		if(objects[i].name.search("_search")>-1)
+			continue;
+		if(objects[i].type == "array")
+		{
+		%>
+		self.<%=objects[i].name%>=ko.observableArray([]);
+		self.<%=objects[i].name%>_search_results=ko.observableArray([]);
+		self.<%=objects[i].name%>(self.<%=objects[i].name%>_search_results);
+		self.<%=objects[i].name%>_search_term=ko.observable();							
+		<%
+		for(j=0;j<objects[i].fields.length;j++)
+		{
+			if(objects[i].fields[j]!="_id")
+			{
+		%>
+			self.<%=objects[i].name%>_<%=objects[i].fields[j]%>=ko.observable();
+		<%
+			}
+		}
+		%>
+		<%
+		}
+	}
+	%>
+	
+	
+	//initial load
+	<%
+	for(i=0;i<objects.length;i++)
+	{
+		 if(objects[i].name.search("_search")>-1)
+                        continue;	
+	%>
+		$.ajax(
+			{url:"/<%=objects[i].name%>",
+			dataType:"json",
+			data:'',
+			success:function(data){
+				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
+        			self.<%=objects[i].name%>(mapped);
+			}			
+		});
+	<%
+	}
+	%>
+	// create code
+	<%
+	for(i=0;i<objects.length;i++)
+	{
+		 if(objects[i].name.search("_search")>-1)
+                        continue;	
+	%>
+		<%=objects[i].name%>_create = function() {
+        			$.ajax("/<%=objects[i].name%>/create", {
+            				data: ko.toJSON(self),
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+					{ 
+						$.getJSON("/<%=objects[i].name%>", function(allData) {
+        						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+        						self.<%=objects[i].name%>(mapped);
+						});
+						<%
+						for(j=0;j<objects[i].fields.length;j++)
+						{
+							if(objects[i].fields[j]!="_id")
+							{
+						%>
+							self.<%=objects[i].name%>_<%=objects[i].fields[j]%>("");
+						<%
+							}
+						}
+						%>
+
+					}
+        		});
+    		};
+
+		<%=objects[i].name%>_delete = function(id) {
+                                $.ajax("/<%=objects[i].name%>/delete/"+id, {
+                                        data: '',
+                                        type: "get", contentType: "application/json",
+                                        success: function(result)
+                                        {
+                                                $.getJSON("/<%=objects[i].name%>", function(allData) {
+                                                        var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+                                                        self.<%=objects[i].name%>(mapped);
+                                                });
+                                        }
+                                });
+                };
+
+		<%=objects[i].name%>_search = function() {
+				//alert(self.<%=objects[i].name%>_search_term());
+				$.getJSON("/<%=objects[i].name%>/search/"+self.<%=objects[i].name%>_search_term(), function(allData) {
+                                	var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+                                	self.<%=objects[i].name%>_search_results(mapped);
+					self.<%=objects[i].name%>(mapped);
+                                });
+                };
+
+	<%
+	}
+	%>
+
+
+	
+	}
+	
+	ko.applyBindings(new myViewModel());
+});
+</script>
+<%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

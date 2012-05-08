@@ -1,0 +1,113 @@
+/* desktop */
+header {
+	height: 35px;
+	color: #494E52;
+}
+header #title{
+	font-size: 1em;
+}
+header .search {
+	display: block;
+}
+header button {
+	height: 24px;
+	font-size: .8em;
+}
+header #backButton {
+	display: none;
+}
+header #addButton {
+		
+}
+#searchPanel {
+	display: none;
+}
+#data {
+	top: 36px;
+	left: 0px;
+	right: 0px;
+	bottom: 50%;
+}
+
+/* tablet landscape */
+@media screen and (max-width:1024px) {
+
+	
+}
+
+/* tablet portrait */
+@media screen and (max-width:768px) {
+header {
+		height: 45px;
+		color: #72797F;
+	}
+	header #title{
+		font-size: 1.5em;
+	}
+	header .search {
+		display: none;
+	}
+	header button {
+		height: 34px;
+		font-size: 1em;
+	}
+	header #backButton {
+		display: block;
+	}
+	header #addButton {
+		
+	}
+	header .panel.left {
+		display: block;
+	}
+	header .panel.right {
+		display: block;
+	}
+	#searchPanel {
+		display: block;
+	}
+	.search {
+		margin: 10px 0 0 10px;
+		min-width: 93%;
+		max-width: 93%;	
+	}
+	#data {
+		top: 90px;
+		width: 240px;
+		left: 0px;
+		bottom: 0px;
+	}
+}
+
+/* phone landscape */
+@media screen and (max-width:640px) {
+	header .panel.left {
+		display: inline-block;
+	}
+	header .panel.right {
+		display: inline-block;
+	}
+	#searchPanel {	
+		width: 100%;	
+	}
+	#data {
+		width: 100%;
+	}
+}
+
+/* phone portrait */
+@media screen and (max-width:320px) {
+	header .panel.left {
+		display: inline-block;
+	}
+	header .panel.right {
+		display: inline-block;
+	}
+	#searchPanel {	
+		width: 100%;	
+	}
+	#data {
+		width: 100%;
+	}
+
+}

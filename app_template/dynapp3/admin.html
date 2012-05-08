@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Admin</title>
+	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+	<script src="assets/js/libs/jquery-1.7.1.min.js"></script>
+	<link rel="stylesheet" href="assets/styles/css/admin.css">
+	<link rel="icon" href="assets/images/favicon.png">
+	<link rel="apple-touch-icon" href="assets/images/iosIcon.png">
+	<script>
+		function highlightMe(me)
+		{
+			$("#object-list > ul").removeAttr("data-highlight");
+			$(me).attr("data-highlight","true");
+
+		}
+
+		function highlightMeInstanceList(me)
+		{
+			$("#instance-list tr").removeAttr("data-highlight");
+			$(me).attr("data-highlight","true");
+
+		}
+
+	</script>
+</head>
+<body>
+
+<section id="s-head">
+
+	<header id="global-header">
+		<section id="global-header-left">
+			<button class="header-button">Application</button>
+		</section>
+		<section id="global-header-center">
+			<div id="title">Admin</div>
+		</section>
+		<section id="global-header-right">
+			<input type="search" placeholder="Search" id="global-search">
+		</section>	
+	</header>
+
+</section>
+
+<section id="s-body">
+	
+	<section id="s-left">
+
+		<div class="panel">
+			<div class="panel-header">
+				<section class="panel-header-center">
+					<div class="panel-title">Objects</div>
+				</section>
+			</div>
+			<div class="panel-body flush">
+
+				<section id="object-list" data-bind="foreach:nextera_objects">
+					<ul data-bind="css: { objectsSelected: nextera_selected()},click:selectObject">
+						<li ><span id="name" data-bind="text:name">User</span>
+							<ul data-bind="foreach:fields">
+								<li data-bind="text:name">User Name</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				
+			</div>
+		</div>
+
+
+	</section>
+
+	<section id="s-right">
+		
+		<section id="s-top">
+			
+			<div class="panel">
+				<div class="panel-header">
+					<section class="panel-header-left">
+						<button class="panel-header-button" data-bind="click:addRow">New</button>
+					</section>
+					<section class="panel-header-center">
+						<div class="panel-title">List</div>
+					</section>
+					<section class="panel-header-right">
+						<button class="panel-header-button" data-bind="click:deleteRow">Delete</button>
+					</section>
+				</div>
+				<div class="panel-body flush" >
+					
+					<table class="datagrid" id="instance-list">
+						<thead>
+							<tr data-bind="foreach:nextera_admin_current_object_fields" >
+								<th data-bind="text:name"></th>
+							</tr>
+						</thead>
+						<!--onmouseup="highlightMeInstanceList(this);"-->
+						<tbody data-bind="foreach: nextera_admin_current_object_instances">
+								<tr  data-bind="css: { instancesSelected: nextera_selected()},html:row,click:selectRow">
+								</tr>			
+						</tbody>
+					</table>
+					
+				</div>
+			</div>
+			
+		</section>
+
+		<section id="s-bottom">
+
+			<div class="panel">
+				<div class="panel-header">
+					<section class="panel-header-center">
+						<div class="panel-title">Details</div>
+					</section>
+				</div>
+				<div class="panel-body" style="min-height:250px">
+
+					<form data-bind="submit:updateRow" id="instanceForm">
+						<fieldset class="form-body" >
+							<legend>Object Data</legend>
+							<span data-bind="html:nextera_admin_current_selected_instance().myForm">
+								<!--label data-bind="text:name">Form Label</label><input type="text" placeholder="enter value"-->
+							</span>
+							<!--div>
+								<label>Form Label</label><input type="text" value="I am text">
+							</div>
+							<div>
+								<label>Form Label</label><select><option>Option 1</option><option>Option 2</option><option>Option 3</option></select>
+							</div>
+							<div>
+								<label>Form Label</label><textarea rows="3">I am the textarea</textarea>
+							</div-->
+							<div class="form-body">
+								<button class="primary">Save</button><button class="secondary">Cancel</button>
+							</div>
+						</fieldset>
+					</form>
+
+					<form id="audit-trail">
+						<fieldset class="form-body">
+							<legend>Audit Trail</legend>
+							<div>
+								<label>Created By</label>Admin
+							</div>
+							<div>
+								<label>Created On</label>2012-02-12 21:39
+							</div>
+							<div>
+								<label>Modified By</label>Admin
+							</div>
+							<div>
+								<label>Form Label</label>2012-02-12 21:39
+							</div>
+						</fieldset>
+					</form>
+
+				</div>
+			</div>
+
+		</section>
+
+	</section>
+</section>
+<div style="visibility:hidden">
+<div data-bind="foreach:users">
+	<div data-bind="text:username"/>
+	<div data-bind="text:password"/>
+</div>
+<div data-bind="foreach:Apps">
+	<div data-bind="text:name"/>
+	<div data-bind="text:port"/>
+	<div data-bind="text:location"/>
+</div>
+
+</div>
+<script>
+	
+</script>
+</body>
+</html>

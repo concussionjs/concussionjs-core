@@ -1,0 +1,619 @@
+
+
+<script src="assets/js/libs/jquery-1.7.1.min.js"></script>
+<script language="JavaScript" src="assets/js/libs/knockout-2.0.0.js"></script>
+<script>
+var mvm;
+$(function() {
+<%
+try{
+	
+	objects = myObjects;
+	
+	%>
+	function fields(data)
+			{
+				//alert(data.type);
+				
+				var self = this;
+				self.name=ko.observable(data.name);					
+				self.type=ko.observable(data.type);			
+				self._id=ko.observable(data._id);
+					
+			}
+	// handle children
+	<%
+	
+	function handleChildren(myObject,counter,nextFunction)
+	{
+		
+		if(!myObject)
+			return;
+
+		if(myObject.name.search("_search")>-1)
+		{
+			console.log("inside handleChildren where myObject.name contains _search");
+                        nextFunction(objects[counter+1],counter+1,handleChildren);
+			return;
+		}
+
+		//console.log("at top of handle: ",myObject.name);
+		if(myObject.children && myObject.children.length>0)
+		{
+			//console.log("I should not be here");
+			for(i=0;i<myObject.children.length;i++)
+			{
+				//console.log("inside children loop");
+				handleChildren(myObject.children[i]);
+			}
+		}
+		%>
+			function <%=myObject.name%>(data)
+			{
+				//alert(data);
+				
+				var self = this;
+				var nextera_selected = ko.observable(false);
+				self.nextera_selected = nextera_selected;
+				<%
+				//console.log("inside creating function");
+				if(myObject.fields)
+				{
+					//console.log("inside fields");
+					for(j=0;j<myObject.fields.length;j++)
+					{
+						//console.log("inside adding fields loop");
+						if(myObject.fields[j].name!="_id")
+						{
+					%>
+						if(data.<%=myObject.fields[j].name%>)
+						{
+							self.<%=myObject.fields[j].name%>=ko.observable(data.<%=myObject.fields[j].name%>);
+						}
+						else
+						{
+							self.<%=myObject.fields[j].name%>=ko.observable('');
+						}
+					<%
+						}	
+						//console.log("after processing adding field");
+					}
+					%>
+
+						
+
+						self._id=ko.observable(data._id);
+						self.row=ko.observable("");
+						self.myForm = ko.observable("");
+					<%
+				}
+				if(myObject.children)
+				{
+					//console.log("I have children");
+					
+					for(i=0;i<myObject.children.length;i++)
+					{
+						//console.log("inside children loop");
+						if(myObject.children[i].fields && myObject.children[i].fields.length>0)
+						{
+						%>
+						if(data.<%=myObject.children[i].name%>)
+							self.<%=myObject.children[i].name%> = $.map(data.<%=myObject.children[i].name%>,function(item){return new <%=myObject.children[i].name%>(item)});
+						<%
+						}
+				
+					}
+					
+					//console.log("after loop");
+				}
+
+		%>
+			}
+			
+		<%
+			//console.log("before calling next function ");
+		
+			if(objects && counter<objects.length)
+			{
+				//console.log("inside calling next function ", objects.length, " ",counter);
+				nextFunction(objects[counter+1],counter+1,handleChildren);
+			}
+		
+		
+	}
+	//console.log("objects.length:",objects.length);
+	var i=0;
+	
+	handleChildren(objects[0],0,handleChildren);
+
+	%>
+
+
+	function myViewModel()
+	{
+		var self = this;
+		var nextera_admin_current_selected_instance = ko.observable();
+		self.nextera_admin_current_selected_instance = nextera_admin_current_selected_instance;
+		var nextera_admin_current_object_instances = ko.observableArray([]);
+		self.nextera_admin_current_object_instances = nextera_admin_current_object_instances;
+		var nextera_admin_current_object_name = ko.observable("apps");
+		self.nextera_admin_current_object_name = nextera_admin_current_object_name;
+		var nextera_admin_current_object_fields = ko.observableArray([]);
+		self.nextera_admin_current_object_fields = nextera_admin_current_object_fields;
+		var nextera_admin_current_selected_object = ko.observable();
+		self.nextera_admin_current_selected_object = nextera_admin_current_selected_object;
+
+		var addField = function()
+		{
+			//alert("adding field " + self.nextera_admin_current_selected_instance().fields().length);
+			var field_name = prompt("Please provide a field name");
+			if(self.nextera_admin_current_selected_instance().fields() && self.nextera_admin_current_selected_instance().fields().length>0)
+			{
+				self.nextera_admin_current_selected_instance().fields().push({"name":field_name});
+			}
+			else
+			{
+				self.nextera_admin_current_selected_instance().fields([{"name":field_name}]);
+			}
+			self.updateRow();
+			//alert("added field " + self.nextera_admin_current_selected_instance().fields().length);
+		}
+		self.addField = addField;
+
+		var removeField = function()
+		{
+			var id = $(document.getElementById('instanceForm')).find('input[name=object-fields]:checked').attr("id");
+			//alert("removing field " + id + " length " + self.nextera_admin_current_selected_instance().fields().splice(id,1).length);
+			self.nextera_admin_current_selected_instance().fields().splice(id,1);
+			self.updateRow();
+			//$('input[name=object-fields]:checked', '#myForm').val();
+		}
+		self.removeField = removeField;
+
+		var loadObjects = function(resetCurrentSelectedInstance,callback)
+		{
+			$.ajax(
+			{
+				url:"/" + self.nextera_admin_current_object_name(),
+				dataType:"json",
+				async:'false',
+				data:'',
+				success:function(data){
+					eval("var mapped = $.map(data,function(item)\{return new " + self.nextera_admin_current_object_name() + "(item)\});");
+        			eval("self." + self.nextera_admin_current_object_name() + "(mapped)");
+        			//alert(self.nextera_admin_current_object_fields().length);
+        			//alert(self.users().length);
+        			for(j=0;j<eval("self." + self.nextera_admin_current_object_name() + "().length");j++)
+        			{
+						       					
+        				for(i=0;i<self.nextera_admin_current_object_fields().length;i++)
+        				{
+        					//alert(self.nextera_admin_current_object_fields()[i].name());
+        					//if(self.nextera_admin_current_object_fields()[i].type())
+        					//alert(self.nextera_admin_current_object_fields()[i].name + " " + self.nextera_admin_current_object_fields()[i].type());
+        					var string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "]." + self.nextera_admin_current_object_fields()[i].name() + "()";
+       						//alert("eval: ",eval(string4Eval)); 					
+        					
+        					
+
+        					//alert(string4Eval);
+
+        					
+        					if(self.nextera_admin_current_object_fields()[i].type()=="array")
+        					{
+        						//ko.applyBindings(myViewModel, $('#latebind')[0]);
+        						var string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "]." + self.nextera_admin_current_object_fields()[i].name() + "()";
+       							var myForm = "";
+       							var row = "<td>";
+       							myForm += "<fieldset class='form-body' ><legend>" + self.nextera_admin_current_object_fields()[i].name() + "</legend>";
+       							myForm += "<ol class='editable-list'>";
+       							
+       							for(k=0;k<eval(string4Eval).length;k++)
+       							{
+	       							var name = eval(string4Eval)[k].name;
+	       							myForm +="<li>";
+									myForm +="<div class='editable-list-box'>";
+									myForm +="<div><input id='" + k + "' type='radio' name='object-fields' checked></div>";
+									myForm +="<div><input id='" + k + "' type='text' value='" + name + "'></div>";
+									myForm +="</div>";
+									myForm +="</li>";
+									row += name + ","
+	       						} 
+	       						row = row.slice(0,row.length-1)
+	       						row += "</td>";
+	       						myForm += "</ol></div>";
+	       						myForm += "<div class='editable-list-buttons'>";
+								myForm += "<span class='editable-list-button-add' onclick='mvm.addField();'></span>";
+								myForm += "<span class='editable-list-button-remove' onclick='mvm.removeField();'></span>";
+								//myForm += "<span class='editable-list-button-moveup'></span>";
+								//myForm += "<span class='editable-list-button-movedown'></span>";
+								myForm += "</div></fieldset>";
+	       						//alert(myForm);
+        					}
+        					else
+        					{
+        						var myForm = "<div><label>" + self.nextera_admin_current_object_fields()[i].name() + "</label><input type='text' placeholder='I am text' data-bind='value:" + self.nextera_admin_current_object_fields()[i].name() + "' value='" + eval(string4Eval) + "'></div>";
+        						var row = "<td>" + eval(string4Eval) + "</td>";
+        					}
+        					//alert(myForm);
+        					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].row(self." + self.nextera_admin_current_object_name() + "()[" + j + "].row() + \"" + row + "\");";
+        					//alert(string4Eval);
+        					eval(string4Eval);
+ 	       					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm(self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm() + \""  + myForm + "\");";
+ 	       					//alert(string4Eval);
+     						eval(string4Eval);   					
+        				}
+        				//alert(eval("self." + self.nextera_admin_current_object_name() + "()[" + j + "].row()"));
+					}
+					self.nextera_admin_current_object_instances(eval("self." + self.nextera_admin_current_object_name() + "()"));
+					//alert(self.nextera_admin_current_object_instances().length);
+					if(resetCurrentSelectedInstance)
+					{
+						if(self.nextera_admin_current_selected_instance())
+							self.nextera_admin_current_selected_instance().nextera_selected(false);
+						self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[0]);
+						self.nextera_admin_current_selected_instance().nextera_selected(true);
+					}
+
+					if(callback)
+					{
+						callback();
+					}
+					//alert(nextera_admin_current_selected_instance().myForm());
+				}					
+			});
+		}
+
+		self.loadObjects = loadObjects;
+
+		$.ajax(
+			{url:"/nextera_objects_models/"+self.nextera_admin_current_object_name(),
+			dataType:"json",
+			async:'false',
+			data:'',
+			success:function(data){
+				var mapped = $.map(data[0].fields,function(item){return new fields(item)});
+        		self.nextera_admin_current_object_fields(mapped);
+			}			
+		});
+
+		loadObjects(true);
+
+		updateRowHelper = function(counter,inputs,labels,callback)
+		{
+			if(counter>=inputs.length)
+			{
+				callback();
+				return;
+			}
+			else
+			{
+				updateRowHelper(counter+1,inputs,labels,callback);	
+			}
+		}
+
+
+		var updateRow = function()
+		{
+			var inputs = $(document.getElementById('instanceForm')).find('input');
+			var labels = $(document.getElementById('instanceForm')).find('label');
+			var selectedId = self.nextera_admin_current_selected_instance()._id();
+			for(i=0;i<inputs.length;i++)
+			{
+				if(labels[i])
+					eval("self.nextera_admin_current_selected_instance()." + labels[i].innerHTML + "('" + inputs[i].value + "')");
+			}
+
+			//updateRowHelper(0,inputs,labels,function(){
+
+				//alert("/" + self.nextera_admin_current_object_name() + "/update/" + self.nextera_admin_current_selected_instance()._id() );
+				$.ajax("/" + self.nextera_admin_current_object_name() + "/update/" + self.nextera_admin_current_selected_instance()._id() , {
+            				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+							{ 
+								//alert("all done: " +result);
+								loadObjects(false, function(){
+									
+									for(i=0;i<self.nextera_admin_current_object_instances().length;i++)
+									{
+										//alert(selectedId + " " + self.nextera_admin_current_object_instances()[i]._id())
+										if(self.nextera_admin_current_object_instances()[i]._id() == selectedId)
+										{
+											self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[i]);
+											self.nextera_admin_current_selected_instance().nextera_selected(true);
+										}
+									}
+								});
+							}
+        		});
+        	
+        	//});
+		}
+		self.updateRow = updateRow;
+		addRow = function()
+		{
+			if(self.nextera_admin_current_object_instances().length>0)
+			{
+				var inputs = $(document.getElementById('instanceForm')).find('input');
+				var labels = $(document.getElementById('instanceForm')).find('label');
+
+				for(i=0;i<self.nextera_admin_current_object_fields().length;i++)
+				{
+					//alert(self.nextera_admin_current_object_fields()[i].name());
+					eval("self.nextera_admin_current_selected_instance()." + self.nextera_admin_current_object_fields()[i].name() + "('')");
+				}
+			
+
+				$.ajax("/" + self.nextera_admin_current_object_name() + "/create", {
+            				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+							{ 
+								//alert("all done: " +result);
+								loadObjects(false, function(){
+									var len = self.nextera_admin_current_object_instances().length;
+									if(self.nextera_admin_current_selected_instance())
+										self.nextera_admin_current_selected_instance().nextera_selected(false);
+									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
+									self.nextera_admin_current_selected_instance().nextera_selected(true);	
+								});
+							}
+        		});
+        	}
+        	else
+        	{
+        		$.ajax("/" + self.nextera_admin_current_object_name() + "/create", {
+            				data: "",
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+							{ 
+								//alert("all done: " +result);
+								loadObjects(false, function(){
+									var len = self.nextera_admin_current_object_instances().length;
+									if(self.nextera_admin_current_selected_instance())
+										self.nextera_admin_current_selected_instance().nextera_selected(false);
+									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
+									self.nextera_admin_current_selected_instance().nextera_selected(true);	
+								});
+							}
+        		});
+        	}        	
+		}
+
+		deleteRow = function()
+		{
+				
+			$.ajax("/" + self.nextera_admin_current_object_name() + "/delete/" + self.nextera_admin_current_selected_instance()._id(), {
+            				data: '',
+            				contentType: "application/json",
+            				success: function(result) 
+							{ 
+								//alert("all done: " +result);
+								loadObjects(false, function(){
+									var len = self.nextera_admin_current_object_instances().length;
+									if(self.nextera_admin_current_selected_instance())
+										self.nextera_admin_current_selected_instance().nextera_selected(false);
+									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
+									self.nextera_admin_current_selected_instance().nextera_selected(true);
+								});
+							}
+        	});        	
+		}
+
+
+		selectRow = function()
+		{
+			//alert(this.name());
+			if(self.nextera_admin_current_selected_instance())
+				self.nextera_admin_current_selected_instance().nextera_selected(false);
+			self.nextera_admin_current_selected_instance(this);	
+			self.nextera_admin_current_selected_instance().nextera_selected(true);
+		}
+
+		selectObject = function()
+		{
+			if(self.nextera_admin_current_selected_object())
+				self.nextera_admin_current_selected_object().nextera_selected(false);
+			self.nextera_admin_current_object_name(this.name());
+			this.nextera_selected(true);
+			self.nextera_admin_current_selected_object(this);
+			//alert("just selected");
+			$.ajax(
+			{
+				url:"/nextera_objects_models/"+self.nextera_admin_current_object_name(),
+				dataType:"json",
+				data:'',
+				success:function(data){
+					var mapped = $.map(data[0].fields,function(item){return new fields(item)});
+        			self.nextera_admin_current_object_fields(mapped);
+					loadObjects(false, function(){
+						if(self.nextera_admin_current_selected_instance())
+							self.nextera_admin_current_selected_instance().nextera_selected(false);
+						self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[0]);
+						self.nextera_admin_current_selected_instance().nextera_selected(true);
+
+					});
+				}			
+			});
+
+			//alert(self.nextera_admin_current_object_name());
+		}
+
+		
+
+		//READ
+	<%
+	//console.log("myViewModel: ", objects.length);
+	for(i=0;i<objects.length;i++)
+	{
+		//console.log("tee: ", objects[i], " ", objects[i].type, " ", objects[i].fields.length);
+		if(objects[i].name.search("_search")>-1)
+			continue;
+		if(objects[i].name)
+		{
+		%>
+		self.<%=objects[i].name%>=ko.observableArray([]);
+		self.<%=objects[i].name%>_search_results=ko.observableArray([]);
+		self.<%=objects[i].name%>(self.<%=objects[i].name%>_search_results);
+		self.<%=objects[i].name%>_search_term=ko.observable();							
+		<%
+		for(j=0;j<objects[i].fields.length;j++)
+		{
+			if(objects[i].fields[j].name!="_id")
+			{
+		%>
+			self.<%=objects[i].name%>_<%=objects[i].fields[j].name%>=ko.observable();
+		<%
+			}
+		}
+		%>
+		<%
+		}
+	}
+	%>
+	//setFormData
+	<%
+	for(i=0;i<objects.length;i++)
+	{
+		if(objects[i].name)
+		{
+	%>	
+	<%=objects[i].name%>_set_form_data = function(me)
+		{
+			//alert(me.first_name());
+	<%
+		for(j=0;j<objects[i].fields.length;j++)
+		{
+			if(objects[i].fields[j].name!="_id")
+			{
+	%>
+			self.<%=objects[i].name%>_<%=objects[i].fields[j].name%>(me.<%=objects[i].fields[j].name%>());
+	<%
+			}
+		}
+	%>
+		}
+
+	<%
+		}
+	}
+	%>
+	//initial load
+	<%
+
+	//objects= objects.filter(function(element,index, array){return element.name.search("id_xxx")>-1 || element.name=="nextera_objects"});
+	for(i=0;i<objects.length;i++)
+	{
+		 if(objects[i].name.search("_search")>-1)
+                        continue;	
+		//console.log(objects[i].name.search("id_xxx"));
+		//if(objects[i].name.search("id_xxx")>-1)
+		//{
+				//continue;
+	%>
+		$.ajax(
+			{url:"/<%=objects[i].name%>",
+			dataType:"json",
+			data:'',
+			success:function(data){
+				//alert(JSON.stringify(data));
+				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
+        			self.<%=objects[i].name%>(mapped);
+        			<%if(objects[i].name=="nextera_objects")
+        			{%>
+        				//self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return element.name().search("id_xxx")>-1}));
+        			<%}%>
+        		<%
+        			if(objects[i].name=="nextera_objects")
+        			{
+        		%>
+        				self.nextera_objects()[0].nextera_selected(true);
+						self.nextera_admin_current_selected_object(self.nextera_objects()[0]);
+        		<%
+        			}
+        		%>	
+			}			
+		});
+	<%
+		//}
+	}
+	%>
+	// create code
+	<%
+	console.log("objectName: just before loop ", objects.length);
+	for(i=0;i<objects.length;i++)
+	{
+		console.log("objectName: ",objects[i].name);
+		 if(objects[i].name.search("_search")>-1)
+                        continue;	
+	%>
+		<%=objects[i].name%>_create = function() {
+					//alert(ko.toJSON(self));
+        			$.ajax("/<%=objects[i].name%>/create", {
+            				data: ko.toJSON(self),
+            				type: "post", contentType: "application/json",
+            				success: function(result) 
+					{ 
+						$.getJSON("/<%=objects[i].name%>", function(allData) {
+        						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+        						self.<%=objects[i].name%>(mapped);
+						});
+						<%
+						for(j=0;j<objects[i].fields.length;j++)
+						{
+							if(objects[i].fields[j].name!="_id")
+							{
+						%>
+							self.<%=objects[i].name%>_<%=objects[i].fields[j].name%>("");
+						<%
+							}
+						}
+						%>
+
+					}
+        		});
+    		};
+
+		<%=objects[i].name%>_delete = function(id) {
+                                $.ajax("/<%=objects[i].name%>/delete/"+id, {
+                                        data: '',
+                                        type: "get", contentType: "application/json",
+                                        success: function(result)
+                                        {
+                                                $.getJSON("/<%=objects[i].name%>", function(allData) {
+                                                        var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+                                                        self.<%=objects[i].name%>(mapped);
+                                                });
+                                        }
+                                });
+                };
+
+		<%=objects[i].name%>_search = function() {
+				//alert(self.<%=objects[i].name%>_search_term());
+				$.getJSON("/<%=objects[i].name%>/search/"+self.<%=objects[i].name%>_search_term(), function(allData) {
+                                	var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+                                	self.<%=objects[i].name%>_search_results(mapped);
+					self.<%=objects[i].name%>(mapped);
+                                });
+                };
+
+	<%
+	}
+	%>
+	//alert(self.nextera_objects().length);
+	//self.nextera_objects()[0].nextera_selected(true);
+	//self.nextera_admin_current_selected_object(self.nextera_objects()[0]);
+
+	
+
+	
+	}
+	mvm = new myViewModel();
+	ko.applyBindings(mvm);
+	//alert($("ul").length);
+	//$("#object-list > ul")[0].attr("data-highlight","true");
+	var latebind = "#latebind";
+});
+</script>
+<%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

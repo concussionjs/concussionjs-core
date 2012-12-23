@@ -1,0 +1,1 @@
+module.exports = function () {var settings = new Object();settings.id = '50d748a41f30a54285a28d48';settings.name='api';return settings;}

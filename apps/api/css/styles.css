@@ -1,0 +1,120 @@
+body {
+	font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+header {
+	background: -webkit-linear-gradient(top, rgb(241,241,241) 0%,rgb(166,172,186) 99%,rgb(121,127,143) 100%);
+	border-bottom: 1px solid #4E525C;
+}
+
+header .panel {
+	padding: 5px;	
+}
+
+header #title {
+	text-align: center;
+	vertical-align: middle;
+	text-shadow: 0px 1px 0px #ECECEC;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+
+}
+
+.search {
+	min-width: 100px;
+	max-width: 240px;
+	height: 24px;
+	color: #999;  
+    text-shadow: 0px 1px 0px #fff;
+  	background-color: #FFF;
+   	box-shadow: inset 0 1px 1px #000;
+	border-radius: 21px;
+	border: none;
+	outline: none;	
+	font-size: 14px;
+}
+
+.searchIcon {
+	position:absolute;
+	padding:0px;
+	margin:6px 0 0 7px;
+}
+
+header button {
+	display: inline-block;
+	border: 1px solid #4D5464;
+	color: #fff;
+	border-radius: 5px;
+	background: -webkit-linear-gradient(top, rgb(173,179,192) 0%,rgb(84,91,109) 100%);
+	text-shadow: 0px -1px 0px #4D5464;
+	box-shadow: 0 1px 1px #fff;
+	padding: 0 16px 0 16px;
+
+}
+
+header #backButton {
+
+}
+
+header #addButton {
+	
+}
+
+#searchPanel {
+	height: 44px;
+	background-color: #ABAFBB;
+	border-top: 1px solid #CCD1DB;
+	margin: 0 auto;
+}
+
+#data {
+	background-color: #F5F5F5;
+}
+
+.button {
+	color: #fff;
+	display: inline-block;
+	text-decoration: none;
+	padding: 4px 10px;
+	-webkit-border-radius: 5px;
+	font: normal 14px/34px Helvetica, Arial, sans-serif;
+	
+	background: -webkit-linear-gradient(top, rgb(173,179,192) 0%,rgb(84,91,109) 100%);
+	
+	border: 1px solid #4D5464;
+	position: relative;
+	padding-left: 5px;
+	margin-left: 8px;
+	text-shadow: 0px -1px 0px #4D5464;
+	box-shadow: 0 1px 1px #fff;
+	
+	font: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	padding: 0 16px 0 8px;
+	margin-left: 16px;
+	height: 34px;
+	width: 34px;
+	font-size: 1em;
+}
+
+.button > span {
+	background: -webkit-linear-gradient(-45deg, rgb(173,179,192) 0%,rgb(84,91,109) 100%);
+	
+	border: 1px solid #4D5464;
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-bottom-right-radius: 6px;
+	height: 26px;
+	width: 26px;
+	display: inline-block;
+	-webkit-transform: rotate(45deg);
+	-webkit-mask-image: -webkit-gradient(linear, left bottom, right top, 
+		from(#000000), 
+		color-stop(0.5,#000000), 
+		color-stop(0.5, transparent), 
+		to(transparent));
+	position: absolute;
+	left: -11px;
+	top: 3px;
+	-webkit-background-clip: content;
+	
+}

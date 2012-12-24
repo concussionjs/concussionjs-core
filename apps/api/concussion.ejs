@@ -30,7 +30,7 @@ $.getScript("http://<%=CJS_WEB_URL%>/cjs-utilities.js",
 						vars[hash[0]] = hash[1];
 					}
 				}
-				concsole.log("vars[id]=" + vars["id"]);
+				console.log("vars[id]=" + vars["id"]);
 				if(!vars["id"] && !readCookie("sessionId"))
 				{
 					createUUID(function(id){

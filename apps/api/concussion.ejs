@@ -31,7 +31,7 @@ $.getScript("http://<%=CJS_WEB_URL%>/cjs-utilities.js",
 					}
 				}
 						
-				if(!vars["sid"] && !readCookie("sessionId"))
+				if(!vars["sessionId"] && !readCookie("sessionId"))
 				{
 					createUUID(function(id){
 						createCookie("sessionId",id,1);								
@@ -41,7 +41,15 @@ $.getScript("http://<%=CJS_WEB_URL%>/cjs-utilities.js",
 						callback(page);	
 					});
 				}
-				else
+				else if(vars["sessionId"])
+				{
+					createCookie("sessionId",vars["sessionId"],1)
+					page.id=vars["sessionId"];
+					page.html=$('html')[0].innerHTML;
+					page.name='index';
+					callback(page);
+				}
+				else 
 				{
 					page.id=readCookie("sessionId");
 					page.html=$('html')[0].innerHTML;

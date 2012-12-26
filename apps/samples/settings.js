@@ -1,0 +1,1 @@
+module.exports = function () {var settings = new Object();settings.id = '50d7f90a1f30a542cb385573';settings.name='samples';return settings;}

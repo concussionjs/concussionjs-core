@@ -1,0 +1,24 @@
+<head><title>Contacts</title><meta charset="utf-8"><link rel="stylesheet" href="contacts-style.css">
+<script src="http://api.local-concussionjs.com/concussion.js"></script>
+</head>
+<body>
+  <form data-bind="submit:contacts_create">
+    <div class="new-contact">
+      <input class="fn" placeholder="Contact Name" data-bind="value:contacts_name">
+      <input class="email" placeholder="Email Address" data-bind="value:contacts_email">
+      <input class="phone" placeholder="Phone Number" data-bind="value:contacts_phone">
+      <input class="bday" placeholder="Birthday" data-bind="value:contacts_birthday">
+      <button>Add record</button>
+    </div>
+  </form>
+  <div id="contacts" data-bind="foreach:contacts">
+    <div class="vcard">
+      <input class="fn" data-bind="value:name">
+      <input class="email" data-bind="value:email">
+      <input class="tel" data-bind="value:phone">
+      <input class="bday" data-bind="value:birthday">
+      <button data-bind="click:contacts_update">Save</button><button class="secondary" data-bind="click:contacts_delete">Delete</button>
+    </div>
+  </div>
+
+</body>

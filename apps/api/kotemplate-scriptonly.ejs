@@ -192,7 +192,7 @@ try{
                         continue;	
 	%>
 		$.ajax(
-			{url:"http://<%=testdriveURL%>/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>",
+			{url:"http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>",
 			dataType:"json",
 			data:'',
 			success:function(data){
@@ -227,7 +227,7 @@ try{
 					//alert(ko.toJSON(self));
 					var patt = new RegExp("<%=objects[i].varname%>","g");
 					//alert(ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"));
-        			$.ajax("http://<%=testdriveURL%>/<%=objects[i].name%>/instanceCreate", {
+        			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
             				data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),//.<%=objects[i].varname%>()[self.<%=objects[i].varname%>().length-1]),
             				type: "post",
             				dataType: "text",
@@ -236,7 +236,7 @@ try{
             				success: function(result) 
 							{
 							//alert("checking if this is called"); 
-							$.getJSON("http://<%=testdriveURL%>/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>", function(allData) {
+							$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
 									//alert(allData);
         							var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
         							self.<%=objects[i].varname%>(mapped);
@@ -258,13 +258,13 @@ try{
     		};
     	 
     	 <%=objects[i].varname%>_delete = function() {
-                                $.ajax("http://<%=testdriveURL%>/instances/delete/"+this.id(), {
+                                $.ajax("http://<%=testdriveURL%>/delete/instances/"+this.id(), {
                                         data: '',
                                         type: "get", dataType: "text",
                                         success: function(result)
                                         {
                                         	//alert("inside of delete result");
-                                                $.getJSON("http://<%=testdriveURL%>/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>", function(allData) {
+                                                $.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
                                                         var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
                                                         self.<%=objects[i].varname%>(mapped);
                                                 });
@@ -273,17 +273,17 @@ try{
                 };
 
          <%=objects[i].varname%>_update = function() {
-                            $.ajax("http://<%=testdriveURL%>/<%=objects[i].name%>/instanceUpdate/" + this.id() , {
-            				data: ko.toJSON(this),
-            				type: "post", dataType: "text",
-            				success: function(result) 
-							{ 
-                                $.getJSON("http://<%=testdriveURL%>/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>", function(allData) {
-                                    var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-                                    self.<%=objects[i].varname%>(mapped);
-                                });
-                            }
-                        });
+            $.ajax("http://<%=testdriveURL%>/update/instances/<%=objects[i].name%>/" + this.id() , {
+				data: ko.toJSON(this),
+				type: "post", dataType: "text",
+				success: function(result) 
+				{ 
+					$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
+						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+						self.<%=objects[i].varname%>(mapped);
+					});
+                }
+            });
          };
 
 		<%=objects[i].varname%>_search = function() {

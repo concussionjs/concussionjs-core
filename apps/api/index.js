@@ -10,6 +10,8 @@ var ejs = require('ejs');
 var qs = require('querystring');
 var http = require('http');
 var parse = require('./inferObjects.js');
+var express = require('express');
+var app = express();
 var util = require('util');
 var URLPrefix=process.env.CJS_WEB_URL;
 var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"}];
@@ -66,7 +68,7 @@ function escapeSpecialCharacters(text)
 }
 
 addNewObjects = function(objects,callback)
-    {
+{
 	if (nta.debug)
 		util.debug('addNewObjects: inside addNewObjects', objects.length);
 	for (i = 0; i < objects.length; i++)
@@ -145,7 +147,8 @@ var generateRoutes = function(req,res,next) {
 
 function setSessionId(myObjects,sessionId,i,callback)
 {
-
+	if (nta.debug)
+		util.debug("myObjects.length: " + myObjects.length)
 	if (i < myObjects.length)
 	{
 		myObjects[i].tenant_id= sessionId;
@@ -159,6 +162,252 @@ function setSessionId(myObjects,sessionId,i,callback)
 		callback(myObjects);
 	}
 }
+
+var readRoute = app.get("/read/:objectName", function(req,res){
+	readAction(req.params.objectName,req,res);
+});
+
+var readAction = function(objectName,req,res)
+{
+	nta.getEntries(objectName, function(err,documents) {
+		res.writeHeader(200);
+		res.end('' + JSON.stringify(documents));
+	});
+}
+
+var getPageRoute = app.get("/getpage/:id/:pageName", function(req,res){
+	getPageAction(req.params.id,req.params.pageName,req,res);
+});
+
+
+
+
+var getPageAction = function(id,pageName,req,res)
+{
+	
+	console.log(req.params.id);
+	var searchKey = [];
+	var object = {};
+	res.writeHeader(200);
+	
+	if (nta.debug)
+		util.debug('getPage: session id: ', id, ' ', pageName);
+
+	nta.getEntriesWhere({'id': id, 'name': pageName},'pages', function(err,objects) {
+		if(err)
+		{
+			console.err("err: " + err);
+			return;
+		}
+		else if(objects && objects.length > 0)
+		{
+			res.end(objects[0].html);
+		}
+		else
+			res.end("");
+	});
+}
+
+var getScriptRoute = app.get("/getScript/:id/:pageName", function(req,res){
+	getScriptAction(req.params.id,req.params.pageName,req,res);
+});
+
+var getScriptAction =  function(id,pageName,req,res)
+{
+	var object = {};
+	res.writeHeader(200);//, {'Access-Control-Allow-Origin': '*', 'Content-Type': 'text/javascript'});
+	
+	if (nta.debug)
+		util.debug('getScript x: session id: ' + id + ' pagename ' + pageName);
+
+	nta.getEntriesWhere({'id': id, 'name': pageName},'pages', function(err,objects) {
+		if (nta.debug)
+			util.debug('getScript: ' + JSON.stringify(objects));
+		if (objects && objects.length > 0 && objects[0].html)
+		{
+			parse.runGenerateStructureHTML(objects[0].html, function(myObjects) {
+				var myName = myObjects[0].name;
+				setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
+					if ( nta.debug)
+					{
+						util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects));
+						util.debug('getScript: ' + objects[0].html);
+						util.debug('getScript: setSessionId');
+					}
+					addNewObjects(myObjects, function() {
+						if ( nta.debug)
+						{
+							util.debug('getScript: addNewObjects');
+							util.debug('getScript: ' + JSON.stringify(myObjects));
+						}
+						res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+					});
+				});
+			});
+		}
+	});
+    
+    return;
+}
+
+var postGetScriptRoute = app.all("/postGetScript/:id",function(req,res){
+	postGetScriptAction(req.params.id,req,res);
+});
+
+var postGetScriptAction = function(id,req,res)
+{
+	res.writeHeader(200);
+	
+	var args = qs.parse(req.url.split('?')[1]);
+	if (nta.debug)
+		util.debug('postGetScript x: session id: ' + id + ' HTML ' + args.html)
+	
+	parse.runGenerateStructureHTML(args.html, function(myObjects) {
+		var myName = myObjects[0].name;
+		if(nta.debug)
+			util.debug("myName:" + myName);
+		setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
+			if ( nta.debug)
+			{
+				util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects));
+			}
+	
+			addNewObjects(myObjects, function() {
+				if ( nta.debug)
+				{
+					util.debug('getScript: addNewObjects');
+					util.debug('getScript: ' + JSON.stringify(myObjects));
+				}
+				
+				res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+			});
+		});
+	});
+}
+
+var getEntriesByTenantObjectIdRoute = app.get("/getEntriesByTenantObjectId/:objectName",function(req,res){
+	getEntriesByTenantObjectIdAction(req.params.objectName,req,res);
+});
+
+
+var getEntriesByTenantObjectIdAction = function(objectName,req,res)
+{	       
+	res.writeHeader(200);
+    nta.getEntriesByTenantObjectId(objectName, "instances", function(err,documents) {
+		res.end(JSON.stringify(documents));
+	});
+	
+	return;
+}
+
+var createInstanceRoute = app.post("/createInstance/:objectName",function(req,res){
+	createInstanceAction(req.params.objectName, req, res);
+});
+
+var createInstanceAction = function(objectName,req,res)
+{
+	searchKey = [];
+	object = {};
+
+	if (nta.debug)
+		util.debug('create: rawBody: ', req.rawBody);
+	res.writeHeader(200);
+	nta.getEntriesWhere({'name': objectName},'nextera_objects', function(err,result) {
+		if (err)
+		{
+			res.end(err);
+			console.error('getEntriesWhere err: ', err);
+			return;
+		}
+		setupObject(searchKey, 0, result, [0], req, object, function(newObject) {
+			newObject.tenant_object_id = objectName;
+			nta.createEntry(newObject, "instances", function(msg) {
+				res.end(msg);
+			});
+		});		
+	});
+}
+
+var getEntryWhereRoute = app.get("/getEntryWhere/:objectName",function(req,res){
+	getEntryWhereAction(objectName,req,res);
+});
+
+var getEntryWhereAction = function(objectName,req,res)
+{
+	var where = qs.parse(req.url.split('?')[1]);
+	if (nta.debug)
+		util.debug(JSON.stringify(where));
+	res.writeHeader(200);//, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'X-Requested-With', 'Access-Control-Allow-Headers': 'application/json'});
+	nta.getEntryWhere(where, objectName, function(err,documents) {
+		res.end(JSON.stringify(documents[0]));
+    });
+	
+	return;
+}
+
+var getEntriesByNameRoute = app.get("/getEntriesByName/:objectName",function(req,res){
+	getEntriesByNameAction(objectName,req,res);
+});
+
+var getEntriesByNameAction = function(objectName,req,res)
+{
+	var where = qs.parse(req.url.split('?')[1]);
+	if (nta.debug)
+		util.debug(JSON.stringify(where));
+	res.writeHeader(200);//, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'X-Requested-With', 'Access-Control-Allow-Headers': 'application/json'});
+	nta.getEntriesByName(where, objectName, function(err,documents) {
+		res.end(JSON.stringify(documents));
+    });
+	
+	return;
+}
+
+var deleteRoute = app.get("/delete/:objectName/:id", function(req,res){
+	deleteAction(req.params.objectName,req.params.id,req,res);
+});
+
+var deleteAction = function(objectName,id,req,res)
+{
+	res.writeHeader(200);
+	nta.deleteEntry(id, objectName, function(err,documents) {
+        if (err)
+        {
+        	res.end('failure');
+        }
+        else
+        {
+	    	res.end('success');
+	   	}
+    });
+
+	return;
+}
+
+var updateRoute = app.post("/update/:objectName/:tenantObjectId/:id", function(req,res){
+	console.log("updateRoute ", req.rawBody);
+	updateAction(req.params.objectName,req.params.tenantObjectId,req.params.id,req,res);
+});
+
+var updateAction = function(objectName,tenantObjectId,id,req,res)
+{
+	res.writeHeader(200);
+	updatedRow = JSON.parse(('' + req.rawBody).replace('_id', '_id_mock'));
+    updatedRow.tenant_object_id = tenantObjectId;
+
+	nta.updateEntry(id, updatedRow, objectName, function(err,documents) {
+		if (err)
+		{
+			res.end('failure');
+		}
+		else
+		{
+			res.end('success');
+		}
+	});
+
+	return;
+}
+
 
 loopThroughObjects = function(objects,req,res,next)
     {
@@ -696,7 +945,17 @@ var server = connect.createServer(
 	crossDomainRules(),
 	//connect.session({ secret: 'test'}),
 	connect.bodyParser(),
-	generateRoutes,
+	readRoute,
+	getPageRoute,
+	getScriptRoute,
+	postGetScriptRoute,
+	getEntriesByTenantObjectIdRoute,
+	createInstanceRoute,
+	getEntriesByNameRoute,
+	getEntryWhereRoute,
+	deleteRoute,
+	updateRoute,
+	//generateRoutes,
 	nta.serveStaticFilesNoWriteHead,
 	connect.static(__dirname)
 );

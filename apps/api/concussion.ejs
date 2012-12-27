@@ -241,7 +241,7 @@ $(document).ready(function(){
 				var sessionId = readCookie("sessionId");
 
 				$.ajax({
-					url: "http://<%=CJS_WEB_URL%>/postGetScript",
+					url: "http://<%=CJS_WEB_URL%>/postGetScript/"+sessionId,
 					data: html,
 					dataType: "script",
 					contentType:"script",

@@ -345,13 +345,12 @@ var getEntryWhereAction = function(objectName,req,res)
 	return;
 }
 
-var getEntriesByNameRoute = app.get("/getEntriesByName/:objectName",function(req,res){
-	getEntriesByNameAction(objectName,req,res);
+var getEntriesByNameRoute = app.get("/getEntriesByName/:objectName/:where",function(req,res){
+	getEntriesByNameAction(req.params.objectName,req.params.where,req,res);
 });
 
-var getEntriesByNameAction = function(objectName,req,res)
+var getEntriesByNameAction = function(objectName,where,req,res)
 {
-	var where = qs.parse(req.url.split('?')[1]);
 	if (nta.debug)
 		util.debug(JSON.stringify(where));
 	res.writeHeader(200);//, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'X-Requested-With', 'Access-Control-Allow-Headers': 'application/json'});

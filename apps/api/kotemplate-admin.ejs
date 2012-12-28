@@ -188,7 +188,7 @@ try{
 			console.log("inside loadObject: " + self.nextera_admin_current_object_name());
 			$.ajax(
 			{
-				url:"/instances/getEntriesByTenantObjectId/?where=" + self.nextera_admin_current_object_name(),
+				url:"/getEntriesByTenantObjectId/"+self.nextera_admin_current_object_name(),
 				dataType:"json",
 				async:'false',
 				data:'',
@@ -281,7 +281,7 @@ try{
 		self.loadObjects = loadObjects;
 
 		$.ajax(
-			{url:"/nextera_objects_models/"+self.nextera_admin_current_object_name(),
+			{url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
 			dataType:"json",
 			async:'false',
 			data:'',
@@ -321,7 +321,7 @@ try{
 			//updateRowHelper(0,inputs,labels,function(){
 
 				//alert("/" + self.nextera_admin_current_object_name() + "/update/" + self.nextera_admin_current_selected_instance()._id() );
-				$.ajax("/" + self.nextera_admin_current_object_name() + "/instanceUpdate/" + self.nextera_admin_current_selected_instance()._id() , {
+				$.ajax("/update/instances/" + self.nextera_admin_current_object_name() + "/" + self.nextera_admin_current_selected_instance()._id() , {
             				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
             				type: "post", contentType: "application/json",
             				success: function(result) 
@@ -359,7 +359,7 @@ try{
 				}
 			
 
-				$.ajax("/" + self.nextera_admin_current_object_name() + "/instanceCreate", {
+				$.ajax("/createInstance/" + self.nextera_admin_current_object_name(), {
             				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
             				type: "post", contentType: "application/json",
             				success: function(result) 
@@ -377,7 +377,7 @@ try{
         	}
         	else
         	{
-        		$.ajax("/" + self.nextera_admin_current_object_name() + "/instanceCreate", {
+        		$.ajax("/createInstance/" + self.nextera_admin_current_object_name(), {
             				data: "",
             				type: "post", contentType: "application/json",
             				success: function(result) 
@@ -398,7 +398,7 @@ try{
 		deleteRow = function()
 		{
 				
-			$.ajax("/instances/delete/" + self.nextera_admin_current_selected_instance()._id(), {
+			$.ajax("/delete/instances/" + self.nextera_admin_current_selected_instance()._id(), {
             				data: '',
             				contentType: "application/json",
             				success: function(result) 
@@ -531,7 +531,7 @@ try{
 		<%if(objects[i].name=="nextera_objects")
         {%>
 			$.ajax(
-			{url:"/nextera_objects",
+			{url:"/read/nextera_objects",
 			dataType:"json",
 			data:'',
 			success:function(data){
@@ -546,7 +546,7 @@ try{
 					
 					$.ajax(
 					{
-						url:"/nextera_objects_models/"+self.nextera_admin_current_object_name(),
+						url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
 						dataType:"json",
 						data:'',
 						success:function(data){
@@ -570,7 +570,7 @@ try{
 		<%}else
         {%>
 		$.ajax(
-			{url:"/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>",
+			{url:"/getEntriesByTenantObjectId/<%=objects[i].name%>",
 			dataType:"json",
 			data:'',
 			success:function(data){
@@ -597,12 +597,12 @@ try{
 	%>
 		<%=objects[i].name%>_create = function() {
 					//alert(ko.toJSON(self));
-        			$.ajax("/<%=objects[i].name%>/instanceCreate", {
+        			$.ajax("/createInstance/<%=objects[i].name%>", {
             				data: ko.toJSON(self),
             				type: "post", contentType: "application/json",
             				success: function(result) 
 					{ 
-						$.getJSON("/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>", function(allData) {
+						$.getJSON("/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
         						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
         						self.<%=objects[i].name%>(mapped);
 						});
@@ -623,13 +623,13 @@ try{
     		};
 
 		 <%=objects[i].name%>_delete = function() {
-                                $.ajax("/instances/delete/"+this._id(), {
+                                $.ajax("/delete/instances/"+this._id(), {
                                         data: '',
                                         type: "get", dataType: "text",
                                         success: function(result)
                                         {
                                         	//alert("inside of delete result");
-                                                $.getJSON("/instances/getEntriesByTenantObjectId/?where=<%=objects[i].name%>", function(allData) {
+                                                $.getJSON("/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
                                                         var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
                                                         self.<%=objects[i].varname%>(mapped);
                                                 });

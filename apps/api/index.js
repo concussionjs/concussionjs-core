@@ -206,6 +206,8 @@ var getPageAction = function(id,pageName,req,res)
 		else
 			res.end("");
 	});
+
+	return;
 }
 
 var getScriptRoute = app.get("/getScript/:id/:pageName", function(req,res){
@@ -250,22 +252,31 @@ var getScriptAction =  function(id,pageName,req,res)
     return;
 }
 
-var postGetScriptRoute = app.all("/postGetScript/:id",function(req,res){
-	postGetScriptAction(req.params.id,req,res);
+var postGetScriptRoute = app.all("/postGetScript",function(req,res){
+	postGetScriptAction(req,res);
 });
 
-var postGetScriptAction = function(id,req,res)
+var postGetScriptAction = function(req,res)
 {
 	res.writeHeader(200);
-	
+	try{
 	var args = qs.parse(req.url.split('?')[1]);
 	if (nta.debug)
-		util.debug('postGetScript x: session id: ' + id + ' HTML ' + args.html)
-	
-	parse.runGenerateStructureHTML(args.html, function(myObjects) {
+		util.debug('postGetScript x: session id: ' + args.id + ' HTML rawBody ' + args.html);
+	if(req.body && req.body.html && req.body.html !="")
+	{
+		var html = req.body.html;
+		var id = args.sid;
+	}
+	else
+	{	
+		var html = args.html;
+		var id = args.id;
+	}
+	parse.runGenerateStructureHTML(html, function(myObjects) {
 		var myName = myObjects[0].name;
 		if(nta.debug)
-			util.debug("myName:" + myName);
+			util.debug("myName:" + myName + " length " + myObjects.length + " json " + JSON.stringify(myObjects));
 		setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
 			if ( nta.debug)
 			{
@@ -283,6 +294,7 @@ var postGetScriptAction = function(id,req,res)
 			});
 		});
 	});
+	}catch(error){console.log("custom error: " + error);res.end("error");}
 }
 
 var getEntriesByTenantObjectIdRoute = app.get("/getEntriesByTenantObjectId/:objectName",function(req,res){
@@ -329,7 +341,7 @@ var createInstanceAction = function(objectName,req,res)
 }
 
 var getEntryWhereRoute = app.get("/getEntryWhere/:objectName",function(req,res){
-	getEntryWhereAction(objectName,req,res);
+	getEntryWhereAction(req.params.objectName,req,res);
 });
 
 var getEntryWhereAction = function(objectName,req,res)
@@ -407,6 +419,34 @@ var updateAction = function(objectName,tenantObjectId,id,req,res)
 	return;
 }
 
+var updateWhereRoute = app.post('/updateWhere/:objectName',function(req,res){
+	updateWhereAction(req.params.objectName,req,res);
+});
+
+var updateWhereAction = function(objectName,req,res)
+{
+	if (nta.debug)
+			util.debug('updatePage:x ', req.rawBody, ' url', req.url);
+	res.writeHeader(200);
+	
+	updatedRow = JSON.parse(('' + req.rawBody).replace('_id', '_id_mock'));
+
+	var where = qs.parse(req.url.split('?')[1]);
+
+	try {
+		nta.updateEntryWhere(where, updatedRow, objectName, function(err,documents) {
+			if (err)
+			{
+				res.end('failure');
+			}
+			else
+			{
+				res.end('success');
+			}
+		});
+	}catch (e) {console.error('err:', e);}
+
+}
 
 loopThroughObjects = function(objects,req,res,next)
     {
@@ -941,9 +981,9 @@ crossDomainRules = function () {
 var server = connect.createServer(
 	connect.logger({ format: ':method :url' }),
 	connect.cookieParser(),
-	crossDomainRules(),
 	//connect.session({ secret: 'test'}),
 	connect.bodyParser(),
+	crossDomainRules(),
 	readRoute,
 	getPageRoute,
 	getScriptRoute,
@@ -954,6 +994,7 @@ var server = connect.createServer(
 	getEntryWhereRoute,
 	deleteRoute,
 	updateRoute,
+	updateWhereRoute,
 	//generateRoutes,
 	nta.serveStaticFilesNoWriteHead,
 	connect.static(__dirname)

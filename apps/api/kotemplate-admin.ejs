@@ -435,7 +435,7 @@ try{
 			//alert("just selected, " + self.nextera_admin_current_object_name());
 			$.ajax(
 			{
-				url:"/nextera_objects_models/"+self.nextera_admin_current_object_name(),
+				url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
 				dataType:"json",
 				data:'',
 				success:function(data){

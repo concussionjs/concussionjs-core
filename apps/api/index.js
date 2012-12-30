@@ -312,7 +312,7 @@ var getEntriesByTenantObjectIdAction = function(objectName,req,res)
 	return;
 }
 
-var createInstanceRoute = app.post("/createInstance/:objectName",function(req,res){
+var createInstanceRoute = app.all("/createInstance/:objectName",function(req,res){
 	createInstanceAction(req.params.objectName, req, res);
 });
 
@@ -324,20 +324,24 @@ var createInstanceAction = function(objectName,req,res)
 	if (nta.debug)
 		util.debug('create: rawBody: ', req.rawBody);
 	res.writeHeader(200);
-	nta.getEntriesWhere({'name': objectName},'nextera_objects', function(err,result) {
-		if (err)
-		{
-			res.end(err);
-			console.error('getEntriesWhere err: ', err);
-			return;
-		}
-		setupObject(searchKey, 0, result, [0], req, object, function(newObject) {
-			newObject.tenant_object_id = objectName;
-			nta.createEntry(newObject, "instances", function(msg) {
-				res.end(msg);
-			});
-		});		
-	});
+	if(!req.rawBody)
+		res.end("error: no body posted");
+	else{
+		nta.getEntriesWhere({'name': objectName},'nextera_objects', function(err,result) {
+			if (err)
+			{
+				res.end(err);
+				console.error('getEntriesWhere err: ', err);
+				return;
+			}
+			setupObject(searchKey, 0, result, [0], req, object, function(newObject) {
+				newObject.tenant_object_id = objectName;
+				nta.createEntry(newObject, "instances", function(msg) {
+					res.end(msg);
+				});
+			});		
+		});
+	}
 }
 
 var getEntryWhereRoute = app.get("/getEntryWhere/:objectName",function(req,res){

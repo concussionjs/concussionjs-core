@@ -3,9 +3,9 @@ var nta = require('./node_modules/nextera/nextera.js');
 var settings = require('./settings.js');
 var connect = require('connect');
 var fs = require('fs');
-var html = fs.readFileSync('kotemplate.ejs', 'utf-8');
-var scriptonly = fs.readFileSync('kotemplate-scriptonly.ejs', 'utf-8');
-var cjsutil = fs.readFileSync('cjs-utilities.js','utf-8');
+var html = fs.readFileSync(__dirname + '/kotemplate.ejs', 'utf-8');
+var scriptonly = fs.readFileSync(__dirname + '/kotemplate-scriptonly.ejs', 'utf-8');
+var cjsutil = fs.readFileSync(__dirname + '/cjs-utilities.js','utf-8');
 var ejs = require('ejs');
 var qs = require('querystring');
 var http = require('http');
@@ -14,7 +14,7 @@ var express = require('express');
 var app = express();
 var util = require('util');
 var URLPrefix=process.env.CJS_WEB_URL;
-var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"}];
+var files2Localize=[{templateFileName:__dirname + "/concussion.ejs",outputFileName:__dirname + "/concussion.js"}];
 /*
 	reference:
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];

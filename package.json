@@ -1,0 +1,25 @@
+{
+  "name": "Concussion",
+  "description": "The web app platform for the impatient hacker",
+  "homepage": "http://concussionjs.com/",
+  "author":"Benjamin Frenkel",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/concussionjs/concussionjs-core.git"
+  },
+  "version": "0.3.0",
+  "main": "./lib/nextera.js",
+  "dependencies": {
+    "connect": ">=1.7.1",
+    "ejs": ">=0.4.3",
+    "express": ">=3.x",
+    "mongodb": ">=0.9.0",
+    "redis": ">=0.8.0",
+    "jsdom": ">=0.2.0",
+    "basic-auth": ">=0.0.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "optionalDependencies": {}
+}

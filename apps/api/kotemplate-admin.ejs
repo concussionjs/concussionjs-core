@@ -1,5 +1,6 @@
 <script src="jquery-1.8.1.min.js"></script>
 <script language="JavaScript" src="knockout-2.0.0.js"></script>
+<script language="JavaScript" src="jquery.json-2.3.js"></script>
 <script>
 var mvm;
 $(function() {
@@ -190,7 +191,7 @@ try{
 			{
 				url:"/getEntriesByTenantObjectId/"+self.nextera_admin_current_object_name(),
 				dataType:"json",
-				async:'false',
+				async:'true',
 				data:'',
 				success:function(data){
 					eval("var mapped = $.map(data,function(item)\{return new " + self.nextera_admin_current_object_name() + "(item)\});");
@@ -228,7 +229,7 @@ try{
 	       							myForm +="<li>";
 									myForm +="<div class='editable-list-box'>";
 									myForm +="<div><input id='" + k + "' type='radio' name='object-fields' checked></div>";
-									myForm +="<div><input id='" + k + "' type='text' value='" + name + "'></div>";
+									myForm +="<div><input id='" + k + "' type='text' value=" + name + "></div>";
 									myForm +="</div>";
 									myForm +="</li>";
 									row += name + ","
@@ -246,14 +247,17 @@ try{
         					}
         					else
         					{
-        						var myForm = "<div><label>" + self.nextera_admin_current_object_fields()[i].name() + "</label><input type='text' placeholder='I am text' data-bind='value:" + self.nextera_admin_current_object_fields()[i].name() + "' value='" + eval(string4Eval) + "'></div>";
-        						var row = "<td>" + eval(string4Eval) + "</td>";
+        						var myForm = "<div><label>" + self.nextera_admin_current_object_fields()[i].name() + "</label><input type='text' placeholder='I am text' data-bind='value:" + self.nextera_admin_current_object_fields()[i].name() + "' value='" + JSON.stringify(eval(string4Eval)).substring(1,JSON.stringify(eval(string4Eval)).length-1) + "'></div>";
+        						var row = "<td>\"+" + JSON.stringify(eval(string4Eval)) + "+\"</td>";
         					}
         					//alert(myForm);
         					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].row(self." + self.nextera_admin_current_object_name() + "()[" + j + "].row() + \"" + row + "\");";
+        					
         					//alert(string4Eval);
+        					//console.log(string4Eval);
         					eval(string4Eval);
  	       					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm(self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm() + \""  + myForm + "\");";
+ 	       					
  	       					//alert(string4Eval);
      						eval(string4Eval);   					
         				}

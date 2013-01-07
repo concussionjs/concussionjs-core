@@ -1,5 +1,5 @@
 var jsdom = require('jsdom');
-var nta = require('./node_modules/nextera/nextera.js');
+var nta = require('concussion-core');
 var settings = require('./settings.js');
 var connect = require('connect');
 var fs = require('fs');

@@ -226,43 +226,30 @@ $.ajaxSetup({
 });
 
 $(document).ready(function(){
-	//console.log("support.cors: " + $.support.cors);
-
-	//console.log("console: initiating cjs-utilities load");
-	/*$.getScript("http://api.local-concussionjs.com/cjs-utilities.js",
-		function(data, textStatus, jqxhr)
-		{
-			console.log("console: successfully loaded cjs-utilities");							
-			$(document).ready(function(){
-				
-	*/				
 			getPage(function(html){
 				console.log("console: getPage " + readCookie("sessionId") + JSON.stringify(html));
 				var sessionId = readCookie("sessionId");
 
-				$.ajax({
-					url: "http://api.local-concussionjs.com/postGetScript/"+sessionId,
+				/*$.ajax({
+					url: "http://api.local-concussionjs.com/postGetScript?sid="+sessionId,
 					data: html,
-					dataType: "script",
-					contentType:"script",
+					dataType: "text",
 					type: "POST", 
 					async: false,
-					success: function(result) 
-					{ 
-						/*$.getScript("http://api.local-concussionjs.com/getScript?id="+sessionId+"&pagename=index",
-							function()
-							{
-								console.log("console: loaded custom script");
-							});*/
-													
+					success: function(result){
+						eval(result);							
 						$("body").append("<a href=\"#\" onclick=\"window.open(\'http://api.local-concussionjs.com/admin.html?id=" + sessionId + "\');\"> <img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"http://api.local-concussionjs.com/concussion_admin.png\" alt=\"Fork me on GitHub\"> </a>");
 					},
 					error: function(xhr, textStatus, errorThrown )
 					{
 						console.log("error: " + textStatus);
 					}
-				});
+				});*/
+				var error;
+				$.post("http://api.local-concussionjs.com/postGetScript?sid="+sessionId,html,function(result){
+						eval(result);							
+						$("body").append("<a href=\"#\" onclick=\"window.open(\'http://api.local-concussionjs.com/admin.html?id=" + sessionId + "\');\"> <img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"http://api.local-concussionjs.com/concussion_admin.png\" alt=\"Fork me on GitHub\"> </a>");
+					});
 			});
-		//});
 });
 

@@ -82,7 +82,7 @@ addNewObjects = function(objects,callback)
 			util.debug('addNewObjects: currentName', currentName, ' ', currentObj.fields.length, JSON.stringify(currentObj));
 		if (currentName.search('_search') < 0)
 		{
-		nta.getEntriesWhere({'name': currentName},'nextera_objects', function(err,result)
+		nta.getEntriesWhere({'name': currentName},'cjs_objects', function(err,result)
 		{
 			//console.log("addNewObjects,","inside find ", "result: ", result.length, ", ", currentObj.name);
 			if (nta.debug)
@@ -96,7 +96,7 @@ addNewObjects = function(objects,callback)
 			if (result.length > 0)
 			{
 				currentObj.fields = dedupe(result[0].fields.concat(currentObj.fields));
-				nta.updateEntry('' + result[0]._id, {$set: currentObj},'nextera_objects', function(err) {
+				nta.updateEntry('' + result[0]._id, {$set: currentObj},'cjs_objects', function(err) {
 						if (err)
 						{
 							console.error('addNewObjects err: ', err);
@@ -108,7 +108,7 @@ addNewObjects = function(objects,callback)
 			{
 				if (nta.debug)
 					util.debug('addNewObjects: object does not exist');
-				nta.createEntry(currentObj, 'nextera_objects', function(msg) {
+				nta.createEntry(currentObj, 'cjs_objects', function(msg) {
 						if (nta.debug)
 							util.debug('add new ', msg);
 						callback();
@@ -133,7 +133,7 @@ var generateRoutes = function(req,res,next) {
 	if (nta.debug)
 		util.debug('req.url: generateroutes: req.headers.host:', req.headers.host, ' req.headers.host', 'req.url ',req.url,' req.rawBody: ', req.rawBody);
 
-	nta.getEntries('nextera_objects', function(err,result) {
+	nta.getEntries('cjs_objects', function(err,result) {
 		if (err)
 		{
 			res.end(err);
@@ -327,7 +327,7 @@ var createInstanceAction = function(objectName,req,res)
 	if(!req.rawBody)
 		res.end("error: no body posted");
 	else{
-		nta.getEntriesWhere({'name': objectName},'nextera_objects', function(err,result) {
+		nta.getEntriesWhere({'name': objectName},'cjs_objects', function(err,result) {
 			if (err)
 			{
 				res.end(err);
@@ -454,7 +454,7 @@ var updateWhereAction = function(objectName,req,res)
 
 loopThroughObjects = function(objects,req,res,next)
     {
-	if (req.url.search('/nextera_objects_models') > -1)
+	if (req.url.search('/cjs_objects_models') > -1)
 	{
 
 		if (req.url.split('/').length < 2)
@@ -477,7 +477,7 @@ loopThroughObjects = function(objects,req,res,next)
 
 	    if (nta.debug)
 			util.debug('searchTerm: ', searchTerm, req.url);
-		nta.getEntriesWhere({'name': searchTerm},'nextera_objects', function(err,result) {
+		nta.getEntriesWhere({'name': searchTerm},'cjs_objects', function(err,result) {
 				if (err)
 				{
 					res.end(err);

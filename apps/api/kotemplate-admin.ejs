@@ -60,8 +60,8 @@ try{
 						console.log("myobject name: ", myObject.name, " varname: ", myObject.varname)
 				%>
 				var self = this;
-				var nextera_selected = ko.observable(false);
-				self.nextera_selected = nextera_selected;
+				var cjs_selected = ko.observable(false);
+				self.cjs_selected = cjs_selected;
 				
 				if(data.name)
 				{ 
@@ -145,39 +145,39 @@ try{
 	function myViewModel()
 	{
 		var self = this;
-		var nextera_admin_current_selected_instance = ko.observable();
-		self.nextera_admin_current_selected_instance = nextera_admin_current_selected_instance;
-		var nextera_admin_current_object_instances = ko.observableArray([]);
-		self.nextera_admin_current_object_instances = nextera_admin_current_object_instances;
-		var nextera_admin_current_object_name = ko.observable("apps");
-		self.nextera_admin_current_object_name = nextera_admin_current_object_name;
-		var nextera_admin_current_object_fields = ko.observableArray([]);
-		self.nextera_admin_current_object_fields = nextera_admin_current_object_fields;
-		var nextera_admin_current_selected_object = ko.observable();
-		self.nextera_admin_current_selected_object = nextera_admin_current_selected_object;
+		var cjs_admin_current_selected_instance = ko.observable();
+		self.cjs_admin_current_selected_instance = cjs_admin_current_selected_instance;
+		var cjs_admin_current_object_instances = ko.observableArray([]);
+		self.cjs_admin_current_object_instances = cjs_admin_current_object_instances;
+		var cjs_admin_current_object_name = ko.observable("");
+		self.cjs_admin_current_object_name = cjs_admin_current_object_name;
+		var cjs_admin_current_object_fields = ko.observableArray([]);
+		self.cjs_admin_current_object_fields = cjs_admin_current_object_fields;
+		var cjs_admin_current_selected_object = ko.observable();
+		self.cjs_admin_current_selected_object = cjs_admin_current_selected_object;
 
 		var addField = function()
 		{
-			//alert("adding field " + self.nextera_admin_current_selected_instance().fields().length);
+			//alert("adding field " + self.cjs_admin_current_selected_instance().fields().length);
 			var field_name = prompt("Please provide a field name");
-			if(self.nextera_admin_current_selected_instance().fields() && self.nextera_admin_current_selected_instance().fields().length>0)
+			if(self.cjs_admin_current_selected_instance().fields() && self.cjs_admin_current_selected_instance().fields().length>0)
 			{
-				self.nextera_admin_current_selected_instance().fields().push({"name":field_name});
+				self.cjs_admin_current_selected_instance().fields().push({"name":field_name});
 			}
 			else
 			{
-				self.nextera_admin_current_selected_instance().fields([{"name":field_name}]);
+				self.cjs_admin_current_selected_instance().fields([{"name":field_name}]);
 			}
 			self.updateRow();
-			//alert("added field " + self.nextera_admin_current_selected_instance().fields().length);
+			//alert("added field " + self.cjs_admin_current_selected_instance().fields().length);
 		}
 		self.addField = addField;
 
 		var removeField = function()
 		{
 			var id = $(document.getElementById('instanceForm')).find('input[name=object-fields]:checked').attr("id");
-			//alert("removing field " + id + " length " + self.nextera_admin_current_selected_instance().fields().splice(id,1).length);
-			self.nextera_admin_current_selected_instance().fields().splice(id,1);
+			//alert("removing field " + id + " length " + self.cjs_admin_current_selected_instance().fields().splice(id,1).length);
+			self.cjs_admin_current_selected_instance().fields().splice(id,1);
 			self.updateRow();
 			//$('input[name=object-fields]:checked', '#myForm').val();
 		}
@@ -185,27 +185,27 @@ try{
 
 		var loadObjects = function(resetCurrentSelectedInstance,callback)
 		{
-			console.log("inside loadObject: " + self.nextera_admin_current_object_name());
+			console.log("inside loadObject: " + self.cjs_admin_current_object_name());
 			$.ajax(
 			{
-				url:"/getEntriesByTenantObjectId/"+self.nextera_admin_current_object_name(),
+				url:"/getEntriesByTenantObjectId/"+self.cjs_admin_current_object_name(),
 				dataType:"json",
 				async:'true',
 				data:'',
 				success:function(data){
-					eval("var mapped = $.map(data,function(item)\{return new " + self.nextera_admin_current_object_name() + "(item)\});");
-        			eval("self." + self.nextera_admin_current_object_name() + "(mapped)");
-        			//alert(self.nextera_admin_current_object_fields().length);
-        			console.log("length: " + eval("self." + self.nextera_admin_current_object_name() + "().length"));
-        			for(j=0;j<eval("self." + self.nextera_admin_current_object_name() + "().length");j++)
+					eval("var mapped = $.map(data,function(item)\{return new " + self.cjs_admin_current_object_name() + "(item)\});");
+        			eval("self." + self.cjs_admin_current_object_name() + "(mapped)");
+        			//alert(self.cjs_admin_current_object_fields().length);
+        			console.log("length: " + eval("self." + self.cjs_admin_current_object_name() + "().length"));
+        			for(j=0;j<eval("self." + self.cjs_admin_current_object_name() + "().length");j++)
         			{
 						       					
-        				for(i=0;i<self.nextera_admin_current_object_fields().length;i++)
+        				for(i=0;i<self.cjs_admin_current_object_fields().length;i++)
         				{
-        					//alert(self.nextera_admin_current_object_fields()[i].name());
-        					//if(self.nextera_admin_current_object_fields()[i].type())
-        					//alert(self.nextera_admin_current_object_fields()[i].name + " " + self.nextera_admin_current_object_fields()[i].type());
-        					var string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "]." + self.nextera_admin_current_object_fields()[i].name() + "()";
+        					//alert(self.cjs_admin_current_object_fields()[i].name());
+        					//if(self.cjs_admin_current_object_fields()[i].type())
+        					//alert(self.cjs_admin_current_object_fields()[i].name + " " + self.cjs_admin_current_object_fields()[i].type());
+        					var string4Eval = "self." + self.cjs_admin_current_object_name() + "()[" + j + "]." + self.cjs_admin_current_object_fields()[i].name() + "()";
        						console.log("eval: " + string4Eval); 					
         					
         					
@@ -213,13 +213,13 @@ try{
         					//alert(string4Eval);
 
         					
-        					if(self.nextera_admin_current_object_fields()[i].type()=="array")
+        					if(self.cjs_admin_current_object_fields()[i].type()=="array")
         					{
         						//ko.applyBindings(myViewModel, $('#latebind')[0]);
-        						var string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "]." + self.nextera_admin_current_object_fields()[i].name() + "()";
+        						var string4Eval = "self." + self.cjs_admin_current_object_name() + "()[" + j + "]." + self.cjs_admin_current_object_fields()[i].name() + "()";
        							var myForm = "";
        							var row = "<td>";
-       							myForm += "<fieldset class='form-body' ><legend>" + self.nextera_admin_current_object_fields()[i].name() + "</legend>";
+       							myForm += "<fieldset class='form-body' ><legend>" + self.cjs_admin_current_object_fields()[i].name() + "</legend>";
        							myForm += "<ol class='editable-list'>";
        							
        							for(k=0;k<eval(string4Eval).length;k++)
@@ -246,53 +246,42 @@ try{
         					}
         					else
         					{
-        						var myForm = "<div><label>" + self.nextera_admin_current_object_fields()[i].name() + "</label><input type='text' placeholder='I am text' data-bind='value:" + self.nextera_admin_current_object_fields()[i].name() + "' value='" + JSON.stringify(eval(string4Eval)).substring(1,JSON.stringify(eval(string4Eval)).length-1) + "'></div>";
+        						var myForm = "<div><label>" + self.cjs_admin_current_object_fields()[i].name() + "</label><input type='text' placeholder='I am text' data-bind='value:" + self.cjs_admin_current_object_fields()[i].name() + "' value='" + JSON.stringify(eval(string4Eval)).substring(1,JSON.stringify(eval(string4Eval)).length-1) + "'></div>";
         						var row = "<td>\"+" + JSON.stringify(eval(string4Eval)) + "+\"</td>";
         					}
         					//alert(myForm);
-        					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].row(self." + self.nextera_admin_current_object_name() + "()[" + j + "].row() + \"" + row + "\");";
+        					string4Eval = "self." + self.cjs_admin_current_object_name() + "()[" + j + "].row(self." + self.cjs_admin_current_object_name() + "()[" + j + "].row() + \"" + row + "\");";
         					
         					//alert(string4Eval);
         					//console.log(string4Eval);
         					eval(string4Eval);
- 	       					string4Eval = "self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm(self." + self.nextera_admin_current_object_name() + "()[" + j + "].myForm() + \""  + myForm + "\");";
+ 	       					string4Eval = "self." + self.cjs_admin_current_object_name() + "()[" + j + "].myForm(self." + self.cjs_admin_current_object_name() + "()[" + j + "].myForm() + \""  + myForm + "\");";
  	       					
  	       					//alert(string4Eval);
      						eval(string4Eval);   					
         				}
-        				//alert(eval("self." + self.nextera_admin_current_object_name() + "()[" + j + "].row()"));
+        				//alert(eval("self." + self.cjs_admin_current_object_name() + "()[" + j + "].row()"));
 					}
-					self.nextera_admin_current_object_instances(eval("self." + self.nextera_admin_current_object_name() + "()"));
-					//alert(self.nextera_admin_current_object_instances().length);
+					self.cjs_admin_current_object_instances(eval("self." + self.cjs_admin_current_object_name() + "()"));
+					//alert(self.cjs_admin_current_object_instances().length);
 					if(resetCurrentSelectedInstance)
 					{
-						if(self.nextera_admin_current_selected_instance())
-							self.nextera_admin_current_selected_instance().nextera_selected(false);
-						self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[0]);
-						self.nextera_admin_current_selected_instance().nextera_selected(true);
+						if(self.cjs_admin_current_selected_instance())
+							self.cjs_admin_current_selected_instance().cjs_selected(false);
+						self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
+						self.cjs_admin_current_selected_instance().cjs_selected(true);
 					}
 
 					if(callback)
 					{
 						callback();
 					}
-					//alert(nextera_admin_current_selected_instance().myForm());
+					//alert(cjs_admin_current_selected_instance().myForm());
 				}					
 			});
 		}
 
 		self.loadObjects = loadObjects;
-
-		$.ajax(
-			{url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
-			dataType:"json",
-			async:'false',
-			data:'',
-			success:function(data){
-				var mapped = $.map(data[0].fields,function(item){return new fields(item)});
-        		self.nextera_admin_current_object_fields(mapped);
-			}			
-		});
 
 		loadObjects(true);
 
@@ -314,31 +303,31 @@ try{
 		{
 			var inputs = $(document.getElementById('instanceForm')).find('input');
 			var labels = $(document.getElementById('instanceForm')).find('label');
-			var selectedId = self.nextera_admin_current_selected_instance()._id();
+			var selectedId = self.cjs_admin_current_selected_instance()._id();
 			for(i=0;i<inputs.length;i++)
 			{
 				if(labels[i])
-					eval("self.nextera_admin_current_selected_instance()." + labels[i].innerHTML + "('" + inputs[i].value + "')");
+					eval("self.cjs_admin_current_selected_instance()." + labels[i].innerHTML + "('" + inputs[i].value + "')");
 			}
 
 			//updateRowHelper(0,inputs,labels,function(){
 
-				//alert("/" + self.nextera_admin_current_object_name() + "/update/" + self.nextera_admin_current_selected_instance()._id() );
-				$.ajax("/update/instances/" + self.nextera_admin_current_object_name() + "/" + self.nextera_admin_current_selected_instance()._id() , {
-            				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
+				//alert("/" + self.cjs_admin_current_object_name() + "/update/" + self.cjs_admin_current_selected_instance()._id() );
+				$.ajax("/update/instances/" + self.cjs_admin_current_object_name() + "/" + self.cjs_admin_current_selected_instance()._id() , {
+            				data: ko.toJSON(self.cjs_admin_current_selected_instance()),
             				type: "post", contentType: "application/json",
             				success: function(result) 
 							{ 
 								//alert("all done: " +result);
 								loadObjects(false, function(){
 									
-									for(i=0;i<self.nextera_admin_current_object_instances().length;i++)
+									for(i=0;i<self.cjs_admin_current_object_instances().length;i++)
 									{
-										//alert(selectedId + " " + self.nextera_admin_current_object_instances()[i]._id())
-										if(self.nextera_admin_current_object_instances()[i]._id() == selectedId)
+										//alert(selectedId + " " + self.cjs_admin_current_object_instances()[i]._id())
+										if(self.cjs_admin_current_object_instances()[i]._id() == selectedId)
 										{
-											self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[i]);
-											self.nextera_admin_current_selected_instance().nextera_selected(true);
+											self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[i]);
+											self.cjs_admin_current_selected_instance().cjs_selected(true);
 										}
 									}
 								});
@@ -350,48 +339,48 @@ try{
 		self.updateRow = updateRow;
 		addRow = function()
 		{
-			if(self.nextera_admin_current_object_instances().length>0)
+			if(self.cjs_admin_current_object_instances().length>0)
 			{
 				var inputs = $(document.getElementById('instanceForm')).find('input');
 				var labels = $(document.getElementById('instanceForm')).find('label');
 
-				for(i=0;i<self.nextera_admin_current_object_fields().length;i++)
+				for(i=0;i<self.cjs_admin_current_object_fields().length;i++)
 				{
-					//alert(self.nextera_admin_current_object_fields()[i].name());
-					eval("self.nextera_admin_current_selected_instance()." + self.nextera_admin_current_object_fields()[i].name() + "('')");
+					//alert(self.cjs_admin_current_object_fields()[i].name());
+					eval("self.cjs_admin_current_selected_instance()." + self.cjs_admin_current_object_fields()[i].name() + "('')");
 				}
 			
 
-				$.ajax("/createInstance/" + self.nextera_admin_current_object_name(), {
-            				data: ko.toJSON(self.nextera_admin_current_selected_instance()),
+				$.ajax("/createInstance/" + self.cjs_admin_current_object_name(), {
+            				data: ko.toJSON(self.cjs_admin_current_selected_instance()),
             				type: "post", contentType: "application/json",
             				success: function(result) 
 							{ 
 								//alert("all done: " +result);
 								loadObjects(false, function(){
-									var len = self.nextera_admin_current_object_instances().length;
-									if(self.nextera_admin_current_selected_instance())
-										self.nextera_admin_current_selected_instance().nextera_selected(false);
-									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
-									self.nextera_admin_current_selected_instance().nextera_selected(true);	
+									var len = self.cjs_admin_current_object_instances().length;
+									if(self.cjs_admin_current_selected_instance())
+										self.cjs_admin_current_selected_instance().cjs_selected(false);
+									self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[len-1]);
+									self.cjs_admin_current_selected_instance().cjs_selected(true);	
 								});
 							}
         		});
         	}
         	else
         	{
-        		$.ajax("/createInstance/" + self.nextera_admin_current_object_name(), {
+        		$.ajax("/createInstance/" + self.cjs_admin_current_object_name(), {
             				data: "{}",
             				type: "post", contentType: "application/json",
             				success: function(result) 
 							{ 
 								//alert("all done: " +result);
 								loadObjects(false, function(){
-									var len = self.nextera_admin_current_object_instances().length;
-									if(self.nextera_admin_current_selected_instance())
-										self.nextera_admin_current_selected_instance().nextera_selected(false);
-									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
-									self.nextera_admin_current_selected_instance().nextera_selected(true);	
+									var len = self.cjs_admin_current_object_instances().length;
+									if(self.cjs_admin_current_selected_instance())
+										self.cjs_admin_current_selected_instance().cjs_selected(false);
+									self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[len-1]);
+									self.cjs_admin_current_selected_instance().cjs_selected(true);	
 								});
 							}
         		});
@@ -401,18 +390,18 @@ try{
 		deleteRow = function()
 		{
 				
-			$.ajax("/delete/instances/" + self.nextera_admin_current_selected_instance()._id(), {
+			$.ajax("/delete/instances/" + self.cjs_admin_current_selected_instance()._id(), {
             				data: '',
             				contentType: "application/json",
             				success: function(result) 
 							{ 
 								//alert("all done: " +result);
 								loadObjects(false, function(){
-									var len = self.nextera_admin_current_object_instances().length;
-									if(self.nextera_admin_current_selected_instance())
-										self.nextera_admin_current_selected_instance().nextera_selected(false);
-									self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[len-1]);
-									self.nextera_admin_current_selected_instance().nextera_selected(true);
+									var len = self.cjs_admin_current_object_instances().length;
+									if(self.cjs_admin_current_selected_instance())
+										self.cjs_admin_current_selected_instance().cjs_selected(false);
+									self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[len-1]);
+									self.cjs_admin_current_selected_instance().cjs_selected(true);
 								});
 							}
         	});        	
@@ -422,41 +411,41 @@ try{
 		selectRow = function()
 		{
 			//alert(this.name());
-			if(self.nextera_admin_current_selected_instance())
-				self.nextera_admin_current_selected_instance().nextera_selected(false);
-			self.nextera_admin_current_selected_instance(this);	
-			self.nextera_admin_current_selected_instance().nextera_selected(true);
+			if(self.cjs_admin_current_selected_instance())
+				self.cjs_admin_current_selected_instance().cjs_selected(false);
+			self.cjs_admin_current_selected_instance(this);	
+			self.cjs_admin_current_selected_instance().cjs_selected(true);
 		}
 
 		selectObject = function()
 		{
-			if(self.nextera_admin_current_selected_object())
-				self.nextera_admin_current_selected_object().nextera_selected(false);
-			self.nextera_admin_current_object_name(this.name());
-			this.nextera_selected(true);
-			self.nextera_admin_current_selected_object(this);
-			//alert("just selected, " + self.nextera_admin_current_object_name());
+			if(self.cjs_admin_current_selected_object())
+				self.cjs_admin_current_selected_object().cjs_selected(false);
+			self.cjs_admin_current_object_name(this.name());
+			this.cjs_selected(true);
+			self.cjs_admin_current_selected_object(this);
+			//alert("just selected, " + self.cjs_admin_current_object_name());
 			$.ajax(
 			{
-				url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
+				url:"/getEntriesByName/cjs_objects/"+self.cjs_admin_current_object_name(),
 				dataType:"json",
 				data:'',
 				success:function(data){
 					//alert(JSON.stringify(data));
 					var mapped = $.map(data[0].fields,function(item){return new fields(item)});
-        			self.nextera_admin_current_object_fields(mapped);
+        			self.cjs_admin_current_object_fields(mapped);
 					loadObjects(false, function(){
-						if(self.nextera_admin_current_selected_instance())
+						if(self.cjs_admin_current_selected_instance())
 						{
-							self.nextera_admin_current_selected_instance().nextera_selected(false);
-							self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[0]);
-							self.nextera_admin_current_selected_instance().nextera_selected(true);
+							self.cjs_admin_current_selected_instance().cjs_selected(false);
+							self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
+							self.cjs_admin_current_selected_instance().cjs_selected(true);
 						}
 					});
 				}			
 			});
 
-			//alert(self.nextera_admin_current_object_name());
+			//alert(self.cjs_admin_current_object_name());
 		}
 
 		
@@ -521,7 +510,7 @@ try{
 	//initial load
 	<%
 
-	//objects= objects.filter(function(element,index, array){return (element.name && element.name.search("id_xxx")>-1) || element.name=="nextera_objects"});
+	//objects= objects.filter(function(element,index, array){return (element.name && element.name.search("id_xxx")>-1) || element.name=="cjs_objects"});
 	for(i=0;i<objects.length;i++)
 	{
 		 if(objects[i].name && objects[i].name.search("_search")>-1)
@@ -531,10 +520,10 @@ try{
 		//{
 				//continue;
 	%>
-		<%if(objects[i].name=="nextera_objects")
+		<%if(objects[i].name=="cjs_objects")
         {%>
 			$.ajax(
-			{url:"/read/nextera_objects",
+			{url:"/read/cjs_objects",
 			dataType:"json",
 			data:'',
 			success:function(data){
@@ -542,28 +531,28 @@ try{
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         			self.<%=objects[i].name%>(mapped);
         			self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
-        			self.nextera_admin_current_object_name(self.nextera_objects()[0].name());
-        			console.log("current object name " + self.nextera_admin_current_object_name());
-        			self.nextera_objects()[0].nextera_selected(true);
-					self.nextera_admin_current_selected_object(self.nextera_objects()[0]);
+        			self.cjs_admin_current_object_name(self.cjs_objects()[0].name());
+        			console.log("current object name " + self.cjs_admin_current_object_name());
+        			self.cjs_objects()[0].cjs_selected(true);
+					self.cjs_admin_current_selected_object(self.cjs_objects()[0]);
 					
 					$.ajax(
 					{
-						url:"/getEntriesByName/nextera_objects/"+self.nextera_admin_current_object_name(),
+						url:"/getEntriesByName/cjs_objects/"+self.cjs_admin_current_object_name(),
 						dataType:"json",
 						data:'',
 						success:function(data){
 							//alert(JSON.stringify(data));
 							var mapped = $.map(data[0].fields,function(item){return new fields(item)});
-        					self.nextera_admin_current_object_fields(mapped);
+        					self.cjs_admin_current_object_fields(mapped);
 							loadObjects(false, function(){
-								if(self.nextera_admin_current_selected_instance())
+								if(self.cjs_admin_current_selected_instance())
 								{
-									self.nextera_admin_current_selected_instance().nextera_selected(false);
+									self.cjs_admin_current_selected_instance().cjs_selected(false);
 								}	
 								
-								self.nextera_admin_current_selected_instance(self.nextera_admin_current_object_instances()[0]);
-								self.nextera_admin_current_selected_instance().nextera_selected(true);
+								self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
+								self.cjs_admin_current_selected_instance().cjs_selected(true);
 								
 							});
 						}			
@@ -652,9 +641,9 @@ try{
 	<%
 	}
 	%>
-	//alert(self.nextera_objects().length);
-	//self.nextera_objects()[0].nextera_selected(true);
-	//self.nextera_admin_current_selected_object(self.nextera_objects()[0]);
+	//alert(self.cjs_objects().length);
+	//self.cjs_objects()[0].cjs_selected(true);
+	//self.cjs_admin_current_selected_object(self.cjs_objects()[0]);
 
 	
 

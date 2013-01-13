@@ -41,8 +41,8 @@
 			</div>
 			<div class="panel-body flush">
 
-				<section id="object-list" data-bind="foreach:nextera_objects">
-					<ul data-bind="css: { objectsSelected: nextera_selected()},click:selectObject">
+				<section id="object-list" data-bind="foreach:cjs_objects">
+					<ul data-bind="css: { objectsSelected: cjs_selected()},click:selectObject">
 						<li ><span id="name" data-bind="text:varname">User</span>
 							<ul data-bind="foreach:fields">
 								<li data-bind="text:name">User Name</li>
@@ -77,13 +77,13 @@
 					
 					<table class="datagrid" id="instance-list">
 						<thead>
-							<tr data-bind="foreach:nextera_admin_current_object_fields" >
+							<tr data-bind="foreach:cjs_admin_current_object_fields" >
 								<th data-bind="text:name"></th>
 							</tr>
 						</thead>
 						<!--onmouseup="highlightMeInstanceList(this);"-->
-						<tbody data-bind="foreach: nextera_admin_current_object_instances">
-								<tr  data-bind="css: { instancesSelected: nextera_selected()},html:row,click:selectRow">
+						<tbody data-bind="foreach: cjs_admin_current_object_instances">
+								<tr  data-bind="css: { instancesSelected: cjs_selected()},html:row,click:selectRow">
 								</tr>			
 						</tbody>
 					</table>
@@ -106,7 +106,7 @@
 					<form data-bind="submit:updateRow" id="instanceForm">
 						<fieldset class="form-body" >
 							<legend>Object Data</legend>
-							<span data-bind="html:nextera_admin_current_selected_instance().myForm">
+							<span data-bind="html:cjs_admin_current_selected_instance().myForm">
 								<!--label data-bind="text:name">Form Label</label><input type="text" placeholder="enter value"-->
 							</span>
 							<!--div>

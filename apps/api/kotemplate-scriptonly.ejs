@@ -25,6 +25,7 @@ try{
 		if(!myObject)
 			return;
 
+		myObject.varname=myObject.name.split("_")[2];
 		if(myObject.name.search("_search")>-1)
 		{
 			console.log("inside handleChildren where myObject.name contains _search");
@@ -43,7 +44,9 @@ try{
 			}
 		}
 		%>
-			function <%=myObject.name%>(data)
+
+
+			var <%=myObject.name%> = function(data)
 			{
 				//alert(data);
 				
@@ -72,9 +75,35 @@ try{
 						//console.log("after processing adding field");
 					}
 					%>
+						this.remove = function() {
+    					   	$.ajax("http://<%=testdriveURL%>/delete/instances/"+this.id(), {
+    					   		data: '',
+								type: "get", 
+								dataType: "text",
+								success: function(result)
+								{
+									$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=myObject.name%>", function(allData) {
+										var mapped = $.map(allData, function(item) { return new <%=myObject.name%>(item) });
+										mvm.<%=myObject.varname%>.read(mapped);
+									});
+								}
+							});
+						}
 
+						this.update = function() {
+       						$.ajax("http://<%=testdriveURL%>/update/instances/<%=myObject.name%>/" + this.id() , {
+							data: ko.toJSON(this),
+							type: "post", dataType: "text",
+							success: function(result) 
+							{ 
+								$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=myObject.name%>", function(allData) {
+									var mapped = $.map(allData, function(item) { return new <%=myObject.name%>(item) });
+									mvm.<%=myObject.varname%>.read(mapped);
+								});
+        				   	}
+       						});
+    					}	
 						
-
 						self.id=ko.observable(data._id);
 						self.row=ko.observable("");
 						self.myForm = ko.observable("");
@@ -136,21 +165,11 @@ try{
 		if(objects[i].name)
 		{
 		%>
-		self.<%=objects[i].varname%>=ko.observableArray([]);
+		//self.<%=objects[i].varname%>=ko.observableArray([]);
 		self.<%=objects[i].varname%>_search_results=ko.observableArray([]);
-		self.<%=objects[i].varname%>(self.<%=objects[i].name%>_search_results);
+		//self.<%=objects[i].varname%>(self.<%=objects[i].name%>_search_results);
 		self.<%=objects[i].varname%>_search_term=ko.observable();							
-		<%
-		for(j=0;j<objects[i].fields.length;j++)
-		{
-			if(objects[i].fields[j].name!="_id")
-			{
-		%>
-			self.<%=objects[i].varname%>_<%=objects[i].fields[j].name%>=ko.observable();
-		<%
-			}
-		}
-		%>
+
 		<%
 		}
 	}
@@ -162,7 +181,7 @@ try{
 		if(objects[i].name)
 		{
 	%>	
-	<%=objects[i].varname%>_set_form_data = function(me)
+	<%=objects[i].varname%>_reset_form = function(me)
 		{
 			//alert(me.first_name());
 	<%
@@ -171,7 +190,7 @@ try{
 			if(objects[i].fields[j].name!="_id")
 			{
 	%>
-			self.<%=objects[i].varname%>_<%=objects[i].fields[j].name%>(me.<%=objects[i].fields[j].name%>());
+			self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>("");
 	<%
 			}
 		}
@@ -195,7 +214,7 @@ try{
 			data:'',
 			success:function(data){
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
-        			self.<%=objects[i].varname%>(mapped);
+        			self.<%=objects[i].varname%>.read(mapped);
         		<%
         			if(objects[i].name=="nextera_objects")
         			{
@@ -209,7 +228,6 @@ try{
 		});
 	<%
 	}
-
 	%>
 
 	// create code
@@ -219,88 +237,75 @@ try{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
 	%>
-		
-		
-		<%=objects[i].varname%>_create = function() {
-					//alert(ko.toJSON(self));
-					var patt = new RegExp("<%=objects[i].varname%>","g");
-					//alert(ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"));
-        			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
-            				data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),//.<%=objects[i].varname%>()[self.<%=objects[i].varname%>().length-1]),
-            				type: "post",
-            				dataType: "text",
-            				//jsonCallback: "jsonCallback", 
-            				//dataType: "jsonp"
-            				success: function(result) 
-							{
-							//alert("checking if this is called"); 
-							$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
-									//alert(allData);
-        							var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-        							self.<%=objects[i].varname%>(mapped);
-							});
-						<%
-						for(j=0;j<objects[i].fields.length;j++)
-						{
-							if(objects[i].fields[j].name!="_id")
-							{
-						%>
-							self.<%=objects[i].varname%>_<%=objects[i].fields[j].name%>("");
-						<%
-							}
-						}
-						%>
 
-					}
-        		});
-    		};
+	self.<%=objects[i].varname%> = {};
+	self.<%=objects[i].varname%>Form = ko.observable();
+
+    var <%=objects[i].varname%>CreateJSON = function(){
+	self.<%=objects[i].varname%>Form({<%
+    for(j=0;j<objects[i].fields.length-1;j++)
+	{
+		if(objects[i].fields[j].name!="_id")
+		{
+		%>
+		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>,
+		<%
+		}
+	}
+	%><%=objects[i].fields[objects[i].fields.length-1].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[objects[i].fields.length-1].name%>
+    	});
+	}
+    
+    self.<%=objects[i].varname%>.read=ko.observableArray([]);
+
+    <%
+    for(j=0;j<objects[i].fields.length;j++)
+	{
+		if(objects[i].fields[j].name!="_id")
+		{
+		%>self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>=ko.observable("");
+		<%
+		}
+	}
+	%>
+    self.<%=objects[i].varname%>.create = function() {
+    	var patt = new RegExp("<%=objects[i].varname%>Form","g");
+        <%=objects[i].varname%>CreateJSON();
+        //alert(ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g")); 
+        $.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
+			data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),
+			type: "post",
+			dataType: "text",
+			success: function(result) 
+			{
+				$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
+					var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+        			self.<%=objects[i].varname%>.read(mapped);
+				});
+
+				<%=objects[i].varname%>_reset_form();
+			}
+        });
+    }
     	 
-    	 <%=objects[i].varname%>_delete = function() {
-                                $.ajax("http://<%=testdriveURL%>/delete/instances/"+this.id(), {
-                                        data: '',
-                                        type: "get", dataType: "text",
-                                        success: function(result)
-                                        {
-                                        	//alert("inside of delete result");
-                                                $.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
-                                                        var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-                                                        self.<%=objects[i].varname%>(mapped);
-                                                });
-                                        }
-                                });
-                };
-
-         <%=objects[i].varname%>_update = function() {
-            $.ajax("http://<%=testdriveURL%>/update/instances/<%=objects[i].name%>/" + this.id() , {
-				data: ko.toJSON(this),
-				type: "post", dataType: "text",
-				success: function(result) 
-				{ 
-					$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
-						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-						self.<%=objects[i].varname%>(mapped);
-					});
-                }
-            });
-         };
-
-		<%=objects[i].varname%>_search = function() {
-				//alert(self.<%=objects[i].name%>_search_term());
-				$.getJSON("http://<%=testdriveURL%>/<%=objects[i].name%>/search/"+self.<%=objects[i].varname%>_search_term(), function(allData) {
-                                	var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-                                	self.<%=objects[i].varname%>_search_results(mapped);
-					self.<%=objects[i].varname%>(mapped);
-                                });
-                };
-
+    
+	self.<%=objects[i].varname%>.search = function() {
+		//alert(self.<%=objects[i].name%>_search_term());
+		$.getJSON("http://<%=testdriveURL%>/<%=objects[i].name%>/search/"+self.<%=objects[i].varname%>_search_term(), function(allData) {
+            var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
+            self.<%=objects[i].varname%>_search_results(mapped);
+			self.<%=objects[i].varname%>.read(mapped);
+        });
+    }
 	<%
 	}
 	%>
-
 	}
+
 	mvm = new myViewModel();
 	ko.applyBindings(mvm);
-
+	
+	//var contacts = new contacts();
 	var latebind = "#latebind";
 });
 <%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

@@ -23,7 +23,7 @@ var files2Localize=[{templateFileName:__dirname + "/concussion.ejs",outputFileNa
 var s = settings();
 
 objects = [];
-nta.debug=true;
+nta.debug=false;
 
 for(i=0;i<files2Localize.length;i++)
 {
@@ -32,12 +32,13 @@ for(i=0;i<files2Localize.length;i++)
 
 function localizeFile(fileName,output)
 {
-	console.log(fileName, " ",output);
+	if(nta.debug)
+		console.log(fileName, " ",output);
 	contents = fs.readFileSync(fileName,'utf-8');
-	//console.log(contents);
-	//contents.replace("@@CJS_WEB_URL@@", process.env.CJS_WEB_URL);
 	contentsOutput = ejs.render(contents, {locals: {'CJS_WEB_URL': process.env.CJS_WEB_URL,'cjsutil':cjsutil}})
-	console.log(contentsOutput);
+	
+	if(nta.debug)
+		console.log(contentsOutput);
 	fs.writeFile(output,contentsOutput,function(err){
 		if(err)
 		{
@@ -322,7 +323,8 @@ var createInstanceAction = function(objectName,req,res)
 	object = {};
 
 	if (nta.debug)
-		util.debug('create: rawBody: ', req.rawBody);
+		util.debug('create: rawBody:' + objectName + ' ' + req.rawBody);
+	
 	res.writeHeader(200);
 	if(!req.rawBody)
 		res.end("error: no body posted");
@@ -399,7 +401,8 @@ var deleteAction = function(objectName,id,req,res)
 }
 
 var updateRoute = app.post("/update/:objectName/:tenantObjectId/:id", function(req,res){
-	console.log("updateRoute ", req.rawBody);
+	if(nta.debug)
+		util.debug("updateRoute " + req.rawBody);
 	updateAction(req.params.objectName,req.params.tenantObjectId,req.params.id,req,res);
 });
 
@@ -915,12 +918,13 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
     {
 	var j = fieldIndex;
 	if (nta.debug)
-		util.debug('create: rawBody: ', req.rawBody);
-	
+		util.debug('setupObject: rawBody4U: ' + req.rawBody + " " + objects[counter].name);
+		
 	if (fieldIndex == objects[counter].fields.length)
 	{
 		try {
-			//console.log("create: searchKey: ",searchKey);
+			if (nta.debug)
+				console.log("field index is " + fieldIndex + " " + objects[counter].fields.length);
 			//newObject._search_keys=searchKey;
 			callback(newObject);
 		}catch (e) {console.log('create: ', e);}
@@ -928,14 +932,14 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
 	}
 	else if (fieldIndex < objects[counter].fields.length)
 	{
-		if (req.rawBody != '')
-			var text = 'newObject.' + objects[counter].fields[j].name + ' = JSON.parse(req.rawBody).' + objects[counter].name + '_' + objects[counter].fields[j].name;
+		if (req.rawBody != '' && req.rawBody != "{}")
+			var text = 'newObject.' + objects[counter].fields[j].name + ' = JSON.parse(req.rawBody).' + objects[counter].name + '.' + objects[counter].fields[j].name;
 		else
 			var text = 'newObject.' + objects[counter].fields[j].name + " = ''";
 		if (nta.debug)
-			util.debug('create: rawBody: ', req.rawBody);
+			util.debug('create: rawBody:xx ' + req.rawBody);
 		if (nta.debug)
-			util.debug('create: text: ', text);
+			util.debug('create: text: tt ' +   text);
 
 		eval(text);
 		//console.log("create: eval",eval("newObject." + objects[counter].fields[j].name));

@@ -2,7 +2,9 @@ var jsdom = require('jsdom');
 var fs = require('fs');
 var objects = [];
 var myCallback;
+var debug = false;
 module.exports.objects = objects;
+
 
 module.exports.runGenerateStructure = function(fileName,callback)
 {
@@ -55,17 +57,22 @@ function recurseStructure(window,node,parentChildList,my_prefix)
 		currentObject.children = [];
 		listOfChildren = getChildren(window,this);
 		
-		if(window.$(this).attr("data-bind").split(":")[0] == "submit")
+		if(window.$(this).attr("data-bind").split(":")[0] == "submit" || window.$(this).attr("data-bind").split(":")[0] == "foreach")
 		{
 			currentObject.type = "submit";
-			var objectName = window.$(this).attr("data-bind").split(":")[1].split("_")[0];
-			//console.log("testParse: x ", objectName);
-			prefix = objectName + "_";
-			//console.log("testParse: y", prefix);
+			var objectName = window.$(this).attr("data-bind").split(":")[1].split(".")[0];
+			currentObject.name=objectName;
+			//console.log("testParse: z", objectName);
+			prefix = objectName + ".";
+			//console.log("testParse: w", prefix);
+			//return;
+		}	
+		if(window.$(this).attr("data-bind").split(":")[0] == "foreach")
+		{
+			prefix="";
 		}
-		
 		currentObject.name = window.$(this).attr("data-bind").split(":"+prefix)[1];
-		//console.log("testParse: ", currentObject.name);
+		// console.log("testParse: ", currentObject.name);
 		
 		if(window.$(this).attr("data-bind").split(":")[0] == "foreach")
 			currentObject.type = "array";
@@ -129,16 +136,22 @@ function processHTML(errors,window){
 		currentObject.children = [];
 		listOfChildren = getChildren(window,this);
 		currentObject.name = window.$(this).attr("data-bind").split(":")[1];
-		if(window.$(this).attr("data-bind").split(":")[0] == "submit")
+		if(window.$(this).attr("data-bind").split(":")[0] == "submit" || window.$(this).attr("data-bind").split(":")[0] == "foreach")
 		{
 			currentObject.type = "submit";
-			var objectName = window.$(this).attr("data-bind").split(":")[1].split("_")[0];
+			var objectName = window.$(this).attr("data-bind").split(":")[1].split(".")[0];
 			currentObject.name=objectName;
-			//console.log("testParse: z", objectName);
-			prefix = objectName + "_";
-			//console.log("testParse: w", prefix);
+			if(debug)
+				console.log("testParse: z", objectName);
+			prefix = objectName + ".";
+			if(debug)
+				console.log("testParse: w", prefix);
 			//return;
 		}	
+		if(window.$(this).attr("data-bind").split(":")[0] == "foreach")
+		{
+			prefix="";
+		}
 		//console.log("1243 ", index)
 		if(window.$(this).attr("data-bind").split(":")[0] == "foreach")
 			currentObject.type = "array";

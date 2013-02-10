@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="container">
-    	<div data-bind="foreach:articles">
+    	<div data-bind="foreach:articles.read">
     		<article> 
 		      <h3 data-bind="text:title"></h3>
 		      <p>By <a data-bind="text:author" href="#"></a></p>
@@ -41,12 +41,12 @@
 		    </article>
     	</div>
       <div class="well">
-      	<form data-bind="submit:articles_create">
+      	<form data-bind="submit:articles.create">
         	<h4>Create a new blog post</h4>
-        	<input placeholder="Title" data-bind="value:articles_title">
-        	<input placeholder="Author" data-bind="value:articles_author">
-        	<input placeholder="Body" data-bind="value:articles_body">
-        	<input placeholder="Tag, tag, tag" data-bind="value:articles_tags">
+        	<input placeholder="Title" data-bind="value:articles.title">
+        	<input placeholder="Author" data-bind="value:articles.author">
+        	<input placeholder="Body" data-bind="value:articles.body">
+        	<input placeholder="Tag, tag, tag" data-bind="value:articles.tags">
         	<button class="btn btn-success"><i class="icon-pencil icon-white"></i>Create New Post</button>
       	</form>
       </div>

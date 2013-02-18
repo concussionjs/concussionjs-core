@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 	<title>Admin</title>
@@ -7,27 +6,21 @@
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name = "viewport" content = "width=device-width, initial-scale=1.0">
+	<script src="jquery-1.8.1.min.js"></script>
+	<script src="colorbox/jquery.colorbox-min.js"></script>
 	<script type="text/javascript" src="//use.typekit.net/bqr1qnl.js"></script>
 	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 	<link rel="stylesheet" href="admin.css">
-	<script>
-		function highlightMe(me)
-		{
-			$("#object-list > ul").removeAttr("data-highlight");
-			$(me).attr("data-highlight","true");
-
-		}
-
-		function highlightMeInstanceList(me)
-		{
-			$("#instance-list tr").removeAttr("data-highlight");
-			$(me).attr("data-highlight","true");
-
-		}
-
-	</script>
+	<link rel="stylesheet" href="colorbox/colorbox.css">
 </head>
 <body>
+
+<section id="s-mast">
+	<h1 id="logo">concussion<span>js</span></h1>
+	<div id="actions">
+		<a href="#settings"class="masthead-icon" id="masthead-icon-settings" title="Settings"></a>
+	</div>
+</section>
 
 <section id="s-body">
 	
@@ -151,18 +144,55 @@
 </section>
 <div style="visibility:hidden">
 <div data-bind="foreach:users">
-	<div data-bind="text:username"/>
-	<div data-bind="text:password"/>
+	<div data-bind="text:username"></div>
+	<div data-bind="text:password"></div>
 </div>
 <div data-bind="foreach:Apps">
-	<div data-bind="text:name"/>
-	<div data-bind="text:port"/>
-	<div data-bind="text:location"/>
+	<div data-bind="text:name"></div>
+	<div data-bind="text:port"></div>
+	<div data-bind="text:location"></div>
 </div>
-
+</div>
+<div id="settings-wrapper">
+<div id="settings">
+	<form id="settings-form">
+		<fieldset class="form-body" >
+			<legend>Settings</legend>
+			<div>
+				<label>Form Label</label><input type="text" value="I am text">
+			</div>
+			<div>
+				<label>Form Label</label><select><option>Option 1</option><option>Option 2</option><option>Option 3</option></select>
+			</div>
+			<div>
+				<label>Form Label</label><textarea rows="3">I am the textarea</textarea>
+			</div>
+			<div>
+				<button class="primary">Save</button><button class="secondary">Cancel</button>
+			</div>
+		</fieldset>
+	</form>
+</div>
 </div>
 <script>
-	
+function highlightMe(me){
+	$("#object-list > ul").removeAttr("data-highlight");
+	$(me).attr("data-highlight","true");
+};
+
+function highlightMeInstanceList(me){
+	$("#instance-list tr").removeAttr("data-highlight");
+	$(me).attr("data-highlight","true");
+};
+
+// Settings
+$("#masthead-icon-settings").colorbox(
+	{
+		opacity:0.65,
+		inline:true,
+		title:"Hey"
+	}
+);
 </script>
 </body>
 </html>

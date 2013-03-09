@@ -25,6 +25,7 @@ body {
   width: 100%;
   height: 100%;
   margin: 0;
+border-radius: 7px;
   padding: 0;
 }
 
@@ -78,7 +79,12 @@ body {
   border-right: 1px solid #262A2C;
 }
 
+	#s-left .panel-header {
+		border-radius: 7px 0 0 0;
+	}
+
 	#s-left .panel-body {
+		border-radius: 0 0 0 7px;
 		background: rgb(61,67,68);
 		color: #rgb(255,255,255);
 	}
@@ -116,6 +122,9 @@ body {
   border-bottom: 1px solid #262A2C;
 }
 
+	#s-top .panel-header {
+		border-radius: 0 7px 0 0;
+	}
 
 /* BOTTOM SECTION
 -------------------------------------------------------------------------*/
@@ -135,6 +144,9 @@ body {
   margin-top: 20px;
 }
 
+	#s-bottom .panel-body {
+		border-radius: 0 0 7px 0;
+	}
 
 /* DATAGRID
 -------------------------------------------------------------------------*/

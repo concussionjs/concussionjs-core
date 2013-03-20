@@ -9,28 +9,94 @@ var cjsutil = fs.readFileSync(__dirname + '/cjs-utilities.js','utf-8');
 var ejs = require('ejs');
 var qs = require('querystring');
 var http = require('http');
+var exec  = require('child_process').exec;
 var parse = require('./inferObjects.js');
 var express = require('express');
 var app = express();
 var util = require('util');
 var URLPrefix=process.env.CJS_WEB_URL;
-var files2Localize=[{templateFileName:__dirname + "/concussion.ejs",outputFileName:__dirname + "/concussion.js"}];
+var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js']
+var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
 /*
 	reference:
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];
 */
+
+var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/jquery.stringify.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
+compileFiles(files2Compile);
 
 var s = settings();
 
 objects = [];
 nta.debug=false;
 
-for(i=0;i<files2Localize.length;i++)
+function localizeFiles()
 {
-	localizeFile(files2Localize[i].templateFileName,files2Localize[i].outputFileName);
+	for(i=0;i<files2Localize.length;i++)
+	{
+		if(i==files2Localize.length-1)
+		{
+			localizeFile(files2Localize[i].templateFileName,files2Localize[i].outputFileName, function(){
+				concatenateFiles(files2Concatenate.inputFileNames,files2Concatenate.outputFileName);			
+			});	
+		}
+		else
+			localizeFile(files2Localize[i].templateFileName,files2Localize[i].outputFileName);
+	}
 }
 
-function localizeFile(fileName,output)
+function compileFiles(fileArray)
+{
+	var contents="";
+	var fileName="";
+
+	fileName=fileArray.shift();
+	
+	if(fileName)
+	{
+		console.log(fileName);
+		exec(" java -jar " + __dirname + "/compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".js","-compiled.js")
+			, function (error, stdout, stderr) {
+				compileFiles(fileArray)
+			});
+	}
+	else	
+		localizeFiles();		
+}
+
+function concatenateFiles(fileArray,output)
+{
+	var contents="";
+	var fileName="";
+	for(;fileArray.length>=0;)
+	{
+		if((fileName=fileArray.shift()))
+		{
+			console.log("fileName:" + fileName);
+			contents += fs.readFileSync(__dirname + fileName,'utf-8') + "\n";
+		}
+		else
+		{
+			if(nta.debug)
+				console.log(contents);
+			
+			fs.writeFile(output,contents,function(err){
+				if(err)
+				{
+					console.error(err);
+				}
+				else
+				{
+					console.log(output + " written successfully");
+				}
+			});
+			break;
+		}
+
+	}		
+}
+
+function localizeFile(fileName,output,callback)
 {
 	if(nta.debug)
 		console.log(fileName, " ",output);
@@ -45,7 +111,11 @@ function localizeFile(fileName,output)
 			console.error(err);
 		}
 		else
+		{
 			console.log(output + " written successfully");
+			if(callback)
+				callback();
+		}
 	});
 }
 
@@ -70,17 +140,17 @@ function escapeSpecialCharacters(text)
 
 addNewObjects = function(objects,callback)
 {
-	if (nta.debug)
-		util.debug('addNewObjects: inside addNewObjects', objects.length);
+	if (!nta.debug)
+		util.debug('addNewObjects: inside addNewObjects xx' + objects.length + " " + JSON.stringify(objects));
 	for (i = 0; i < objects.length; i++)
 	{
-		if (nta.debug)
-			util.debug('addNewObjects: ', objects[i].name);
+		if (!nta.debug)
+			util.debug('addNewObjects: ' + objects[i].name);
 		try {
 		var currentObj = objects[i];
 		var currentName = '' + currentObj.name;
-		if (nta.debug)
-			util.debug('addNewObjects: currentName', currentName, ' ', currentObj.fields.length, JSON.stringify(currentObj));
+		if (!nta.debug)
+			util.debug('addNewObjects: currentName' + currentName + ' ' + currentObj.fields.length + " " + JSON.stringify(currentObj));
 		if (currentName.search('_search') < 0)
 		{
 		nta.getEntriesWhere({'name': currentName},'cjs_objects', function(err,result)
@@ -107,7 +177,7 @@ addNewObjects = function(objects,callback)
 			}
 			else
 			{
-				if (nta.debug)
+				if (!nta.debug)
 					util.debug('addNewObjects: object does not exist');
 				nta.createEntry(currentObj, 'cjs_objects', function(msg) {
 						if (nta.debug)
@@ -253,20 +323,22 @@ var getScriptAction =  function(id,pageName,req,res)
     return;
 }
 
-var postGetScriptRoute = app.all("/postGetScript",function(req,res){
-	postGetScriptAction(req,res);
+var postGetScriptRoute = app.all("/postGetScript/:isparsed",function(req,res){
+	postGetScriptAction(req.params.isparsed,req,res);
 });
 
-var postGetScriptAction = function(req,res)
+var postGetScriptAction = function(isparsed,req,res)
 {
 	res.writeHeader(200);
+    util.debug(req.rawBody);
+
 	try{
 	var args = qs.parse(req.url.split('?')[1]);
-	if (nta.debug)
-		util.debug('postGetScript x: session id: ' + args.id + ' HTML rawBody ' + args.html);
-	if(req.body && req.body.html && req.body.html !="")
+	// if (nta.debug)
+		util.debug(req.body + ' postGetScript x: session id: ' + args.id + ' HTML rawBody ' + args.html);
+	if(req.rawBody)
 	{
-		var html = req.body.html;
+		var html = req.rawBody;
 		var id = args.sid;
 	}
 	else
@@ -274,27 +346,52 @@ var postGetScriptAction = function(req,res)
 		var html = args.html;
 		var id = args.id;
 	}
-	parse.runGenerateStructureHTML(html, function(myObjects) {
-		var myName = myObjects[0].name;
-		if(nta.debug)
-			util.debug("myName:" + myName + " length " + myObjects.length + " json " + JSON.stringify(myObjects));
+	if(isparsed && isparsed.toLowerCase()=="true")
+	{
+		util.debug("isparsed html: " + html)
+		var myObjects = JSON.parse(html);
+		util.debug("myObjects length: " + myObjects.length)
 		setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
-			if ( nta.debug)
-			{
-				util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects));
-			}
+				if ( !nta.debug)
+				{
+					util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects) + " " + myObjects[0].name);
+				}
 	
-			addNewObjects(myObjects, function() {
+				addNewObjects(myObjects, function() {
+					if (!nta.debug)
+					{
+						util.debug('getScript: addNewObjects');
+						util.debug('getScript: ' + JSON.stringify(myObjects));
+					}	
+				
+					res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+				});
+		});
+	}
+	else
+	{
+		parse.runGenerateStructureHTML(html, function(myObjects) {
+			var myName = myObjects[0].name;
+			if(nta.debug)
+				util.debug("myName:" + myName + " length " + myObjects.length + " json " + JSON.stringify(myObjects));
+			setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
 				if ( nta.debug)
 				{
-					util.debug('getScript: addNewObjects');
-					util.debug('getScript: ' + JSON.stringify(myObjects));
+					util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects));
 				}
+	
+				addNewObjects(myObjects, function() {
+					if ( nta.debug)
+					{
+						util.debug('getScript: addNewObjects');
+						util.debug('getScript: ' + JSON.stringify(myObjects));
+					}	
 				
-				res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+					res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+				});
 			});
 		});
-	});
+	}
 	}catch(error){console.log("custom error: " + error);res.end("error");}
 }
 
@@ -917,13 +1014,13 @@ loopThroughObjects = function(objects,req,res,next)
 var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,callback)
     {
 	var j = fieldIndex;
-	if (nta.debug)
+	if (!nta.debug)
 		util.debug('setupObject: rawBody4U: ' + req.rawBody + " " + objects[counter].name);
 		
 	if (fieldIndex == objects[counter].fields.length)
 	{
 		try {
-			if (nta.debug)
+			if (!nta.debug)
 				console.log("field index is " + fieldIndex + " " + objects[counter].fields.length);
 			//newObject._search_keys=searchKey;
 			callback(newObject);
@@ -936,9 +1033,9 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
 			var text = 'newObject.' + objects[counter].fields[j].name + ' = JSON.parse(req.rawBody).' + objects[counter].name + '.' + objects[counter].fields[j].name;
 		else
 			var text = 'newObject.' + objects[counter].fields[j].name + " = ''";
-		if (nta.debug)
+		if (!nta.debug)
 			util.debug('create: rawBody:xx ' + req.rawBody);
-		if (nta.debug)
+		if (!nta.debug)
 			util.debug('create: text: tt ' +   text);
 
 		eval(text);

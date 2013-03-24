@@ -25,8 +25,8 @@
   <link rel="stylesheet" href="stylesheets/app.css">
   
     <!-- Included JS Files (Compressed) -->
-	  <script src="javascripts/jquery.js"></script>
-	  <script src="javascripts/foundation.min.js"></script>
+    <script src="http://api.local-concussionjs.com/concussion.js"></script>
+	<script src="javascripts/foundation.min.js"></script>
 	  
   
   <style>
@@ -273,9 +273,12 @@ $("#month").text(curMonth + " " + dayOfMonth);
 
         function setTime()
         {
-            ++totalSeconds;
-            secondsLabel.innerHTML = pad(totalSeconds%60);
-            minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+           if(secondsLabel && minutesLabel)
+           {
+            	++totalSeconds;
+            	secondsLabel.innerHTML = pad(totalSeconds%60);
+            	minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+           }
         }
 
         function pad(val)
@@ -304,7 +307,7 @@ $("#month").text(curMonth + " " + dayOfMonth);
 		  
 		  
 	  </script>
-	  <script src="http://api.concussionjs.com/concussion.js"></script>
+
   
   </body>
 </html>

@@ -22,7 +22,7 @@ var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",output
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];
 */
 
-var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/jquery.stringify.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
+var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
 compileFiles(files2Compile);
 
 var s = settings();

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+
+  <title>Time Tracker</title>
+  
+  <!-- Included CSS Files (Uncompressed) -->
+  <!--
+  <link rel="stylesheet" href="stylesheets/foundation.css">
+  -->
+  
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  
+  <!-- Included CSS Files (Compressed) -->
+  <link rel="stylesheet" href="stylesheets/foundation.min.css">
+  <link rel="stylesheet" href="stylesheets/app.css">
+  
+    <!-- Included JS Files (Compressed) -->
+	  <script src="javascripts/jquery.js"></script>
+	  <script src="javascripts/foundation.min.js"></script>
+	  
+  
+  <style>
+  
+* {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+}
+
+h2 {
+	font-weight: 700;
+}
+
+.top-bar {
+	margin-bottom: 35px;
+}
+
+#dayOfWeek {
+	color:#2BA6CB; 
+	font-size:44px; 
+	font-weight:400;
+}
+
+#month, .modalTitle {
+	color:#6F6F6F; 
+	font-size:33px; 
+	font-weight:400;
+}
+
+.time {
+	font-size: 61px;
+}
+
+form {
+	margin-top: 25px;
+}
+
+input[type="text"] {
+	font-size: 23px;
+	height: 39px;
+}
+
+textarea {
+	font-size: 23px;
+	height: 70px;
+}
+
+.timeModal {
+	font-size: 41px !important; 
+	height: 70px !important;
+} 
+
+.btnModal {
+	font-size: 23px;
+	width: 100%;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.newBottom {
+	font-size: 23px;
+	display: none;
+	margin-bottom: 50px;
+}
+
+#createTime {
+	position: relative;
+top: 0;
+right: 0;
+color: white;
+padding: 20px;
+}
+
+
+
+@media only screen and (max-width: 767px) {
+	
+	.time {
+		font-size: 81px;
+		text-align: left;
+	}
+	
+	input[type="text"] {
+		height: 59px;
+	}
+	
+	textarea, .timeModal {
+		height: 90px !important;
+	}
+	
+	.newTop {
+		display: none;
+	}
+	
+	.newBottom {
+		display: block;
+	}
+	
+}
+
+
+  
+  </style>
+
+  <script src="javascripts/modernizr.foundation.js"></script>
+
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+</head>
+<body>
+
+  <nav class="top-bar">
+    <ul>
+      <li class="name">
+        <h1>
+        	
+          <a href="#"><img src="images/logo.svg"> Time Tracker</a>
+        </h1>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="row">
+  	<div class="ten columns">
+  		<span id="dayOfWeek"></span>
+  		&nbsp;
+  		<span id="month"></span>
+  	</div>
+  	<div class="two columns">
+  		<p class="alignRight">
+  			<a href="#" data-reveal-id="exampleModal" class="radius success button newTop">New</a>
+  		</p>
+  	</div>
+  </div>
+  
+    <div class="row"> 
+    <div class="twelve columns">
+  		<hr>
+  	</div>
+  </div>
+  
+
+  
+  <div class="times" data-bind="foreach:timesheet">
+	  <div class="row">
+	    <div class="nine columns">
+	      	<h3 data-bind="text:name"></h3>
+	      	<h4 data-bind="text:notes" class="subheader"></h4>  	
+	    </div>
+	    <div class="three columns alignRight">
+	    	<h1 class="time"><a data-bind="text:time"></a></h1>
+	    		<!--<a id="minutes">00</a><a>:</a><a id="seconds">00</a>-->
+	    	
+	    	<!--
+	    	<a class="radius success button" href="#">Stop</a>
+	    	-->
+	    </div>
+	  </div>
+	    <div class="row">
+  	<div class="twelve columns">
+  		<hr>
+  	</div>
+  </div>
+  </div>
+  
+      <div class="row"> 
+    <div class="twelve columns">
+  		<br><br>
+  		
+  		<a href="#" data-reveal-id="exampleModal" class="radius success large button newBottom">Create New Entry</a>
+  	</div>
+  </div>
+    
+
+	  <div id="exampleModal" class="reveal-modal alignCenter">
+	    <span class="modalTitle">Create New Entry</span>
+	    <form class="custom" data-bind="submit:timesheet_create">
+	      <input type="text" placeholder="Name" data-bind="value:timesheet_name">
+			  <textarea placeholder="Notes" data-bind="value:timesheet_notes"></textarea>
+			  <input type="text" class="timeModal" placeholder="0:00" data-bind="value:timesheet_time">
+			  <br>
+			  <button id="createTime" class="radius success button btnModal close-reveal-modal">Start Timer</button>
+			  <!-- <a class="radius secondary button" href="#">Cancel</a> -->
+			</form>
+			
+			<a class="close-reveal-modal">×</a>
+	  </div>
+
+  
+	
+	  <!-- Initialize JS Plugins -->
+	  <script src="javascripts/app.js"></script>
+	  
+	  <script>
+	  
+	  $(document).ready(function() {
+	  
+	  				//$("#createTime").click(function(){ 
+				
+		  				//$(".reveal-modal").trigger("reveal:close");
+					
+					//});
+				
+				
+		  
+var objToday = new Date(),
+                weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+                dayOfWeek = weekday[objToday.getDay()],
+                domEnder = new Array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' ),
+                dayOfMonth = today + (objToday.getDate() < 10) ? '0' + objToday.getDate() + domEnder[objToday.getDate()] : objToday.getDate() + domEnder[parseFloat(("" + objToday.getDate()).substr(("" + objToday.getDate()).length - 1))],
+                dayOfMonth = objToday.getDate(),
+                months = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
+                curMonth = months[objToday.getMonth()],
+                curYear = objToday.getFullYear(),
+                curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+                curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+                curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
+                curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
+
+var today = curHour + ":" + curMinute + "." + curSeconds + curMeridiem + " " + dayOfWeek + " " + dayOfMonth + " of " + curMonth + ", " + curYear;
+
+//document.write(today);
+
+$("#dayOfWeek").text(dayOfWeek);
+
+$("#month").text(curMonth + " " + dayOfMonth);
+		  
+		  
+		  
+
+        var minutesLabel = document.getElementById("minutes");
+        var secondsLabel = document.getElementById("seconds");
+        var totalSeconds = 0;
+        setInterval(setTime, 1000);
+
+        function setTime()
+        {
+            ++totalSeconds;
+            secondsLabel.innerHTML = pad(totalSeconds%60);
+            minutesLabel.innerHTML = pad(parseInt(totalSeconds/60));
+        }
+
+        function pad(val)
+        {
+            var valString = val + "";
+            if(valString.length < 2)
+            {
+                return "0" + valString;
+            }
+            else
+            {
+                return valString;
+            }
+        }
+
+
+		  
+
+				
+				
+				
+
+				
+				
+			});
+		  
+		  
+	  </script>
+	  <script src="http://api.concussionjs.com/concussion.js"></script>
+  
+  </body>
+</html>

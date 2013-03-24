@@ -245,7 +245,7 @@ try{
 	self.<%=objects[i].varname%>Form({<%
     for(j=0;j<objects[i].fields.length-1;j++)
 	{
-		if(objects[i].fields[j].name!="_id")
+		if(objects[i].fields && objects[i].fields.length > j && objects[i].fields[j].name!="_id")
 		{
 		%>
 		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>,

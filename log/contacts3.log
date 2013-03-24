@@ -1,0 +1,23 @@
+port: 27017
+127.0.0.1 - - [Mon, 07 Jan 2013 01:06:10 GMT] "GET / HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:06:11 GMT] "GET /contacts-style.css HTTP/1.1" 200 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:06:11 GMT] "GET /contacts-bg.png HTTP/1.1" 200 174632 "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:06:12 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:34:27 GMT] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:34:28 GMT] "GET /contacts-style.css HTTP/1.1" 304 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:34:28 GMT] "GET /contacts-bg.png HTTP/1.1" 304 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:34:29 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:44:10 GMT] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:44:10 GMT] "GET /contacts-style.css HTTP/1.1" 304 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:44:10 GMT] "GET /contacts-bg.png HTTP/1.1" 304 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:44:10 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:46:42 GMT] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:46:42 GMT] "GET /contacts-style.css HTTP/1.1" 304 - "http://contacts3.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:46:42 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:46:46 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+mon : write mon pid to /home/concussed/concussionjs-core/log/contacts3-mon.pid
+mon : child 22579
+mon : write pid to /home/concussed/concussionjs-core/log/contacts3.pid
+mon : shutting down
+mon : kill(-22578, 15)
+mon : bye :)

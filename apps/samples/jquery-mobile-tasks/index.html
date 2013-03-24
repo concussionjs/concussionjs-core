@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Task List</title>
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.2.0/jquery.mobile-1.2.0.min.css">
+        <link rel="stylesheet" href="assets/css/styles.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery.mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+        <script src="assets/js/scripts.js"></script>
+        <script src="http://api.concussionjs.com/concussion.js"></script>
+    </head>
+    <body>
+        <div data-role="page" id="page1">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>Task List</h3>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="searchinput1"></label>
+                        <input name="" id="searchinput1" placeholder="Search for a task..." value="" type="search">
+                    </fieldset>
+                </div>
+                <div id="checkboxes1" data-role="fieldcontain">
+                    <fieldset data-role="controlgroup" data-type="vertical">
+                        <input id="checkbox1" type="checkbox">
+                        <label for="checkbox1">Choose a boxing club</label>
+                        <input id="checkbox2" type="checkbox">
+                        <label for="checkbox2">Get a trainer</label>
+                        <input id="checkbox3" type="checkbox">
+                        <label for="checkbox3">Register as an amateur boxer</label>
+                        <input id="checkbox4" type="checkbox">
+                        <label for="checkbox4">Get licensed</label>
+                    </fieldset>
+                </div>
+                
+            </div>
+            <div data-theme="a" data-role="footer" data-position="fixed">
+                <form data-bind="submit:tasks_create">
+                	<input type="text" data-theme="b" placeholder="Add a new task..." data-bind="value:tasks_task">
+                	<input type="submit" data-theme="b" value="Add a new task">
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

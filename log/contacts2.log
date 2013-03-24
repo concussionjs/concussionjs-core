@@ -1,0 +1,227 @@
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+
+node.js:201
+        throw e; // process.nextTick error, or 'error' event on first tick
+              ^
+Error: Cannot find module './node_modules/nextera/nextera.js'
+    at Function._resolveFilename (module.js:332:11)
+    at Function._load (module.js:279:25)
+    at Module.require (module.js:354:17)
+    at require (module.js:370:17)
+    at Object.<anonymous> (/home/concussed/concussionjs-core/apps/contacts2/index.js:3:11)
+    at Module._compile (module.js:441:26)
+    at Object..js (module.js:459:10)
+    at Module.load (module.js:348:32)
+    at Function._load (module.js:308:12)
+    at Array.0 (module.js:479:10)
+sh: 1: Syntax error: word unexpected
+mon : write mon pid to /home/concussed/concussionjs-core/log/contacts2-mon.pid
+mon : child 5016
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart less than one second ago
+mon : 10 attempts remaining
+mon : child 5019
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 9 attempts remaining
+mon : child 5022
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 8 attempts remaining
+mon : child 5025
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 7 attempts remaining
+mon : child 5028
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 6 attempts remaining
+mon : child 5033
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 5 attempts remaining
+mon : child 5036
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 4 attempts remaining
+mon : child 5039
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 3 attempts remaining
+mon : child 5042
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 2 attempts remaining
+mon : child 5045
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : exit(1)
+mon : sleep(1)
+mon : last restart 1 second ago
+mon : 1 attempts remaining
+mon : 10 restarts within 14 seconds, bailing
+mon : on error `(null) 5045`
+mon : exit(512)
+mon : bye :)
+port: 27017
+127.0.0.1 - - [Mon, 07 Jan 2013 01:03:08 GMT] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:03:08 GMT] "GET /contacts-style.css HTTP/1.1" 304 - "http://contacts2.local-concussionjs.com/" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:03:08 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+127.0.0.1 - - [Mon, 07 Jan 2013 01:03:18 GMT] "GET /favicon.ico HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"
+mon : write mon pid to /home/concussed/concussionjs-core/log/contacts2-mon.pid
+mon : child 22364
+mon : write pid to /home/concussed/concussionjs-core/log/contacts2.pid
+mon : shutting down
+mon : kill(-22363, 15)
+mon : bye :)

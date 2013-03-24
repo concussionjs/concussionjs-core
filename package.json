@@ -1,13 +1,13 @@
 {
   "name": "concussion-core",
   "description": "The web app platform for the impatient hacker",
-  "homepage": "http://concussionjs.com/",
+  "homepage": "http://www.concussionjs.com/",
   "author":"Benjamin Frenkel",
   "repository": {
     "type": "git",
     "url": "git://github.com/concussionjs/concussionjs-core.git"
   },
-  "version": "0.3.0",
+  "version": "0.0.1",
   "main": "./lib/concussion-core.js",
   "dependencies": {
     "connect": "1.7.2",

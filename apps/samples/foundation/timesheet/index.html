@@ -179,19 +179,19 @@ padding: 20px;
   
 
   
-  <div class="times" data-bind="foreach:timesheet">
+  <div class="times" data-bind="foreach:timesheet.read">
 	  <div class="row">
 	    <div class="nine columns">
-	      	<h3 data-bind="text:name"></h3>
-	      	<h4 data-bind="text:notes" class="subheader"></h4>  	
+	      	<h3 data-bind="text:name">Workout</h3>
+	      	<h4 data-bind="text:notes" class="subheader">Fight night tomorrow</h4>  	
 	    </div>
 	    <div class="three columns alignRight">
-	    	<h1 class="time"><a data-bind="text:time"></a></h1>
-	    		<!--<a id="minutes">00</a><a>:</a><a id="seconds">00</a>-->
+	    	<h1 class="time"><a data-bind="text:time">1:17</a></h1>
+	    		<!--<a id="minutes">00</a><a>:</a><a id="seconds">00</a>
 	    	
-	    	<!--
-	    	<a class="radius success button" href="#">Stop</a>
-	    	-->
+	    
+	    	<a class="radius success button" href="#">Stop</a>-->
+	    	
 	    </div>
 	  </div>
 	    <div class="row">
@@ -212,10 +212,10 @@ padding: 20px;
 
 	  <div id="exampleModal" class="reveal-modal alignCenter">
 	    <span class="modalTitle">Create New Entry</span>
-	    <form class="custom" data-bind="submit:timesheet_create">
-	      <input type="text" placeholder="Name" data-bind="value:timesheet_name">
-			  <textarea placeholder="Notes" data-bind="value:timesheet_notes"></textarea>
-			  <input type="text" class="timeModal" placeholder="0:00" data-bind="value:timesheet_time">
+	    <form class="custom" data-bind="submit:timesheet.create">
+	      <input type="text" placeholder="Name" data-bind="value:timesheet.name">
+			  <textarea placeholder="Notes" data-bind="value:timesheet.notes"></textarea>
+			  <input type="text" class="timeModal" placeholder="0:00" data-bind="value:timesheet.time">
 			  <br>
 			  <button id="createTime" class="radius success button btnModal close-reveal-modal">Start Timer</button>
 			  <!-- <a class="radius secondary button" href="#">Cancel</a> -->

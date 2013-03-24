@@ -15,44 +15,41 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-    
+    <script src="http://api.concussionjs.com/concussion.js"></script>
   </head>
   <body>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="brand" href="#">Blog Editor</a>
-          <a class="btn" href="#"><i class="icon-pencil"></i>New</a>
+          <!--<a class="btn" href="#"><i class="icon-pencil"></i>New</a>-->
           <div class="span1">
           </div>
         </div>
       </div>
     </div>
     <div class="container">
-    	<div data-bind="foreach:articles">
+    	<div data-bind="foreach:articles.read">
     		<article> 
 		      <h3 data-bind="text:title"></h3>
 		      <p>By <a data-bind="text:author" href="#"></a></p>
 		      <p data-bind="text:body"></p>
-		      
-		      <span  data-bind="text:tags" class="label"></span>
-		     
+		      <span data-bind="text:tags" class="label"></span>
 		      <hr>
 		    </article>
     	</div>
       <div class="well">
-      	<form data-bind="submit:articles_create">
+      	<form data-bind="submit:articles.create">
         	<h4>Create a new blog post</h4>
-        	<input placeholder="Title" data-bind="value:articles_title">
-        	<input placeholder="Author" data-bind="value:articles_author">
-        	<input placeholder="Body" data-bind="value:articles_body">
-        	<input placeholder="Tag, tag, tag" data-bind="value:articles_tags">
+        	<input placeholder="Title" data-bind="value:articles.title">
+        	<input placeholder="Author" data-bind="value:articles.author">
+        	<input placeholder="Body" data-bind="value:articles.body">
+        	<input placeholder="Tag, tag, tag" data-bind="value:articles.tags">
         	<button class="btn btn-success"><i class="icon-pencil icon-white"></i>Create New Post</button>
       	</form>
       </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="assets/js/bootstrap.js"></script>
-    <script src="http://api.concussionjs.com/concussion.js"></script>
   </body>
 </html>

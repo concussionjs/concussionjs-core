@@ -283,7 +283,7 @@ ul.box li h2 {
     <div id="left_panel">
     	<h1><img src="google-maps_files/map.svg">Location Manager</h1>
     	
-			<ul class="box" data-bind="foreach:location">
+			<ul class="box" data-bind="foreach:location.read">
 			  <li>
 			  	<img src="google-maps_files/pin.svg">
 			  	<h2 data-bind="text:place"></h2>
@@ -292,9 +292,9 @@ ul.box li h2 {
 			</ul>
 			
   		
-  		<form data-bind="submit:location_create">
-  			<input id="address" type="textbox" placeholder="Location" data-bind="value:location_place">
-  			<input type="textbox" placeholder="Description" data-bind="value:location_description">
+  		<form data-bind="submit:location.create">
+  			<input id="address" type="textbox" placeholder="Location" data-bind="value:location.place">
+  			<input type="textbox" placeholder="Description" data-bind="value:location.description">
   			<button onclick="codeAddress()">Add Location</button>
   		</form>
     </div>

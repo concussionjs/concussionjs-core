@@ -410,7 +410,7 @@ var getEntriesByTenantObjectIdAction = function(objectName,req,res)
 	return;
 }
 
-var createInstanceRoute = app.all("/createInstance/:objectName",function(req,res){
+var createInstanceRoute = app.all("/create/:objectName",function(req,res){
 	createInstanceAction(req.params.objectName, req, res);
 });
 
@@ -419,7 +419,7 @@ var createInstanceAction = function(objectName,req,res)
 	searchKey = [];
 	object = {};
 
-	if (nta.debug)
+	//if (nta.debug)
 		util.debug('create: rawBody:' + objectName + ' ' + req.rawBody);
 	
 	res.writeHeader(200);
@@ -443,6 +443,43 @@ var createInstanceAction = function(objectName,req,res)
 	}
 }
 
+var createRoute = app.all("/create/:objectName/:key",function(req,res){
+	util.debug('***inside create***');
+	createAction(req.params.objectName, req.params.key, req, res);
+});
+
+var createAction = function(objectName,key,req,res)
+{
+	searchKey = [];
+	object = {};
+
+	if (!nta.debug)
+		util.debug('create: rawBody:' + objectName + ' ' + req.rawBody);
+	
+	res.writeHeader(200);
+	if(!req.rawBody)
+		res.end("error: no body posted");
+	else{
+		nta.getEntriesWhere({'name': objectName},'cjs_objects', function(err,result) {
+			if (err)
+			{
+				res.end(err);
+				console.error('getEntriesWhere err: ', err);
+				return;
+			}
+			util.debug("get this right");
+			setupObject(searchKey, 0, result, [0], req, object, function(newObject) {
+				util.debug("create: setupObjectOutput:" + JSON.stringify(newObject));
+				newObject.key=key;
+				nta.createEntry(newObject, objectName, function(msg) {
+					util.debug("create: " + msg)
+					res.end(msg);
+				});
+			});		
+		});
+	}
+}
+
 var getEntryWhereRoute = app.get("/getEntryWhere/:objectName",function(req,res){
 	getEntryWhereAction(req.params.objectName,req,res);
 });
@@ -450,10 +487,11 @@ var getEntryWhereRoute = app.get("/getEntryWhere/:objectName",function(req,res){
 var getEntryWhereAction = function(objectName,req,res)
 {
 	var where = qs.parse(req.url.split('?')[1]);
-	if (nta.debug)
+	if (!nta.debug)
 		util.debug(JSON.stringify(where));
 	res.writeHeader(200);//, {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'X-Requested-With', 'Access-Control-Allow-Headers': 'application/json'});
 	nta.getEntryWhere(where, objectName, function(err,documents) {
+		util.debug(err + " " + JSON.stringify(documents));
 		res.end(JSON.stringify(documents[0]));
     });
 	
@@ -1021,7 +1059,7 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
 	{
 		try {
 			if (!nta.debug)
-				console.log("field index is " + fieldIndex + " " + objects[counter].fields.length);
+				console.log("create:field index is " + fieldIndex + " " + objects[counter].fields.length);
 			//newObject._search_keys=searchKey;
 			callback(newObject);
 		}catch (e) {console.log('create: ', e);}
@@ -1041,8 +1079,8 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
 		eval(text);
 		//console.log("create: eval",eval("newObject." + objects[counter].fields[j].name));
 
-		if (nta.debug)
-			util.debug('create: newObject: ', JSON.stringify(newObject));
+		if (!nta.debug)
+			util.debug('create: newObject: '+ JSON.stringify(newObject));
 		searchKey.push(eval('newObject.' + objects[counter].fields[j].varname));
 		newObject._search_keys = searchKey;
 		setupObject(searchKey, fieldIndex + 1, objects, counter, req, newObject, callback);

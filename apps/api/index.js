@@ -410,7 +410,7 @@ var getEntriesByTenantObjectIdAction = function(objectName,req,res)
 	return;
 }
 
-var createInstanceRoute = app.all("/create/:objectName",function(req,res){
+var createInstanceRoute = app.all("/createInstance/:objectName",function(req,res){
 	createInstanceAction(req.params.objectName, req, res);
 });
 
@@ -443,12 +443,12 @@ var createInstanceAction = function(objectName,req,res)
 	}
 }
 
-var createRoute = app.all("/create/:objectName/:key",function(req,res){
+var createKeyRoute = app.all("/create/:objectName/:key",function(req,res){
 	util.debug('***inside create***');
-	createAction(req.params.objectName, req.params.key, req, res);
+	createKeyAction(req.params.objectName, req.params.key, req, res);
 });
 
-var createAction = function(objectName,key,req,res)
+var createKeyAction = function(objectName,key,req,res)
 {
 	searchKey = [];
 	object = {};
@@ -1133,6 +1133,7 @@ var server = connect.createServer(
 	postGetScriptRoute,
 	getEntriesByTenantObjectIdRoute,
 	createInstanceRoute,
+	createKeyRoute,
 	getEntriesByNameRoute,
 	getEntryWhereRoute,
 	deleteRoute,

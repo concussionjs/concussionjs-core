@@ -24,7 +24,7 @@ cjs.prototype.compare = function(answer,sample){
 }
 
 cjs.prototype.parseHTML = function (html, parent, prefix){
-	//console.log("parsing: " +  html);
+	console.log("parsing: " +  html);
 	var databind = pkg.knockout.filterNestedNodes(pkg.knockout.parseDatabinds(html));
 	for(var i=0;i<databind.length;i++)
 	{		
@@ -147,7 +147,7 @@ pkg = {
 					if(name && name != "")
 					{
 						(parent.fields[parent.fields.length]={}).name=name;
-						cjs.prototype.dedupe(parent.fields);
+						parent.fields=cjs.prototype.dedupe(parent.fields);
 					}
 				}
 				else
@@ -169,7 +169,7 @@ pkg = {
 					if(name && name!="")
 					{
 						(parent.fields[parent.fields.length]={}).name=name;
-						cjs.prototype.dedupe(parent.fields);	
+						parent.fields=cjs.prototype.dedupe(parent.fields);	
 					}
 				}
 				else

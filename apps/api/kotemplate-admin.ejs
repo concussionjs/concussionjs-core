@@ -304,6 +304,11 @@ try{
 			var inputs = $(document.getElementById('instanceForm')).find('input');
 			var labels = $(document.getElementById('instanceForm')).find('label');
 			var selectedId = self.cjs_admin_current_selected_instance()._id();
+			var instance2Write = self.cjs_admin_current_selected_instance();
+			delete instance2Write["myForm"];
+			delete instance2Write["row"];
+			delete instance2Write["_id_mock"];
+			delete instance2Write["cjs_selected"];
 			for(i=0;i<inputs.length;i++)
 			{
 				if(labels[i])
@@ -314,7 +319,7 @@ try{
 
 				//alert("/" + self.cjs_admin_current_object_name() + "/update/" + self.cjs_admin_current_selected_instance()._id() );
 				$.ajax("/update/instances/" + self.cjs_admin_current_object_name() + "/" + self.cjs_admin_current_selected_instance()._id() , {
-            				data: ko.toJSON(self.cjs_admin_current_selected_instance()),
+            				data: ko.toJSON(instance2Write),
             				type: "post", contentType: "application/json",
             				success: function(result) 
 							{ 

@@ -1,5 +1,5 @@
 var mvm;
-$(function() {
+$(document).ready(function(){
 <%
 try{
 	
@@ -231,8 +231,8 @@ try{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
 	%>
-
-	self.<%=objects[i].varname%> = {};
+	if(!self.<%=objects[i].varname%>)
+		self.<%=objects[i].varname%> = {};
 	self.<%=objects[i].varname%>Form = ko.observable();
 
     var <%=objects[i].varname%>CreateJSON = function(){
@@ -242,11 +242,11 @@ try{
 		if(objects[i].fields && objects[i].fields.length > j && objects[i].fields[j].name!="_id")
 		{
 		%>
-		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>,
+		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>(),
 		<%
 		}
 	}
-	%><%=objects[i].fields[objects[i].fields.length-1].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[objects[i].fields.length-1].name%>
+	%><%=objects[i].fields[objects[i].fields.length-1].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[objects[i].fields.length-1].name%>()
     	});
 	}
     
@@ -264,8 +264,9 @@ try{
 	%>
     self.<%=objects[i].varname%>.create = function() {
     	var patt = new RegExp("<%=objects[i].varname%>Form","g");
+        //alert(ko.toJSON(self)); 
         <%=objects[i].varname%>CreateJSON();
-        //alert(ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g")); 
+        //alert(ko.toJSON(self)); 
         $.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
 			data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),
 			type: "post",

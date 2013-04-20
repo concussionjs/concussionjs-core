@@ -445,10 +445,17 @@ var createInstanceAction = function(objectName,req,res)
 				return;
 			}
 			setupObject(searchKey, 0, result, [0], req, object, function(newObject) {
-				newObject.tenant_object_id = objectName;
-				nta.createEntry(newObject, "instances", function(msg) {
-					res.end(msg);
-				});
+				if(newObject)
+				{
+					newObject.tenant_object_id = objectName;
+					nta.createEntry(newObject, "instances", function(msg) {
+						res.end(msg);
+					});
+				}
+				else
+				{
+					res.end("failure");
+				}
 			});		
 		});
 	}
@@ -1100,15 +1107,16 @@ loopThroughObjects = function(objects,req,res,next)
 };
 
 var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,callback)
-    {
+{
+try{
 	var j = fieldIndex;
-	if (!nta.debug)
+	if (nta.debug)
 		util.debug('setupObject: rawBody4U: ' + req.rawBody + " " + objects[counter].name);
 		
 	if (fieldIndex == objects[counter].fields.length)
 	{
 		try {
-			if (!nta.debug)
+			if (nta.debug)
 				console.log("create:field index is " + fieldIndex + " " + objects[counter].fields.length);
 			//newObject._search_keys=searchKey;
 			callback(newObject);
@@ -1135,6 +1143,7 @@ var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,ca
 		newObject._search_keys = searchKey;
 		setupObject(searchKey, fieldIndex + 1, objects, counter, req, newObject, callback);
 	}
+}catch(e){return callback(null);}
 };
 
 var extractObj=function(name)

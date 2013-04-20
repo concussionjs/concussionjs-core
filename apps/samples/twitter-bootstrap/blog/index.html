@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
-    <script src="http://api.concussionjs.com/concussion.js"></script>
+    <script src="http://api.local-concussionjs.com/concussion.js"></script>
   </head>
   <body>
     <div class="navbar navbar-fixed-top">
@@ -31,10 +31,10 @@
     <div class="container">
     	<div data-bind="foreach:articles.read">
     		<article> 
-		      <h3 data-bind="text:title"></h3>
-		      <p>By <a data-bind="text:author" href="#"></a></p>
-		      <p data-bind="text:body"></p>
-		      <span data-bind="text:tags" class="label"></span>
+		      <h3 data-bind="text:title()"></h3>
+		      <p>By <a data-bind="text:author()" href="#"></a></p>
+		      <p data-bind="text:body()"></p>
+		      <span data-bind="text:tags()" class="label"></span>
 		      <hr>
 		    </article>
     	</div>

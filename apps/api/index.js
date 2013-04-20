@@ -1,6 +1,7 @@
 var jsdom = require('jsdom');
 var nta = require('concussion-core');
 var settings = require('./settings.js');
+var config = require('./config.js');
 var connect = require('connect');
 var fs = require('fs');
 var html = fs.readFileSync(__dirname + '/kotemplate.ejs', 'utf-8');
@@ -14,6 +15,7 @@ var parse = require('./inferObjects.js');
 var express = require('express');
 var app = express();
 var util = require('util');
+var redis = require('redis');
 var URLPrefix=process.env.CJS_WEB_URL;
 var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js']
 var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
@@ -29,6 +31,15 @@ var s = settings();
 
 objects = [];
 nta.debug=false;
+
+redisClient = redis.createClient(
+    config().port,
+    config().host
+);
+
+redisClient.on('error', function (err) {
+	console.log('RedisError ' + err);
+}.bind(this));
 
 function localizeFiles()
 {
@@ -590,6 +601,45 @@ var updateWhereAction = function(objectName,req,res)
 
 }
 
+var addDomainRoute = app.get("/domains/add/:type/:name", function(req,res){
+	addDomainAction(req.params.type,req.params.name,req,res);
+});
+
+var addDomainAction = function(type,name,req,res)
+{
+	//res.writeHeader(200);
+	redisClient.sadd( "registered", [name], function(err,obj) {
+    	if(err)
+    		res.end('error: '  + err)
+    	else
+    	{
+    		res.end('success');
+        }
+    });
+
+	return;
+}
+
+var removeDomainRoute = app.get("/domains/remove/:type/:name", function(req,res){
+	removeDomainAction(req.params.type,req.params.name,req,res);
+});
+
+var removeDomainAction = function(type,name,req,res)
+{
+	//res.writeHeader(200);
+	redisClient.srem( "registered", [name], function(err,obj) {
+    	if(err)
+    		res.end('error: '  + err)
+    	else
+    	{
+    		res.end('success');
+        }
+    });
+
+	return;
+}
+
+
 loopThroughObjects = function(objects,req,res,next)
     {
 	if (req.url.search('/cjs_objects_models') > -1)
@@ -1127,6 +1177,7 @@ var server = connect.createServer(
 	//connect.session({ secret: 'test'}),
 	connect.bodyParser(),
 	crossDomainRules(),
+	addDomainRoute,
 	readRoute,
 	getPageRoute,
 	getScriptRoute,

@@ -182,11 +182,11 @@ padding: 20px;
   <div class="times" data-bind="foreach:timesheet.read">
 	  <div class="row">
 	    <div class="nine columns">
-	      	<h3 data-bind="text:name">Workout</h3>
-	      	<h4 data-bind="text:notes" class="subheader">Fight night tomorrow</h4>  	
+	      	<h3 data-bind="text:name()">Workout</h3>
+	      	<h4 data-bind="text:notes()" class="subheader">Fight night tomorrow</h4>  	
 	    </div>
 	    <div class="three columns alignRight">
-	    	<h1 class="time"><a data-bind="text:time">1:17</a></h1>
+	    	<h1 class="time"><a data-bind="text:time()">1:17</a></h1>
 	    		<!--<a id="minutes">00</a><a>:</a><a id="seconds">00</a>
 	    	
 	    

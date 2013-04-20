@@ -31,10 +31,10 @@
     <div class="container">
     	<div data-bind="foreach:articles.read">
     		<article> 
-		      <h3 data-bind="text:title"></h3>
-		      <p>By <a data-bind="text:author" href="#"></a></p>
+		      <h3 data-bind="text:title()"></h3>
+		      <p>By <a data-bind="text:author()" href="#"></a></p>
 		      <p data-bind="text:body"></p>
-		      <span data-bind="text:tags" class="label"></span>
+		      <span data-bind="text:tags()" class="label"></span>
 		      <hr>
 		    </article>
     	</div>

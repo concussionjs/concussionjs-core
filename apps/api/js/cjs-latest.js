@@ -24,7 +24,7 @@ cjs.prototype.compare = function(answer,sample){
 }
 
 cjs.prototype.parseHTML = function (html, parent, prefix){
-	console.log("parsing: " +  html);
+	//console.log("parsing: " +  html);
 	var databind = pkg.knockout.filterNestedNodes(pkg.knockout.parseDatabinds(html));
 	for(var i=0;i<databind.length;i++)
 	{		
@@ -75,7 +75,7 @@ pkg = {
 						return null;
 				}
 				else
-					return tokens[1];
+					return tokens[1].split("()")[0];
 			}
 			else
 				return null;
@@ -357,7 +357,7 @@ cjs.prototype.getPage = function(callback)
 				vars[hash[0]] = hash[1];
 			}
 		}
-		console.log("vars[id]=" + vars["id"]);
+		//console.log("vars[id]=" + vars["id"]);
 		if(!vars["id"] && !cjs.prototype.readCookie("sessionId"))
 		{
 			cjs.prototype.createUUID(function(id){

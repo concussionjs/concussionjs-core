@@ -86,7 +86,7 @@ border-radius: 7px;
 	#s-left .panel-body {
 		border-radius: 0 0 0 7px;
 		background: rgb(61,67,68);
-		color: #rgb(255,255,255);
+		color: rgb(255,255,255);
 	}
 
 
@@ -364,7 +364,7 @@ div > legend {
 #object-list ul {
   margin: 0 0 12px;
   padding: 0;
-  list-style-type: none;
+  list-style: none;
   color: rgb(255,255,255);
   transition: all 0.08s ease-in-out;
 }
@@ -391,8 +391,6 @@ div > legend {
 #object-list ul ul {
 	margin: 0;
 	padding: 0;
-	list-style-type: square;
-	list-style-position: inside;
 }
 
 #object-list ul ul li {
@@ -415,7 +413,7 @@ div > legend {
 .delete-icon {
 	float: right;
 	display: inline-block;	
-	margin: 0 0 0 18px;
+	margin: 2px 0 0 18px;
 	width: 16px;
 	height: 16px;
 	opacity: .5;
@@ -436,6 +434,9 @@ div > legend {
 	outline: none;
 }
 
+.object-name-wrapper .delete-icon {
+	margin-top: 4px;
+}
 
 /* PANEL
 -------------------------------------------------------------------------*/

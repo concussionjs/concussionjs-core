@@ -27,9 +27,9 @@
 
 				<section id="object-list" data-bind="foreach:cjs_objects">
 					<ul data-bind="css: { objectsSelected: cjs_selected()},click:selectObject">
-						<li ><span id="name" data-bind="text:varname">User</span>
+						<li ><span id="name" data-bind="text:varname">User</span><a class="delete-icon" title="Delete"></a>
 							<ul data-bind="foreach:fields">
-								<li data-bind="text:name">User Name</li>
+								<li><span data-bind="text:name">User Name</span><a class="delete-icon" title="Delete"></a></li>
 							</ul>
 						</li>
 					</ul>

@@ -25,7 +25,7 @@ var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",output
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
-compileFiles(files2Compile);
+localizeFiles(files2Localize);
 
 var s = settings();
 
@@ -41,18 +41,17 @@ redisClient.on('error', function (err) {
 	console.log('RedisError ' + err);
 }.bind(this));
 
-function localizeFiles()
+function localizeFiles(fileArray)
 {
-	for(i=0;i<files2Localize.length;i++)
+	var contents="";
+	var file=fileArray.shift();
+	if(file)
 	{
-		if(i==files2Localize.length-1)
-		{
-			localizeFile(files2Localize[i].templateFileName,files2Localize[i].outputFileName, function(){
-				concatenateFiles(files2Concatenate.inputFileNames,files2Concatenate.outputFileName);			
-			});	
-		}
-		else
-			localizeFile(files2Localize[i].templateFileName,files2Localize[i].outputFileName);
+			localizeFile(file.templateFileName,file.outputFileName,localizeFiles,fileArray);
+	}
+	else
+	{
+			compileFiles(files2Compile);
 	}
 }
 
@@ -68,17 +67,20 @@ function compileFiles(fileArray)
 		console.log(fileName);
 		exec(" java -jar " + __dirname + "/compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".js","-compiled.js")
 			, function (error, stdout, stderr) {
-				compileFiles(fileArray)
+				compileFiles(fileArray);
 			});
 	}
-	else	
-		localizeFiles();		
+	else{
+		console.log("initiating creation of concussion.js");	
+		concatenateFiles(files2Concatenate.inputFileNames, files2Concatenate.outputFileName);		
+	}
 }
 
 function concatenateFiles(fileArray,output)
 {
 	var contents="";
 	var fileName="";
+	console.log("Concatenating files " + JSON.stringify(fileArray));
 	for(;fileArray.length>=0;)
 	{
 		if((fileName=fileArray.shift()))
@@ -107,7 +109,7 @@ function concatenateFiles(fileArray,output)
 	}		
 }
 
-function localizeFile(fileName,output,callback)
+function localizeFile(fileName,output,callback,arg)
 {
 	if(nta.debug)
 		console.log(fileName, " ",output);
@@ -125,7 +127,8 @@ function localizeFile(fileName,output,callback)
 		{
 			console.log(output + " written successfully");
 			if(callback)
-				callback();
+				if(arg)
+					callback(arg);
 		}
 	});
 }

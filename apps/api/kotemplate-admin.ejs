@@ -199,7 +199,7 @@ try{
 				data:'',
 				success:function(data){
 					eval("var mapped = $.map(data,function(item)\{return new " + self.cjs_admin_current_object_name() + "(item)\});");
-        			eval("self." + self.cjs_admin_current_object_name() + "(mapped)");
+        			eval("if(self." + self.cjs_admin_current_object_name()+"){self." + self.cjs_admin_current_object_name()  + "(mapped);}");
         			//alert(self.cjs_admin_current_object_fields().length);
         			if(debug)
         				console.log("length: " + eval("self." + self.cjs_admin_current_object_name() + "().length"));

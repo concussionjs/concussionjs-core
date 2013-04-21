@@ -1,5 +1,5 @@
 var mvm;
-$(document).ready(function(){
+//$(function(){
 <%
 try{
 	
@@ -76,6 +76,7 @@ try{
 					}
 					%>
 						this.remove = function() {
+    					   //alert(ko.toJSON(self) + " \n\n" + ko.toJSON(this) + " bday:" + this.birthday());
     					   	$.ajax("http://<%=testdriveURL%>/delete/instances/"+this.id(), {
     					   		data: '',
 								type: "get", 
@@ -92,7 +93,7 @@ try{
 
 						this.update = function() {
        						$.ajax("http://<%=testdriveURL%>/update/instances/<%=myObject.name%>/" + this.id() , {
-							data: ko.toJSON(this),
+							data: ko.toJSON(self),
 							type: "post", dataType: "text",
 							success: function(result) 
 							{ 
@@ -113,7 +114,7 @@ try{
 				{
 					//console.log("I have children");
 					
-					for(i=0;i<myObject.children.length;i++)
+					for(var i=0;i<myObject.children.length;i++)
 					{
 						//console.log("inside children loop");
 						if(myObject.children[i].fields && myObject.children[i].fields.length>0)
@@ -156,7 +157,7 @@ try{
 		var self = this;
 	<%
 	//console.log("myViewModel: ", objects.length);
-	for(i=0;i<objects.length;i++)
+	for(var i=0;i<objects.length;i++)
 	{
 		objects[i].varname=objects[i].name.split("_")[2];
 		//console.log("tee: ", objects[i], " ", objects[i].type, " ", objects[i].fields.length);
@@ -176,7 +177,7 @@ try{
 	%>
 	//setFormData
 	<%
-	for(i=0;i<objects.length;i++)
+	for(var i=0;i<objects.length;i++)
 	{
 		if(objects[i].name)
 		{
@@ -203,7 +204,7 @@ try{
 	%>
 	//initial load
 	<%
-	for(i=0;i<objects.length;i++)
+	for(var i=0;i<objects.length;i++)
 	{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
@@ -226,18 +227,18 @@ try{
 
 	// create code
 	<%
-	for(i=0;i<objects.length;i++)
+	for(var i=0;i<objects.length;i++)
 	{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
 	%>
-	if(!self.<%=objects[i].varname%>)
+	//if(!self.<%=objects[i].varname%>)
 		self.<%=objects[i].varname%> = {};
 	self.<%=objects[i].varname%>Form = ko.observable();
 
     var <%=objects[i].varname%>CreateJSON = function(){
 	self.<%=objects[i].varname%>Form({<%
-	for(j=0;j<objects[i].fields.length-1;j++)
+	for(var j=0;j<objects[i].fields.length-1;j++)
 	{
 		if(objects[i].fields && objects[i].fields.length > j && objects[i].fields[j].name!="_id")
 		{
@@ -253,7 +254,7 @@ try{
     self.<%=objects[i].varname%>.read=ko.observableArray([]);
 
     <%
-    for(j=0;j<objects[i].fields.length;j++)
+    for(var j=0;j<objects[i].fields.length;j++)
 	{
 		if(objects[i].fields[j].name!="_id")
 		{
@@ -300,12 +301,12 @@ try{
 	mvm = new myViewModel();
 	ko.applyBindings(mvm);
 <%
-	for(i=0;i<objects.length;i++)
+	for(var i=0;i<objects.length;i++)
 	{
 	%>
 		mvm.<%=objects[i].name%>_getRecords();
 	<%
 	}	
 %>	
-});
+//});
 <%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

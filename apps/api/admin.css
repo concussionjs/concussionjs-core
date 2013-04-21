@@ -86,7 +86,7 @@ border-radius: 7px;
 	#s-left .panel-body {
 		border-radius: 0 0 0 7px;
 		background: rgb(61,67,68);
-		color: #rgb(255,255,255);
+		color: rgb(255,255,255);
 	}
 
 
@@ -362,31 +362,81 @@ div > legend {
 /* OBJECT LIST
 -------------------------------------------------------------------------*/
 #object-list ul {
-  margin: 0;
+  margin: 0 0 12px;
   padding: 0;
-  list-style-type: none;
+  list-style: none;
   color: rgb(255,255,255);
+  transition: all 0.08s ease-in-out;
 }
 
-#object-list li {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-}
-
-.objectsSelected{
+.objectsSelected {
     background: rgb(87,160,204);
 }
 
+#object-list li {
+	margin: 0;
+	padding: 0;
+}
+
+#object-list .object-name-wrapper {
+    padding: 6px 20px;
+    font-size: 1.2rem;
+  	transition: all 0.08s ease-in-out;
+}
+
+#object-list .object-name-wrapper:hover  {
+	background: rgba(255,255,255,.2);
+}
+
 #object-list ul ul {
-  padding: 0 0 0 20px;
-  list-style-type: square;
+	margin: 0;
+	padding: 0;
 }
 
 #object-list ul ul li {
-  padding: 6px 0 2px;
-  font-size: 1rem;
+	margin: 0;
+	padding: 0;
 }
 
+#object-list .attribute-name-wrapper {
+    padding: 6px 20px;
+    font-size: 1rem;
+  	transition: all 0.08s ease-in-out;
+}
+
+#object-list .attribute-name-wrapper:hover  {
+	background: rgba(255,255,255,.1);
+}
+
+
+/* Delete Icon*/
+.delete-icon {
+	float: right;
+	display: inline-block;	
+	margin: 2px 0 0 18px;
+	width: 16px;
+	height: 16px;
+	opacity: .5;
+	background: rgba(100,111,115,1.0) center center no-repeat;
+	background-image: url("images/icon-delete.svg");
+	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+}
+
+.delete-icon:hover {
+	background-image: url("../images/icon-delete-hover.svg");
+	background-color: rgba(102, 153, 204, 1);
+	opacity: 1;
+}
+
+.delete-icon:focus {
+	outline: none;
+}
+
+.object-name-wrapper .delete-icon {
+	margin-top: 4px;
+}
 
 /* PANEL
 -------------------------------------------------------------------------*/

@@ -366,6 +366,7 @@ div > legend {
   padding: 0;
   list-style-type: none;
   color: rgb(255,255,255);
+  transition: all 0.08s ease-in-out;
 }
 
 .objectsSelected {
@@ -380,7 +381,7 @@ div > legend {
 #object-list .object-name-wrapper {
     padding: 6px 20px;
     font-size: 1.2rem;
-  	transition: all 0.2s ease-in-out;
+  	transition: all 0.08s ease-in-out;
 }
 
 #object-list .object-name-wrapper:hover  {

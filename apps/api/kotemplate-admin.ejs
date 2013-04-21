@@ -2,7 +2,8 @@
 <script language="JavaScript" src="js/knockout-2.0.0.js"></script>
 <script>
 var mvm;
-$(function() {
+var debug=false;
+$(document).ready(function() {
 <%
 try{
 	var debug=false;
@@ -50,7 +51,8 @@ try{
 				handleChildren(myObject.children[i]);
 			}
 		}
-		console.log("myObject.name: " + myObject.name);
+		if(debug)
+			console.log("myObject.name: " + myObject.name);
 		%>
 			function <%=myObject.name%>(data)
 			{
@@ -145,7 +147,7 @@ try{
 	function myViewModel()
 	{
 		var self = this;
-		var cjs_admin_current_selected_instance = ko.observable();
+		var cjs_admin_current_selected_instance = ko.observable({});
 		self.cjs_admin_current_selected_instance = cjs_admin_current_selected_instance;
 		var cjs_admin_current_object_instances = ko.observableArray([]);
 		self.cjs_admin_current_object_instances = cjs_admin_current_object_instances;
@@ -185,7 +187,10 @@ try{
 
 		var loadObjects = function(resetCurrentSelectedInstance,callback)
 		{
-			console.log("inside loadObject: " + self.cjs_admin_current_object_name());
+			if(debug)
+				console.log("inside loadObject: " + self.cjs_admin_current_object_name());
+			if(!self.cjs_admin_current_object_name())
+				return;
 			$.ajax(
 			{
 				url:"/getEntriesByTenantObjectId/"+self.cjs_admin_current_object_name(),
@@ -196,7 +201,8 @@ try{
 					eval("var mapped = $.map(data,function(item)\{return new " + self.cjs_admin_current_object_name() + "(item)\});");
         			eval("self." + self.cjs_admin_current_object_name() + "(mapped)");
         			//alert(self.cjs_admin_current_object_fields().length);
-        			console.log("length: " + eval("self." + self.cjs_admin_current_object_name() + "().length"));
+        			if(debug)
+        				console.log("length: " + eval("self." + self.cjs_admin_current_object_name() + "().length"));
         			for(j=0;j<eval("self." + self.cjs_admin_current_object_name() + "().length");j++)
         			{
 						       					
@@ -206,7 +212,8 @@ try{
         					//if(self.cjs_admin_current_object_fields()[i].type())
         					//alert(self.cjs_admin_current_object_fields()[i].name + " " + self.cjs_admin_current_object_fields()[i].type());
         					var string4Eval = "self." + self.cjs_admin_current_object_name() + "()[" + j + "]." + self.cjs_admin_current_object_fields()[i].name() + "()";
-       						console.log("eval: " + string4Eval); 					
+       						if(debug)
+       							console.log("eval: " + string4Eval); 					
         					
         					
 
@@ -269,6 +276,7 @@ try{
 						if(self.cjs_admin_current_selected_instance())
 							self.cjs_admin_current_selected_instance().cjs_selected(false);
 						self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
+						if(self.cjs_admin_current_selected_instance())
 						self.cjs_admin_current_selected_instance().cjs_selected(true);
 					}
 
@@ -382,10 +390,11 @@ try{
 								//alert("all done: " +result);
 								loadObjects(false, function(){
 									var len = self.cjs_admin_current_object_instances().length;
-									if(self.cjs_admin_current_selected_instance())
+									if(self.cjs_admin_current_selected_instance() && self.cjs_admin_current_selected_instance().cjs_selected)
 										self.cjs_admin_current_selected_instance().cjs_selected(false);
 									self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[len-1]);
-									self.cjs_admin_current_selected_instance().cjs_selected(true);	
+									if(self.cjs_admin_current_selected_instance() && self.cjs_admin_current_selected_instance().cjs_selected)
+										self.cjs_admin_current_selected_instance().cjs_selected(true);	
 								});
 							}
         		});
@@ -537,7 +546,7 @@ try{
         			self.<%=objects[i].name%>(mapped);
         			self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
         			self.cjs_admin_current_object_name(self.cjs_objects()[0].name());
-        			console.log("current object name " + self.cjs_admin_current_object_name());
+        			//console.log("current object name " + self.cjs_admin_current_object_name());
         			self.cjs_objects()[0].cjs_selected(true);
 					self.cjs_admin_current_selected_object(self.cjs_objects()[0]);
 					
@@ -551,13 +560,17 @@ try{
 							var mapped = $.map(data[0].fields,function(item){return new fields(item)});
         					self.cjs_admin_current_object_fields(mapped);
 							loadObjects(false, function(){
-								if(self.cjs_admin_current_selected_instance())
+								if(self.cjs_admin_current_selected_instance() && self.cjs_admin_current_selected_instance().cjs_selected)
 								{
 									self.cjs_admin_current_selected_instance().cjs_selected(false);
 								}	
-								
-								self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
-								self.cjs_admin_current_selected_instance().cjs_selected(true);
+								if(self.cjs_admin_current_object_instances().length>0)
+									self.cjs_admin_current_selected_instance(self.cjs_admin_current_object_instances()[0]);
+
+								if(self.cjs_admin_current_selected_instance() && self.cjs_admin_current_selected_instance().cjs_selected)
+								{
+									self.cjs_admin_current_selected_instance().cjs_selected(true);
+								}	
 								
 							});
 						}			

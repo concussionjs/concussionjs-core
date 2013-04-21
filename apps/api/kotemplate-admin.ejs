@@ -545,6 +545,8 @@ try{
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         			self.<%=objects[i].name%>(mapped);
         			self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
+        			if(self.cjs_objects().length<1)
+        				return;
         			self.cjs_admin_current_object_name(self.cjs_objects()[0].name());
         			//console.log("current object name " + self.cjs_admin_current_object_name());
         			self.cjs_objects()[0].cjs_selected(true);

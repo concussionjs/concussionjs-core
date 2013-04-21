@@ -362,35 +362,59 @@ div > legend {
 /* OBJECT LIST
 -------------------------------------------------------------------------*/
 #object-list ul {
-  margin: 0;
+  margin: 0 0 12px;
   padding: 0;
   list-style-type: none;
   color: rgb(255,255,255);
 }
 
-#object-list li {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-}
-
-.objectsSelected{
+.objectsSelected {
     background: rgb(87,160,204);
 }
 
+#object-list li {
+	margin: 0;
+	padding: 0;
+}
+
+#object-list .object-name-wrapper {
+    padding: 6px 20px;
+    font-size: 1.2rem;
+  	transition: all 0.2s ease-in-out;
+}
+
+#object-list .object-name-wrapper:hover  {
+	background: rgba(255,255,255,.2);
+}
+
 #object-list ul ul {
-  padding: 0 0 0 20px;
-  list-style-type: square;
+	margin: 0;
+	padding: 0;
+	list-style-type: square;
+	list-style-position: inside;
 }
 
 #object-list ul ul li {
-  padding: 6px 0 2px;
-  font-size: 1rem;
+	margin: 0;
+	padding: 0;
 }
+
+#object-list .attribute-name-wrapper {
+    padding: 6px 20px;
+    font-size: 1rem;
+  	transition: all 0.08s ease-in-out;
+}
+
+#object-list .attribute-name-wrapper:hover  {
+	background: rgba(255,255,255,.1);
+}
+
 
 /* Delete Icon*/
 .delete-icon {
+	float: right;
 	display: inline-block;	
-	margin: 0 0 -4px 18px;
+	margin: 0 0 0 18px;
 	width: 16px;
 	height: 16px;
 	opacity: .5;

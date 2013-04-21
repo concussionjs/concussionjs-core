@@ -1,5 +1,5 @@
 var mvm;
-$(function() {
+$(document).ready(function(){
 <%
 try{
 	
@@ -48,7 +48,7 @@ try{
 
 			var <%=myObject.name%> = function(data)
 			{
-				//alert(data);
+				//alert(JSON.stringify(data));
 				
 				var self = this;
 				<%
@@ -208,6 +208,8 @@ try{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
 	%>
+	self.<%=objects[i].name%>_getRecords= function()
+	{
 		$.ajax(
 			{url:"http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>",
 			dataType:"json",
@@ -215,17 +217,9 @@ try{
 			success:function(data){
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         			self.<%=objects[i].varname%>.read(mapped);
-        		<%
-        			if(objects[i].name=="nextera_objects")
-        			{
-        		%>
-        				self.nextera_objects()[0].nextera_selected(true);
-						self.nextera_admin_current_selected_object(self.nextera_objects()[0]);
-        		<%
-        			}
-        		%>	
 			}			
 		});
+	}
 	<%
 	}
 	%>
@@ -237,22 +231,22 @@ try{
 		 if(objects[i].name.search("_search")>-1)
                         continue;	
 	%>
-
-	self.<%=objects[i].varname%> = {};
+	if(!self.<%=objects[i].varname%>)
+		self.<%=objects[i].varname%> = {};
 	self.<%=objects[i].varname%>Form = ko.observable();
 
     var <%=objects[i].varname%>CreateJSON = function(){
 	self.<%=objects[i].varname%>Form({<%
-    for(j=0;j<objects[i].fields.length-1;j++)
+	for(j=0;j<objects[i].fields.length-1;j++)
 	{
-		if(objects[i].fields[j].name!="_id")
+		if(objects[i].fields && objects[i].fields.length > j && objects[i].fields[j].name!="_id")
 		{
 		%>
-		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>,
+		<%=objects[i].fields[j].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[j].name%>(),
 		<%
 		}
 	}
-	%><%=objects[i].fields[objects[i].fields.length-1].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[objects[i].fields.length-1].name%>
+	%><%=objects[i].fields[objects[i].fields.length-1].name%>:self.<%=objects[i].varname%>.<%=objects[i].fields[objects[i].fields.length-1].name%>()
     	});
 	}
     
@@ -270,8 +264,9 @@ try{
 	%>
     self.<%=objects[i].varname%>.create = function() {
     	var patt = new RegExp("<%=objects[i].varname%>Form","g");
+        //alert(ko.toJSON(self)); 
         <%=objects[i].varname%>CreateJSON();
-        //alert(ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g")); 
+        //alert(ko.toJSON(self)); 
         $.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
 			data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),
 			type: "post",
@@ -304,8 +299,13 @@ try{
 
 	mvm = new myViewModel();
 	ko.applyBindings(mvm);
-	
-	//var contacts = new contacts();
-	var latebind = "#latebind";
+<%
+	for(i=0;i<objects.length;i++)
+	{
+	%>
+		mvm.<%=objects[i].name%>_getRecords();
+	<%
+	}	
+%>	
 });
 <%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

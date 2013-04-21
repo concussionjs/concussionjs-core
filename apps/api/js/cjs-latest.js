@@ -5,9 +5,17 @@
 	
 var cjs = function(){
 };
-
+var debug = false;
 var objects=[];
 var objectsCollection={};
+
+cjs.prototype.debugPrint = function(message)
+{
+	if(!debug)
+		return;
+	else
+		alert(message);
+}
 
 cjs.prototype.inferObjects = function( html ) {
 	objects=[];
@@ -45,6 +53,7 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 
 		}					
 	}	
+	cjs.prototype.debugPrint(JSON.stringify(objectsCollection));
 }
 
 pkg = {

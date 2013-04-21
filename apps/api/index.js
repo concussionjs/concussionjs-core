@@ -153,18 +153,31 @@ addNewObjects = function(objects,callback)
 {
 	if (!nta.debug)
 		util.debug('addNewObjects: inside addNewObjects xx' + objects.length + " " + JSON.stringify(objects));
-	for (i = 0; i < objects.length; i++)
+	for (var i = 0; i < objects.length; i++)
 	{
+		
+		if(objects[i])
+		{
 		if (!nta.debug)
 			util.debug('addNewObjects: ' + objects[i].name);
 		try {
-		var currentObj = objects[i];
-		var currentName = '' + currentObj.name;
+		//var currentObj = objects[i];
+		//var currentName = '' + currentObj.name;
+		processObject(objects[i]);
 		if (!nta.debug)
-			util.debug('addNewObjects: currentName' + currentName + ' ' + currentObj.fields.length + " " + JSON.stringify(currentObj));
-		if (currentName.search('_search') < 0)
+			util.debug('addNewObjects: currentName' + objects[i].name + ' ' + objects[i].fields.length + " " + JSON.stringify(objects[i]));
+		
+		}catch (e) {console.error('addNewObjects:big error', e);}
+	}
+}
+callback();
+};
+
+processObject = function(object)
+{
+	if ((""+object).search('_search') < 0)
 		{
-		nta.getEntriesWhere({'name': currentName},'cjs_objects', function(err,result)
+		nta.getEntriesWhere({'name': object.name},'cjs_objects', function(err,result)
 		{
 			//console.log("addNewObjects,","inside find ", "result: ", result.length, ", ", currentObj.name);
 			if (nta.debug)
@@ -174,11 +187,11 @@ addNewObjects = function(objects,callback)
 				console.error('Error when getting entries in addNewObjects, err:', err);
 				return;
 			}
-
-			if (result.length > 0)
+			util.debug('addNewObjects: result ' + JSON.stringify(result) + " currentName: " + object.name);
+			if (result.length>0)
 			{
-				currentObj.fields = dedupe(result[0].fields.concat(currentObj.fields));
-				nta.updateEntry('' + result[0]._id, {$set: currentObj},'cjs_objects', function(err) {
+				object.fields = dedupe(result[0].fields.concat(object.fields));
+				nta.updateEntry('' + result[0]._id, {$set: object},'cjs_objects', function(err) {
 						if (err)
 						{
 							console.error('addNewObjects err: ', err);
@@ -190,24 +203,19 @@ addNewObjects = function(objects,callback)
 			{
 				if (!nta.debug)
 					util.debug('addNewObjects: object does not exist');
-				nta.createEntry(currentObj, 'cjs_objects', function(msg) {
-						if (nta.debug)
+				nta.createEntry(object, 'cjs_objects', function(msg) {
+						if (!nta.debug)
 							util.debug('add new ', msg);
-						callback();
+						//callback();
 				});
 			}
 
 		});
 		if (nta.debug)
 			util.debug('addNewObjects: i: ', i, ' objects.length: ', objects.length);
-
-		if (i == objects.length - 1)
-			callback();
 	}
-		}catch (e) {console.error('addNewObjects:big error', e);}
-	}
+}
 
-};
 
 var generateRoutes = function(req,res,next) {
 	skipNext = false;

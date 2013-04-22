@@ -416,8 +416,8 @@ div > legend {
 	margin: 2px 0 0 18px;
 	width: 16px;
 	height: 16px;
-	opacity: .5;
-	background: rgba(100,111,115,1.0) center center no-repeat;
+	opacity: .25;
+	/* background: rgba(100,111,115,1.0) center center no-repeat; */
 	background-image: url("images/icon-delete.svg");
 	-webkit-transition: all 0.2s ease-in-out;
 	transition: all 0.2s ease-in-out;
@@ -425,8 +425,8 @@ div > legend {
 }
 
 .delete-icon:hover {
-	background-image: url("../images/icon-delete-hover.svg");
-	background-color: rgba(102, 153, 204, 1);
+	/*background-image: url("images/icon-delete-hover.svg");*/
+	/* background-color: rgba(102, 153, 204, 1); */
 	opacity: 1;
 }
 

@@ -416,7 +416,7 @@ div > legend {
 	margin: 2px 0 0 18px;
 	width: 16px;
 	height: 16px;
-	opacity: .25;
+	opacity: .1;
 	/* background: rgba(100,111,115,1.0) center center no-repeat; */
 	background-image: url("images/icon-delete.svg");
 	-webkit-transition: all 0.2s ease-in-out;

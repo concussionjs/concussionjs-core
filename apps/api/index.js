@@ -596,13 +596,15 @@ var updateWhereRoute = app.post('/updateWhere/:objectName',function(req,res){
 
 var updateWhereAction = function(objectName,req,res)
 {
-	if (nta.debug)
+	if (!nta.debug)
 			util.debug('updatePage:x ', req.rawBody, ' url', req.url);
 	res.writeHeader(200);
 	
 	updatedRow = JSON.parse(('' + req.rawBody).replace('_id', '_id_mock'));
-
 	var where = qs.parse(req.url.split('?')[1]);
+	if (!nta.debug)
+			util.debug(JSON.stringify(where));
+	
 
 	try {
 		nta.updateEntryWhere(where, updatedRow, objectName, function(err,documents) {

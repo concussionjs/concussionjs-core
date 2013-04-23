@@ -28,10 +28,10 @@
 				<section id="object-list" data-bind="foreach:cjs_objects">
 					<ul data-bind="css: { objectsSelected: cjs_selected()},click:selectObject">
 						<li>
-							<div class="object-name-wrapper"><span id="name" data-bind="text:varname">Object</span><a class="delete-icon" title="Delete"></a></div>
+							<div class="object-name-wrapper"><span id="name" data-bind="text:varname">Object</span><a class="delete-icon" title="Delete" data-bind="click:remove"></a></div>
 							<ul data-bind="foreach:fields">
 								<li>
-									<div class="attribute-name-wrapper"><span data-bind="text:name">Attribute</span><a class="delete-icon" title="Delete"></a></div>
+									<div class="attribute-name-wrapper"><span data-bind="text:name">Attribute</span><a class="delete-icon" title="Delete" data-bind="click:$parent.removeField.bind($data,$parent)"></a></div>
 								</li>
 							</ul>
 						</li>

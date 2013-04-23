@@ -14,9 +14,21 @@ try{
 	%>
 	function fields(data)
 			{
-				//alert(data.type);
+				console.log("fields " + data.type);
 				
 				var self = this;
+				//self.remove = function() {
+    				console.log("fields " + ko.toJSON(self));
+
+    				/*$.ajax("/delete/cjs_objects/"+this._id(), {
+						type: "get", 
+						dataType: "text",
+						success: function(result)
+						{
+							
+						}
+					});*/
+				//};
 				self.varname=ko.observable(data.varname);
 				self.name=ko.observable(data.name);					
 				self.type=ko.observable(data.type);			
@@ -86,6 +98,10 @@ try{
 						{
 							self.<%=myObject.fields[j].name%>=ko.observable(data.<%=myObject.fields[j].name%>);
 						}
+						else if(data.<%=myObject.fields[j].name%>)
+						{
+
+						}
 						else
 						{
 							self.<%=myObject.fields[j].name%>=ko.observable('');
@@ -96,8 +112,36 @@ try{
 					}
 					%>
 
-						
+						this.remove = function() {
+    					 //console.log("remove object " + this._id());
+    					 //console.log(JSON.stringify(this.fields()));
+    					   	$.ajax("/delete/cjs_objects/"+this._id(), {
+								type: "get", 
+								dataType: "text",
+								success: function(result)
+								{
+									<%=myObject.name%>_read();
+								}
+							});
+						}
 
+						this.removeField = function(arg) {
+    					 	//console.log("remove field " + this.name + " " + JSON.stringify(this) + " " + arg.fields().indexOf(this) + " " + JSON.stringify(arg.fields()) + " " + arg._id());
+    					 	var index = arg.fields().indexOf(this);
+    					 	arg.fields().splice(index,1)
+    					 	arg.fields(arg.fields())
+    					 	$.ajax("/updateWhere/<%=myObject.name%>/?name=" + arg.name() , {
+								data: ko.toJSON(arg),
+								type: "post", dataType: "text",
+								success: function(result) 
+								{ 
+									$.getJSON("/getEntriesByTenantObjectId/<%=myObject.name%>", function(allData) {
+										<%=myObject.name%>_read(arg._id());
+									});
+        				   		}
+       						});
+    					 	
+						}
 						self._id=ko.observable(data._id);
 						self.row=ko.observable("");
 						self.myForm = ko.observable("");
@@ -536,21 +580,27 @@ try{
 	%>
 		<%if(objects[i].name=="cjs_objects")
         {%>
+        <%=objects[i].name%>_read = function(selectedId){	
 			$.ajax(
 			{url:"/read/cjs_objects",
 			dataType:"json",
 			data:'',
 			success:function(data){
 				//alert(JSON.stringify(data));
+				
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         			self.<%=objects[i].name%>(mapped);
         			self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
         			if(self.cjs_objects().length<1)
         				return;
-        			self.cjs_admin_current_object_name(self.cjs_objects()[0].name());
+ 					var index = findSelected(self.cjs_objects(),selectedId);
+
+        			self.cjs_admin_current_object_name(self.cjs_objects()[index].name());
         			//console.log("current object name " + self.cjs_admin_current_object_name());
-        			self.cjs_objects()[0].cjs_selected(true);
-					self.cjs_admin_current_selected_object(self.cjs_objects()[0]);
+        			self.cjs_objects()[index].cjs_selected(true);
+					self.cjs_admin_current_selected_object(self.cjs_objects()[index]);
+					self.cjs_admin_current_selected_object().cjs_selected(true);
+					self.cjs_admin_current_object_name(self.cjs_admin_current_selected_object().name());
 					
 					$.ajax(
 					{
@@ -558,7 +608,7 @@ try{
 						dataType:"json",
 						data:'',
 						success:function(data){
-							//alert(JSON.stringify(data));
+							//console.log(JSON.stringify(data));
 							var mapped = $.map(data[0].fields,function(item){return new fields(item)});
         					self.cjs_admin_current_object_fields(mapped);
 							loadObjects(false, function(){
@@ -577,20 +627,26 @@ try{
 							});
 						}			
 					});
-			}			
-		});
+				}			
+			});
+		}
+		<%=objects[i].name%>_read();
 		<%}else
         {%>
-		$.ajax(
-			{url:"/getEntriesByTenantObjectId/<%=objects[i].name%>",
-			dataType:"json",
-			data:'',
-			success:function(data){
-				//alert(JSON.stringify(data));
-				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
-        		self.<%=objects[i].name%>(mapped);
-			}			
-		});
+		<%=objects[i].name%>_read = function()
+		{
+			$.ajax(
+				{url:"/getEntriesByTenantObjectId/<%=objects[i].name%>",
+				dataType:"json",
+				data:'',
+				success:function(data){
+					//alert(JSON.stringify(data));
+					var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
+        			self.<%=objects[i].name%>(mapped);
+				}			
+			});
+		}
+		<%=objects[i].name%>_read();
 		<%}%>
 	<%
 		//}
@@ -665,7 +721,20 @@ try{
 	//self.cjs_objects()[0].cjs_selected(true);
 	//self.cjs_admin_current_selected_object(self.cjs_objects()[0]);
 
-	
+	var findSelected = function(array,id)
+	{
+		if(!id)
+			return 0;
+		for(var i=0;i<array.length;i++)
+		{
+			//console.log(array[i]._id() + " " + id); 
+			if(array[i]._id() == id)
+			{
+				return i;
+			}
+		}
+		return 0;
+	}
 
 	
 	}

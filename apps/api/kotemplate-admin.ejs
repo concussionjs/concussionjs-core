@@ -575,7 +575,7 @@ try{
 				
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         			self.<%=objects[i].name%>(mapped);
-        			self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
+        			//self.<%=objects[i].name%>(self.<%=objects[i].name%>().filter(function(element,index,array){return (element.name() && element.name().search("<%=sessionId%>")>-1)}));
         			if(self.cjs_objects().length<1)
         				return;
  					var index = findSelected(self.cjs_objects(),selectedId);

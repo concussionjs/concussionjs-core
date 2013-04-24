@@ -14,26 +14,11 @@ try{
 	%>
 	function fields(data)
 			{
-				console.log("fields " + data.type);
-				
 				var self = this;
-				//self.remove = function() {
-    				console.log("fields " + ko.toJSON(self));
-
-    				/*$.ajax("/delete/cjs_objects/"+this._id(), {
-						type: "get", 
-						dataType: "text",
-						success: function(result)
-						{
-							
-						}
-					});*/
-				//};
 				self.varname=ko.observable(data.varname);
 				self.name=ko.observable(data.name);					
 				self.type=ko.observable(data.type);			
-				self._id=ko.observable(data._id);
-					
+				self._id=ko.observable(data._id);		
 			}
 	// handle children
 	<%
@@ -582,7 +567,7 @@ try{
         {%>
         <%=objects[i].name%>_read = function(selectedId){	
 			$.ajax(
-			{url:"/read/cjs_objects",
+			{url:"/getEntriesByName/cjs_objects/<%=sessionId%>",
 			dataType:"json",
 			data:'',
 			success:function(data){

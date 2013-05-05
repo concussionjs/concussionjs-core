@@ -5,7 +5,7 @@
 	
 var cjs = function(){
 };
-var debug = false;
+var debug = true;
 var objects=[];
 var objectsCollection={};
 
@@ -14,14 +14,14 @@ cjs.prototype.debugPrint = function(message)
 	if(!debug)
 		return;
 	else
-		alert(message);
+		console.log(message);
 }
 
 cjs.prototype.inferObjects = function( html ) {
 	objects=[];
 	objectsCollection={}
 	this.parseHTML(html);
-	// console.log(JSON.stringify(objects));
+	cjs.prototype.debugPrint(JSON.stringify(objects));
 	return objects;
 }
 
@@ -32,8 +32,10 @@ cjs.prototype.compare = function(answer,sample){
 }
 
 cjs.prototype.parseHTML = function (html, parent, prefix){
-	//console.log("parsing: " +  html);
+	//cjs.prototype.debugPrint("parsing: " +  html);
 	var databind = pkg.knockout.filterNestedNodes(pkg.knockout.parseDatabinds(html));
+	var datacjs = pkg.cjs.filterNestedNodes(pkg.cjs.parseDatacjs(html));
+	cjs.prototype.debugPrint(datacjs.length);
 	for(var i=0;i<databind.length;i++)
 	{		
 		var directive = pkg.knockout.getDirective($(databind[i]).attr("data-bind"));
@@ -53,10 +55,153 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 
 		}					
 	}	
+	
+	for(var i=0;i<datacjs.length;i++)
+	{		
+		var directives = $(datacjs[i]).attr("data-cjs").split(",");
+		var obj = {};
+		for(var j=0;j<directives.length;j++)
+		{	
+			var directive = pkg.cjs.getDirective(directives[j]);
+			cjs.prototype.debugPrint("cjs directive");
+			var construct = pkg.cjs.constructs[directive.toLowerCase()];
+			cjs.prototype.debugPrint(construct);
+			if(!construct)
+			{
+				throw new Error('InvalidDirective');
+			}
+		
+			obj=$.extend({},obj,construct({"data-cjs":directives[j]}));
+			cjs.prototype.debugPrint(JSON.stringify(obj));
+
+		}
+		objects[objects.length]={"cjs-settings":obj};
+		/*if(obj && !parent)
+		{
+			if(!objectsCollection[obj.name])
+			{
+				objectsCollection[obj.name]=obj;			
+				objects[objects.length]=obj;
+			}
+
+		}*/					
+	}	
 	cjs.prototype.debugPrint(JSON.stringify(objectsCollection));
 }
 
 pkg = {
+	cjs:{
+		getObjectName : function(token)
+		{
+	 		var tokens = token.split(".");
+	 		if(tokens.length > 1)
+	 			return tokens[0];
+	 		else
+	 			return null;
+		}
+		,
+		getObjectValue : function(token)
+		{
+	 		var tokens = token.split(".");
+	 		if(tokens.length > 1)
+	 			return tokens[1];
+	 		else
+	 			return null;
+		}
+		,
+		getParameter : function(token,prefix)
+		{
+			var tokens = token.split(",")[0].split(":");	
+			if(tokens.length>0)
+			{	
+				tokens[1] = $.trim(tokens[1])
+				if(prefix)
+				{
+					var prefixRemoved = tokens[1].split(prefix+".");
+					if(prefixRemoved.length==1)
+						return prefixRemoved[0];
+					else if(prefixRemoved.length==2)
+						return prefixRemoved[1];
+					else
+						return null;
+				}
+				else
+					return tokens[1].split("()")[0];
+			}
+			else
+				return null;
+		}
+		,
+		getDirective : function(token)
+		{
+			if(!token)
+			{
+				throw new Error('InvalidDirective');
+			}
+
+			var tokens = token.split(",")[0].split(":");
+			if(tokens.length>0)
+			{	
+				tokens[0] = $.trim(tokens[0]);
+				return tokens[0];
+			}
+			else
+				return null;
+		}
+		,
+		parseDatacjs : function(token)
+		{
+			var hiddenDIV = $('<div></div>').html(token);
+			return $('[data-cjs]',hiddenDIV);
+		}
+		,
+		filterNestedNodes : function(dom)
+		{
+			cjs.prototype.debugPrint("inside filterNestedNodes");
+			return $(dom).filter(function(){return window.$(this).parents("[data-cjs]").length==0})
+		}
+		,
+		processPeers : function(dom,parent,prefix)
+		{
+			if(dom.length>1)
+				for(i=1;i<dom.length;i++)
+				{
+					parseHTML(dom[i],parent,prefix);
+				}
+		}
+		,
+		constructs : {
+			securitytype: function(token,parent,prefix){
+			// do nothing
+				var obj = {};
+				obj.securityType = pkg.cjs.getParameter($(token).attr("data-cjs"));
+				return obj;
+			},
+			login: function(token,parent,prefix){
+			// do nothing
+				var obj = {};
+				obj.login = pkg.cjs.getParameter($(token).attr("data-cjs"));
+				return obj;
+			},
+			security: function(token,parent,prefix){
+			// do nothing
+				var obj = {};
+				//obj.name = "login";
+				obj.objectName = pkg.cjs.getObjectName(pkg.cjs.getParameter($(token).attr("data-cjs")));
+				obj.securityKey = pkg.cjs.getObjectValue(pkg.cjs.getParameter($(token).attr("data-cjs")));
+				cjs.prototype.debugPrint(JSON.stringify(obj));
+				return obj;
+			},
+			appname: function(token,parent,prefix){
+			// do nothing
+				var obj = {};
+				//obj.name = "login";
+				obj.appname = pkg.cjs.getParameter($(token).attr("data-cjs"));
+				cjs.prototype.debugPrint(JSON.stringify(obj));
+				return obj;
+			}				
+		}	
+	},
 	knockout:{
 		getObjectName : function(token)
 		{
@@ -226,7 +371,7 @@ cjs.prototype.dedupe = function(arr)
 	var retArr = [];
 	for (var i = 0; i < arr.length; i++)
 	{
-		//console.log("testParse: ",arr[i].name, " ",retArr.length, " ",arrTrackDupes.indexOf(arr[i].name));
+		//cjs.prototype.debugPrint("testParse: ",arr[i].name, " ",retArr.length, " ",arrTrackDupes.indexOf(arr[i].name));
 		if (arrTrackDupes.indexOf(arr[i].name) == -1)
 		{
 			arrTrackDupes[arrTrackDupes.length] = arr[i].name;
@@ -338,20 +483,21 @@ cjs.prototype.readCookie = function(name) {
 			if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
 		}
 	}
-	else if(localStorage.getItem("sessionId"))
+	else if(localStorage.getItem(name))
 	{
-		return localStorage.getItem("sessionId");
+		return localStorage.getItem(name);
 	}
 	return null;
 }
 
 cjs.prototype.eraseCookie = function(name) {
-	createCookie(name,"",-1);
+	cjs.prototype.createCookie(name,"",-1);
+	localStorage.removeItem(name);
 }
 
 cjs.prototype.getPage = function(callback)
 {
-		//console.log("countgp: " + (countgp++));
+		//cjs.prototype.debugPrint("countgp: " + (countgp++));
 
 		var vars = [], hash;
 		var q = document.URL.split('?')[1];
@@ -366,7 +512,7 @@ cjs.prototype.getPage = function(callback)
 				vars[hash[0]] = hash[1];
 			}
 		}
-		//console.log("vars[id]=" + vars["id"]);
+		//cjs.prototype.debugPrint("vars[id]=" + vars["id"]);
 		if(!vars["id"] && !cjs.prototype.readCookie("sessionId"))
 		{
 			cjs.prototype.createUUID(function(id){

@@ -23,7 +23,7 @@ Our mission is to bring down the barriers to creating, and learning how to creat
 
 Our Platform Roadmap
 ====================
-+ The platform's initial target usecases are: 
+The platform's initial target usecases are: 
 + Building simple, graphically rich web applications
 + Rapid prototyping (e.g., turning a static HTML prototype into an interactive, database backed application)
 

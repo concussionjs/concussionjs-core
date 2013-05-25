@@ -1,14 +1,7 @@
-concussionjs-core
-=================
+concussionjs-core documentation
+===============================
 
-Why is it so hard to build apps?
-We are awash in frameworks, patterns, libraries, architectures, and platforms. But it still takes teams of developers months to put together a basic application. Worse still, for beginners there is a step change in complexity moving from writing HTML to building even the most basic database backed apps.
-
-Why it matters
-==============
-Modern web and mobile applications have redefined our expectations for how easy software should be to use. Unfortunately, most software companies still spend the majority of their time focusing on just getting their app to work, not on meeting the needs of their users.
-
-Designing useful, usable products is a numbers game. Developers and designers need to try many different solutions and evaluate them with users to see what works and what doesn't. The more design iterations you can do, the faster you can figure out what works and what doesn't. By radically reducing the time it takes to build apps, ConcussionJS will free up organizations to spend their time on the design, not the implementation.
+http://www.concussionjs.com/#documentation
 
 The ConcussionJS Community's Mission
 =====================================

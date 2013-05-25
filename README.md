@@ -16,13 +16,13 @@ Our mission is to bring down the barriers to creating, and learning how to creat
 
 Our Platform Roadmap
 ====================
-The platform's initial target usecases are: 
+*The platform's initial target usecases are:*
 + Building simple, graphically rich web applications
 + Rapid prototyping (e.g., turning a static HTML prototype into an interactive, database backed application)
 
 As the community grows and platform matures, the goal is to support increasingly sophisticated use cases, and ultimately support both enterprise-ready business applications and web-scale, consumer facing apps.
 
-In addition, we believe that to become a dominant platform ConcussionJS must be able to:
+*In addition, we believe that to become a dominant platform ConcussionJS must be able to:*
 + Run on-demand and on-premises
 + Operate on-line and off-line
 + Deploy as both a multi-tenant and single-tenant solution
@@ -34,7 +34,7 @@ In addition, we believe that to become a dominant platform ConcussionJS must be 
 
 We are just at the beginning of this journey, and there is much to do to fully realize this vision. If you've been frustrated with the inefficieny of building apps and want to take up arms against the encumbant platforms, please join us on github and contribute. 
 
-Immediate areas we would like your help with include, but are not limited to, the following:
+*Immediate areas we would like your help with include, but are not limited to, the following:*
 
 + Adding support for KnockoutJS alternatives, in particular AngularJS (www.angularjs.org)
 + Integrating better security and identity management

@@ -1,7 +1,7 @@
 concussionjs-core documentation
 ===============================
 
-http://www.concussionjs.com/#documentation
+http://www.concussionjs.com/ under the documentation tab
 
 The ConcussionJS Community's Mission
 =====================================

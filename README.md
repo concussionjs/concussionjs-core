@@ -20,7 +20,9 @@ Our mission is to bring down the barriers to creating, and learning how to creat
 + Increasing the power of HTML and CSS skills
 + Ensuring that learnability for first time users is sacred, and that time to learn a task is proportional to its complexity
 + Providing a way for people to interact with the platform at all points along the interest curve (e.g., "I just heard about the platform and am still skeptical" to "I love the technology and want to deploy it behind my firewall" to "I have drunk the kool aid, and now want to contribute to the codebase") that only requires a level of effort proportional to the interest level
-+ Our Platform Roadmap
+
+Our Platform Roadmap
+====================
 + The platform's initial target usecases are: 
 + Building simple, graphically rich web applications
 + Rapid prototyping (e.g., turning a static HTML prototype into an interactive, database backed application)

@@ -17,14 +17,16 @@ var app = express();
 var util = require('util');
 var redis = require('redis');
 var URLPrefix=process.env.CJS_WEB_URL;
-var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js']
-var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
+var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.js']
+var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"},{templateFileName:__dirname + "/js/cjs-bootstrap-customLink.ejs",outputFileName:__dirname + "/js/cjs-bootstrap-customLink.js"}];
 /*
 	reference:
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
+var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.js'],outputFileName:'customLink.js'}
+
 localizeFiles(files2Localize);
 
 var s = settings();
@@ -72,7 +74,8 @@ function compileFiles(fileArray)
 	}
 	else{
 		console.log("initiating creation of concussion.js");	
-		concatenateFiles(files2Concatenate.inputFileNames, files2Concatenate.outputFileName);		
+		concatenateFiles(files2Concatenate.inputFileNames, files2Concatenate.outputFileName);
+		concatenateFiles(customLinkFiles2Concatenate.inputFileNames, customLinkFiles2Concatenate.outputFileName);		
 	}
 }
 
@@ -248,6 +251,46 @@ function getCJSsettings(myObjects, callback)
 		callback(myObjects,null);
 	}
 
+}
+
+var customLinkRoute = app.get("/customLink/:customLinkName", function(req,res){
+	customLinkAction(req.params.objectName,req.params.customLinkName,req,res);
+});
+
+var customLinkAction = function(objectName,customLinkName,req,res)
+{
+	
+	var validateArg = customLinkName.split(".js");
+	console.log(req.headers.referer);
+	if(validateArg.length<2)
+	{
+		res.end(customLinkName + " invalid filename");
+	}
+	else
+	{
+		if(validateArg[0])
+		{	
+			nta.getEntriesWhere({'key': validateArg[0]},'cjs_users', function(err,objects) {
+				if (nta.debug)
+					util.debug('getScript: ' + JSON.stringify(objects));
+				if (objects && objects.length > 0)
+				{
+					fs.readFile(__dirname + '/customLink.js','utf-8', function(err,data){
+						if(err) throw err;
+						res.end(data);
+					});
+				}
+				else
+				{
+					res.end(customLinkName + " invalid filename");
+				}
+			});
+		}
+		else
+		{
+			res.end(customLinkName + " invalid filename");
+		}
+	}
 }
 
 var readRoute = app.get("/read/:objectName", function(req,res){
@@ -803,6 +846,7 @@ var server = connect.createServer(
 	deleteRoute,
 	updateRoute,
 	updateWhereRoute,
+	customLinkRoute,
 	//generateRoutes,
 	nta.serveStaticFilesNoWriteHead,
 	connect.static(__dirname)

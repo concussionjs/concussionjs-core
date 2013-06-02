@@ -4,14 +4,13 @@ $.ajaxSetup({
 
 window.onload = function(){
 			cjs.getPage(function(page){
-				
-				var sessionId = cjs.readCookie("sessionId");
 				var error;
 				//console.log($.stringify(cjs.inferObjects(page.html)));
 				//console.log("countme: " + (countme++));
-				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid="+sessionId,JSON.stringify(cjs.inferObjects(page.html)),function(result){
+				$.post("http://api.local-concussionjs.com/postGetScript/true/?sid="+cjs.readCookie("tenantId"),JSON.stringify(cjs.inferObjects(page.html)),function(result){
 						//console.log(result);
 						eval(result);							
 					});
 			});
 }
+

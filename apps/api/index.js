@@ -17,15 +17,15 @@ var app = express();
 var util = require('util');
 var redis = require('redis');
 var URLPrefix=process.env.CJS_WEB_URL;
-var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.js']
-var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"},{templateFileName:__dirname + "/js/cjs-bootstrap-customLink.ejs",outputFileName:__dirname + "/js/cjs-bootstrap-customLink.js"}];
+var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.ejs']
+var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
 /*
 	reference:
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
-var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.js'],outputFileName:'customLink.js'}
+var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
 
 localizeFiles(files2Localize);
 
@@ -67,7 +67,7 @@ function compileFiles(fileArray)
 	if(fileName)
 	{
 		console.log(fileName);
-		exec(" java -jar " + __dirname + "/compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".js","-compiled.js")
+		exec(" java -jar " + __dirname + "/compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".","-compiled.")
 			, function (error, stdout, stderr) {
 				compileFiles(fileArray);
 			});
@@ -275,9 +275,9 @@ var customLinkAction = function(objectName,customLinkName,req,res)
 					util.debug('getScript: ' + JSON.stringify(objects));
 				if (objects && objects.length > 0)
 				{
-					fs.readFile(__dirname + '/customLink.js','utf-8', function(err,data){
+					fs.readFile(__dirname + '/customLink.ejs','utf-8', function(err,data){
 						if(err) throw err;
-						res.end(data);
+						res.end(ejs.render(data, {locals: {'CJS_WEB_URL':URLPrefix, 'tenantId':validateArg[0]}}));
 					});
 				}
 				else

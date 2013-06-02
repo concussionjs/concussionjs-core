@@ -7,7 +7,7 @@ window.onload = function(){
 				var error;
 				//console.log($.stringify(cjs.inferObjects(page.html)));
 				//console.log("countme: " + (countme++));
-				$.post("http://api.local-concussionjs.com/postGetScript/true/?sid="+cjs.readCookie("tenantId"),JSON.stringify(cjs.inferObjects(page.html)),function(result){
+				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid=<%=tenantId%>",JSON.stringify(cjs.inferObjects(page.html)),function(result){
 						//console.log(result);
 						eval(result);							
 					});

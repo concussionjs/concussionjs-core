@@ -288,7 +288,8 @@ try{
 	self.<%=objects[i].varname%>Form = ko.observable();
 
     var <%=objects[i].varname%>CreateJSON = function(){
-	self.<%=objects[i].varname%>Form({
+    	//console.log("in CreateJSON");
+	$mvm.<%=objects[i].varname%>Form({
 		<%
 		if(securityKey){
 		%>
@@ -323,10 +324,13 @@ try{
     self.<%=objects[i].varname%>.create = function() {
     	var patt = new RegExp("<%=objects[i].varname%>Form","g");
         //alert(ko.toJSON(self)); 
+        //console.log("self b " + $mvm.<%=objects[i].varname%>Form());
         <%=objects[i].varname%>CreateJSON();
         //alert(ko.toJSON(self)); 
+        //console.log("self ja " + ko.toJSON($mvm.<%=objects[i].varname%>Form()));
+        //console.log("self a" + ko.toJSON($mvm.<%=objects[i].varname%>.read()));
         $.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
-			data: ko.toJSON(self).replace(patt,"<%=objects[i].name%>","g"),
+			data: "{\"<%=objects[i].name%>\":" + ko.toJSON($mvm.<%=objects[i].varname%>Form()) + "}",
 			type: "post",
 			dataType: "text",
 			success: function(result) 
@@ -362,6 +366,7 @@ try{
 	{
 	%>
 		$mvm.<%=objects[i].name%>_getRecords();
+		console.log("self " + ko.toJSON($mvm));
 	<%
 	}	
 %>	

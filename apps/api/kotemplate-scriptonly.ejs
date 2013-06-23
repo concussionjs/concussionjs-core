@@ -340,12 +340,13 @@ try{
         //console.log("self ja " + ko.toJSON($mvm.<%=objects[i].varname%>Form()));
         //console.log("self a" + ko.toJSON($mvm.<%=objects[i].varname%>.read()));
         var data = new FormData();
-        $.each($('#file')[0].files, function(i, file) {
-    		data.append('file-'+i, file);
-		});
+        if($("input:file") && $("input:file").length>0)
+        {
+        	$.each($("input:file")[0].files, function(i, file) {
+    			data.append('file-'+i, file);
+			});
+        }
 
-
-       console.log(JSON.stringify($('#file')[0].files));
         var id = cjs.readCookie("userId");
         if(!id)
         {
@@ -399,11 +400,6 @@ try{
 					dataType: "text",
 					success: function(result) 
 					{
-						/*$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>", function(allData) {
-						var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-        				self.<%=objects[i].varname%>.read(mapped);
-						});*/
-        				alert(result);
         				self.<%=objects[i].name%>_getRecords();
 						<%=objects[i].varname%>_reset_form();
 					}

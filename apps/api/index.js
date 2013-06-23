@@ -16,6 +16,10 @@ var express = require('express');
 var app = express();
 var util = require('util');
 var redis = require('redis');
+var AWS = require('aws-sdk');
+var s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+
+
 var URLPrefix=process.env.CJS_WEB_URL;
 var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.ejs']
 var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
@@ -388,24 +392,29 @@ var postGetScriptRoute = app.all("/postGetScript/:isparsed",function(req,res){
 
 var postGetScriptAction = function(isparsed,req,res)
 {
-	res.writeHeader(200);
+	//res.writeHeader(200);
 	if (!nta.debug)
-    	util.debug(req.rawBody);
+    	util.debug("postGetScript: " + req.rawBody);
 
-	try{
+	//try{
 	var args = qs.parse(req.url.split('?')[1]);
 	if (nta.debug)
-		util.debug(req.body + ' postGetScript x: session id: ' + args.id + ' HTML rawBody ' + args.html);
+		util.debug(req.rawBody + ' postGetScript x: session id: ' + args.sid + ' HTML rawBody ' + args.html);
+	
+
 	if(req.rawBody)
 	{
 		var html = req.rawBody;
 		var id = args.sid;
+		var tenantId = args.tenantId;
 	}
 	else
 	{	
 		var html = args.html;
 		var id = args.id;
+		var tenantId = args.tenantId;
 	}
+
 	if(isparsed && isparsed.toLowerCase()=="true")
 	{
 		if (nta.debug)
@@ -419,10 +428,10 @@ var postGetScriptAction = function(isparsed,req,res)
 		getCJSsettings(myObjects,function(myObjects, CJSsettings){
 			if(!nta.debug)
 				util.debug(JSON.stringify(CJSsettings));
-			setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
+			setSessionId(myObjects, 'id_' + ((tenantId)?tenantId:id), 0, function(myObjects) {
 				if ( nta.debug)
 				{
-					util.debug('getScript: setSession ' +  id + ' ' + JSON.stringify(myObjects) + " " + myObjects[0].name);
+					util.debug('getScript: setSession ' +  ((tenantId)?tenantId:id) + ' ' + JSON.stringify(myObjects) + " " + myObjects[0].name);
 				}
 
 				addNewObjects(myObjects, function() {
@@ -432,7 +441,7 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: ' + JSON.stringify(myObjects));
 					}	
 			
-					res.end(ejs.render(scriptonly, {locals: {'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}));
+					res.end(ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}));
 				});
 			});
 		});	
@@ -461,7 +470,7 @@ var postGetScriptAction = function(isparsed,req,res)
 			});
 		});
 	}
-	}catch(error){console.log("custom error: " + error);res.end("error");}
+	//}catch(error){console.log("custom error: " + error);res.end("error");}
 }
 
 var getEntriesByTenantObjectIdRoute = app.get("/getEntriesByTenantObjectId/:objectName",function(req,res){
@@ -521,8 +530,8 @@ var createInstanceAction = function(objectName,req,res)
 						//var newObject = JSON.parse(req.rawBody)[objectName];
 						util.debug(JSON.stringify(newObject));
 						newObject.tenant_object_id = objectName;
-						nta.createEntry(newObject, "instances", function(msg) {
-							res.end(msg);
+						nta.createEntry(newObject, "instances", function(status,msg) {
+							res.end(JSON.stringify(msg));
 						});
 					}
 					else
@@ -547,8 +556,8 @@ var createInstanceAction = function(objectName,req,res)
 					var newObject = JSON.parse(req.rawBody)[objectName];
 					util.debug(JSON.stringify(newObject));
 					newObject.tenant_object_id = objectName;
-					nta.createEntry(newObject, "instances", function(msg) {
-						res.end(msg);
+					nta.createEntry(newObject, "instances", function(status, msg) {
+						res.end(JSON.stringify(msg));
 					});
 				/*}
 				else
@@ -683,6 +692,57 @@ var updateAction = function(objectName,tenantObjectId,id,req,res)
 
 	return;
 }
+
+
+var uploadFileRoute = app.post("/upload/:tenantId/:userId", function(req,res){
+	try{
+		uploadFileAction(req.params.tenantId,req.params.userId,req,res);
+	}catch(e){console.log(e);}
+});
+
+var uploadFileAction = function(tenantId, userId,req,res)
+{
+	try{
+	console.log("req.files: " + tenantId + " " + userId + " " + JSON.stringify(req.files));
+
+	var tmp_path = req.files["file-0"].path;
+    // set where the file should actually exists - in this case it is in the "images" directory
+    console.log(tmp_path);
+    var target_path = '/tmp/' + req.files["file-0"].name;
+    console.log(target_path);
+ 
+	AWS.config.update({
+    	region: 'us-east-1'
+	});
+	
+	fs.readFile(tmp_path,function(err, data){
+		if (err)
+      		console.log(err)
+    	else
+      	{
+			s3.putObject({ ACL: 'public-read', Body:data,Key: tenantId + "/" + userId + "/" + req.files["file-0"].name} , function(err,data) {
+    			if (err)
+      				console.log(err)
+    			else
+    			{
+      				console.log("Successfully uploaded data to myBucket/myKey");
+      				res.end(req.files["file-0"].name + " " + JSON.stringify(data) + " written to s3")
+      			}
+  			});
+  		}	
+	});
+	   
+    /*fs.rename(tmp_path, target_path, function(err) {
+        if (err) throw err;
+        // delete the temporary file, so that the explicitly set temporary upload dir does not get filled with unwanted files
+        fs.unlink(tmp_path, function() {
+            if (err) throw err;
+            res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
+        });
+    });*/
+	}catch(e){console.log(e);}
+} 
+
 
 var updateWhereRoute = app.post('/updateWhere/:objectName',function(req,res){
 	updateWhereAction(req.params.objectName,req,res);
@@ -827,25 +887,59 @@ crossDomainRules = function () {
    };
 };
 
+setRawBody = function(req,res,next){
+  var connectBodyParser = connect.bodyParser();
+  var expressBodyParser = express.bodyParser({uploadDir:'/home/concussed/uploads'});
+  console.log( req.url + " req.url.indexOf = " + req.url.search(/upload/));
+  if (req.url.search(/upload/)>-1)
+  {
+  	expressBodyParser(req,res,next);
+  }
+  else
+  {
+  	connectBodyParser(req,res,next);
+  }
+}
+
+var debugPrint = function(text)
+{
+	return function (res,req,next)
+	{
+		if(nta.debug)
+			console.log(text);
+		next();
+	}
+}
 var server = connect.createServer(
 	connect.logger({ format: ':method :url' }),
 	connect.cookieParser(),
 	//connect.session({ secret: 'test'}),
-	connect.bodyParser(),
+	debugPrint("\n\n**cookieParser**\n\n"),
+	setRawBody,
+	debugPrint("\n\n**setRawBody**\n\n"),
 	crossDomainRules(),
+	debugPrint("\n\n**crossDomain**\n\n"),
 	addDomainRoute,
+	debugPrint("\n\n**addDomain**\n\n"),
 	readRoute,
+	debugPrint("\n\n**readRoute**\n\n"),
 	getPageRoute,
+	debugPrint("\n\n**getPage**\n\n"),
 	getScriptRoute,
+	debugPrint("\n\n**getScript**\n\n"),
 	postGetScriptRoute,
+	debugPrint("\n\n**postGetScript**\n\n"),
 	getEntriesByTenantObjectIdRoute,
+	debugPrint("\n\n**getEntriesByTenantObjectId**\n\n"),
 	createInstanceRoute,
+	debugPrint("\n\n**createInstance**\n\n"),
 	createKeyRoute,
 	getEntriesByNameRoute,
 	getEntryWhereRoute,
 	deleteRoute,
 	updateRoute,
 	updateWhereRoute,
+	uploadFileRoute,
 	customLinkRoute,
 	//generateRoutes,
 	nta.serveStaticFilesNoWriteHead,

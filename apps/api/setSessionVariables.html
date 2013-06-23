@@ -1,9 +1,22 @@
 <script src="js/jquery-latest.js"></script>
 <script src="js/purl.js"></script>
 <script> 			
+	function getUrlVars()
+	{
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+		{
+			hash = hashes[i].split('=');                        
+			vars[vars.length] = hash[0];
+		}
+    	return vars;
+    }
+
 	var date = new Date();
 	date.setTime(date.getTime()+(1*24*60*60*1000));
 	var expires = "; expires=" + date.toGMTString();
-	localStorage.setItem("sessionId", $.url().param('sid'));
-	document.cookie = "sessionId"+"="+$.url().param('sid')+expires+"; path=/";
+	var url_vars = getUrlVars();
+	localStorage.setItem(url_vars[0], $.url().param(url_vars[0]));
+	document.cookie = url_vars[0]+"="+$.url().param(url_vars[0])+expires+"; path=/";
 </script>

@@ -139,6 +139,7 @@ function setUserIdCallback(obj)
      userId = obj['id'];
     }
     cjs.createCookie('userId',userId,1);
+    cjs.synchSessionVariables('userId', userId);
     console.log(JSON.stringify(obj));
     if (obj['name']) {
 		document.getElementById('auth-displayname').innerHTML = obj['name'];

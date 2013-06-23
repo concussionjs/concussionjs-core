@@ -96,6 +96,7 @@ else
 					document.getElementById('auth-displayname').innerHTML = me.name;
 				}
 				cjs.createCookie('userId',userId,1);
+				cjs.synchSessionVariables('userId',userId);
 				<%
 					for(var i=0;i<objects.length;i++)
 					{

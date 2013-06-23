@@ -5,9 +5,14 @@ $.ajaxSetup({
 window.onload = function(){
 			cjs.getPage(function(page){
 				var error;
+				var id = cjs.readCookie("userId");
+				if(!id)
+				{
+					id = cjs.readCookie("sessionId");
+				}
 				//console.log($.stringify(cjs.inferObjects(page.html)));
 				//console.log("countme: " + (countme++));
-				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid=<%=tenantId%>",JSON.stringify(cjs.inferObjects(page.html)),function(result){
+				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid=" + id + "&tenantId=<%=tenantId%>",JSON.stringify(cjs.inferObjects(page.html)),function(result){
 						//console.log(result);
 						eval(result);							
 					});

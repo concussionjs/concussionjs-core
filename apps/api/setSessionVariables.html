@@ -17,6 +17,10 @@
 	date.setTime(date.getTime()+(1*24*60*60*1000));
 	var expires = "; expires=" + date.toGMTString();
 	var url_vars = getUrlVars();
-	localStorage.setItem(url_vars[0], $.url().param(url_vars[0]));
-	document.cookie = url_vars[0]+"="+$.url().param(url_vars[0])+expires+"; path=/";
+	var varName = url_vars[0];
+	if(varName=='sid'){
+		varName="sessionId";
+	}
+	localStorage.setItem(varName, $.url().param(url_vars[0]));
+	document.cookie = varName+"="+$.url().param(url_vars[0])+expires+"; path=/";
 </script>

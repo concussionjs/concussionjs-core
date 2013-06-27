@@ -37,32 +37,32 @@
   opacity: 1;
 }
 #masthead-icon-facebook {
-  background-image: url("../img/icons/icon-facebook.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-facebook.svg");
 }
 #masthead-icon-facebook:hover {
-  background-image: url("../img/icons/icon-facebook-hover.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-facebook-hover.svg");
 }
 
 #masthead-icon-twitter {
-  background-image: url("../img/icons/icon-twitter.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-twitter.svg");
 }
 #masthead-icon-twitter:hover {
-  background-image: url("../img/icons/icon-twitter-hover.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/icons/icon-twitter-hover.svg");
 }
 #masthead-icon-github{  
-  background-image: url("../img/icons/icon-github.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-github.svg");
 }
 #masthead-icon-github:hover {
-  background-image: url("../img/icons/icon-github-hover.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-github-hover.svg");
 }
 #masthead-icon-settings {
-  background-image: url("../img/icons/icon-settings.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-settings.svg");
 }
 #masthead-icon-settings:hover {
- background-image: url("../img/icons/icon-settings-hover.svg");
+ background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-settings-hover.svg");
 }
 #masthead-icon-logout {
-  background-image: url("../img/icons/icon-logout.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-logout.svg");
 }
 #masthead-icon-logout:hover {
 }

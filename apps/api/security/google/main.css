@@ -35,21 +35,21 @@
 }
 
 #masthead-icon-google {
-  background-image: url("../img/icons/icon-google.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-google.svg");
 }
 #masthead-icon-google:hover {
-  background-image: url("../img/icons/icon-google-hover.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-google-hover.svg");
 }
 
 
 #masthead-icon-settings {
-  background-image: url("../img/icons/icon-settings.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-settings.svg");
 }
 #masthead-icon-settings:hover {
- background-image: url("../img/icons/icon-settings-hover.svg");
+ background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-settings-hover.svg");
 }
 #masthead-icon-logout {
-  background-image: url("../img/icons/icon-logout.svg");
+  background-image: url("http://@@CJS_WEB_URL@@/security/icons/icon-logout.svg");
 }
 #masthead-icon-logout:hover {
 }

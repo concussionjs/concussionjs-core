@@ -101,7 +101,7 @@ else
 					for(var i=0;i<objects.length;i++)
 					{
 				%>
-				$mvm.<%=objects[i].name%>_getRecords();
+				$mvm.<%=objects[i].name%>_getRecords(userId);
 				<%
 					}	
 				%>				

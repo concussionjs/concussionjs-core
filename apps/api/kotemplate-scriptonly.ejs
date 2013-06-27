@@ -236,6 +236,7 @@ try{
 		{%>
 		if(!userId)
 		{
+			//?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
 			$.ajax(
 				{url:"http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
 				dataType:"json",
@@ -444,11 +445,12 @@ try{
 			break;
 		}
 		var mainjs = fs.readFileSync(dirname + '/security/' + securityTypes[i] + '/main.js', 'utf-8');
+		var maincss = fs.readFileSync(dirname + '/security/' + securityTypes[i] + '/main.css', 'utf-8');
 	%>
 		$.ajax({
             url:"http://<%=URLPrefix%>/security/<%=securityTypes[i]%>/main.css",
             success:function(data){
-                 $("<style></style>").appendTo("head").html(data);
+                 $("<style></style>").appendTo("head").html(data.replace(/@@CJS_WEB_URL@@/g,"<%=URLPrefix%>"));
             }
         });
 

@@ -106,7 +106,7 @@ function loginFacebook(){
 
 function logoutFacebook(){
   console.log('logout');
-  userId=''; 
+  localStorage.setItem('userId',"");
   cjs.eraseCookie('userId');
   $('#masthead-icon-logout').unbind('click');		
   $('#cjsSecurityGateway').attr({'src':'http://<%=URLPrefix%>/security/facebook/logout.htm'});
@@ -142,6 +142,7 @@ function receiveMessage(event)
 	if (user.displayName) {
 		document.getElementById('auth-displayname').innerHTML = user.displayName;
 	}
+	localStorage.setItem('userId',userId);
 	cjs.createCookie('userId',userId,1);
 	cjs.synchSessionVariables('userId',userId);
    	<%

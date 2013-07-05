@@ -22,7 +22,8 @@
     "aws-sdk" : ">=0.0.0",
     "passport" : "0.1.x",
     "passport-facebook" : "0.1.x" ,
-    "passport-google" : "0.3.x" 
+    "passport-google" : "0.3.x",
+    "connect-ensure-login" : "0.1.x" 
   },
   "engines": {
     "node": ">=0.4.x"

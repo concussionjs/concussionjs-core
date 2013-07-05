@@ -1,4 +1,6 @@
 var userId;
+var popup;
+
 
 function appendLoggedOut()
 {
@@ -26,6 +28,8 @@ function appendLoggedIn()
 	document.getElementById('auth-status').appendChild(div);
 }
 
+
+
 function appendFb()
 {
 	var fb = document.createElement('a');
@@ -40,6 +44,15 @@ function appendStatus()
 	var div = document.createElement('div');
 	div.setAttribute('id','auth-status');
 	document.getElementsByTagName('body')[0].appendChild(div);
+}
+
+
+function appendSecurityGateway()
+{
+	var sg = document.createElement('iframe');
+	sg.style.display='none';
+	sg.id='cjsSecurityGateway';
+	document.getElementsByTagName('body')[0].appendChild(sg);
 }
 
 if($('#auth-status').length==0)
@@ -72,67 +85,98 @@ else
 	}
 }
 
-	(function(d){
-    	var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-    	if (d.getElementById(id)) {return;}
-    	js = d.createElement('script'); js.id = id; js.async = true;
-    	js.src = '//connect.facebook.net/en_US/all.js';
-    	ref.parentNode.insertBefore(js, ref);
-	}(document));
 
-	window.fbAsyncInit = function() {
-	FB.init({
-		appId      : '231629423618271', 
-		status     : true, 
-		cookie     : true, 
-		xfbml      : true
-	});
-		
-	FB.Event.subscribe('auth.statusChange', function(response) {
-		if (response.authResponse) {
-			FB.api('/me', function(me){
-				userId=me.id;
-				if (me.name) {
-					document.getElementById('auth-displayname').innerHTML = me.name;
-				}
-				cjs.createCookie('userId',userId,1);
-				cjs.synchSessionVariables('userId',userId);
-				<%
-					for(var i=0;i<objects.length;i++)
-					{
-				%>
-				$mvm.<%=objects[i].name%>_getRecords(userId);
-				<%
-					}	
-				%>				
-			});
-			$('#masthead-icon-logout').click(facebookLogout);
-			document.getElementById('auth-loggedout').style.display = 'none';
-			document.getElementById('auth-loggedin').style.display = 'block';
-		} 
-		else 
-		{
-			document.getElementById('auth-loggedout').style.display = 'block';
-			document.getElementById('auth-loggedin').style.display = 'none';
-		}
-	});
+	if($('#cjsSecurityGateway').length==0)
+	{
+		console.log('no cjsSecurityGateway iframe');
+		appendSecurityGateway();
+	}
 
-	$('#masthead-icon-facebook').click(function(){FB.login();});
-	$('#facebook-signup').click(function(){FB.login();});
-	
-	var facebookLogout = function(){
-		console.log('facebookLogout');
-		FB.logout();
-		userId=''; 
-		cjs.eraseCookie('userId');
-		$('#masthead-icon-logout').unbind('click');
-		<%
-			for(var i=0;i<objects.length;i++)
-			{
-		%>
-			$mvm.<%=objects[i].name%>_getRecords();
-		<%
-			}	
-		%>					
-	};
+function checkIfLoggedIn()
+{
+  console.log('checkIfLoggedIn');
+   $('#masthead-icon-logout').click(logoutFacebook);
+   $('#cjsSecurityGateway').attr({'src':'http://<%=URLPrefix%>/security/facebook/login.htm'});
 }
+
+function loginFacebook(){
+  $('#masthead-icon-logout').click(logoutFacebook);
+  popup = window.open('http://<%=URLPrefix%>/auth/facebook','facebook-login',  'height=300,width=500');
+}
+
+function logoutFacebook(){
+  console.log('logout');
+  userId=''; 
+  cjs.eraseCookie('userId');
+  $('#masthead-icon-logout').unbind('click');		
+  $('#cjsSecurityGateway').attr({'src':'http://<%=URLPrefix%>/security/facebook/logout.htm'});
+}
+
+function sendMessage(msg){
+  console.log('before send message');
+  if(popup)
+   popup.postMessage(msg,'*');
+  else
+  {
+    var win = document.getElementById('cjsSecurityGateway').contentWindow;
+    win.postMessage(msg,'*');
+  }
+  console.log('after send message');
+}
+
+function receiveMessage(event)
+{
+  
+  var parsed = JSON.parse(event.data);
+
+  if(parsed.msgName == 'loginComplete')
+  {
+    sendMessage('sendUser');
+  }
+  else if(parsed.msgName == 'processUser')
+  {
+    var user = parsed.msg;
+    console.log(user.displayName + ' logged in');
+   
+    userId=user.id;
+	if (user.displayName) {
+		document.getElementById('auth-displayname').innerHTML = user.displayName;
+	}
+	cjs.createCookie('userId',userId,1);
+	cjs.synchSessionVariables('userId',userId);
+   	<%
+	for(var i=0;i<objects.length;i++)
+	{
+	%>
+		$mvm.<%=objects[i].name%>_getRecords(userId);
+	<%
+	}	
+	%>			
+   	document.getElementById('auth-loggedout').style.display = 'none';
+	document.getElementById('auth-loggedin').style.display = 'block';
+
+    sendMessage('closeWindow');
+  }
+  else if(parsed.msgName == 'loggedOut')
+  {
+   	document.getElementById('auth-loggedout').style.display = 'block';
+	document.getElementById('auth-loggedin').style.display = 'none';
+	<%
+	for(var i=0;i<objects.length;i++)
+	{
+	%>
+		$mvm.<%=objects[i].name%>_getRecords();
+	<%
+	}	
+	%>			
+  }
+}
+
+window.addEventListener('message', receiveMessage, false);
+
+
+
+$('#masthead-icon-facebook').click(loginFacebook);
+$('#masthead-icon-logout').click(logoutFacebook);
+
+checkIfLoggedIn();

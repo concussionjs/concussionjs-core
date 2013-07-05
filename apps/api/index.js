@@ -55,7 +55,7 @@ var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",output
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
-var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-1.10.2.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
+var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
 
 localizeFiles(files2Localize);
 

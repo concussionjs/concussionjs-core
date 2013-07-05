@@ -10,6 +10,7 @@ var cjsutil = fs.readFileSync(__dirname + '/cjs-utilities.js','utf-8');
 var ejs = require('ejs');
 var qs = require('querystring');
 var http = require('http');
+var https = require('https');
 var exec  = require('child_process').exec;
 var parse = require('./inferObjects.js');
 var express = require('express');
@@ -18,7 +19,32 @@ var util = require('util');
 var redis = require('redis');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+var passport = require('passport');
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+var FacebookStrategy = require('passport-facebook').Strategy;
 
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://"+process.env.CJS_WEB_URL+"/auth/facebook/callback"
+  },
+  function(token, tokenSecret, profile, done) {
+	console.log("login successful");
+	var user = profile;
+	var credentials = {};
+	user.token = token;
+	user.tokenSecret = tokenSecret;
+	done(null,user);
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+ 
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
 
 var URLPrefix=process.env.CJS_WEB_URL;
 var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.ejs']
@@ -29,7 +55,7 @@ var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",output
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
-var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
+var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-1.10.2.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
 
 localizeFiles(files2Localize);
 
@@ -93,7 +119,7 @@ function concatenateFiles(fileArray,output)
 		if((fileName=fileArray.shift()))
 		{
 			console.log("fileName:" + fileName);
-			contents += fs.readFileSync(__dirname + fileName,'utf-8') + "\n";
+			contents += fs.readFileSync(__dirname + fileName,'utf8') + "\n";
 		}
 		else
 		{
@@ -281,6 +307,7 @@ var customLinkAction = function(objectName,customLinkName,req,res)
 				{
 					fs.readFile(__dirname + '/customLink.ejs','utf-8', function(err,data){
 						if(err) throw err;
+						res.setHeader("Content-Type", 'text/plain');
 						res.end(ejs.render(data, {locals: {'CJS_WEB_URL':URLPrefix, 'tenantId':validateArg[0]}}));
 					});
 				}
@@ -398,8 +425,8 @@ var postGetScriptAction = function(isparsed,req,res)
 
 	//try{
 	var args = qs.parse(req.url.split('?')[1]);
-	if (nta.debug)
-		util.debug(req.rawBody + ' postGetScript x: session id: ' + args.sid + ' HTML rawBody ' + args.html);
+	if (!nta.debug)
+		util.debug(req.rawBody + ' postGetScript x: session id: ' + args.sid + ' HTML rawBody ' + args.html + ' tenant id: ' + args.tenantId);
 	
 
 	if(req.rawBody)
@@ -427,21 +454,23 @@ var postGetScriptAction = function(isparsed,req,res)
 		
 		getCJSsettings(myObjects,function(myObjects, CJSsettings){
 			if(!nta.debug)
-				util.debug(JSON.stringify(CJSsettings));
+				util.debug("settings: " + JSON.stringify(CJSsettings));
 			setSessionId(myObjects, 'id_' + ((tenantId)?tenantId:id), 0, function(myObjects) {
-				if ( nta.debug)
+				if (!nta.debug)
 				{
 					util.debug('getScript: setSession ' +  ((tenantId)?tenantId:id) + ' ' + JSON.stringify(myObjects) + " " + myObjects[0].name);
 				}
 
 				addNewObjects(myObjects, function() {
-					if (nta.debug)
+					if (!nta.debug)
 					{
 						util.debug('getScript: addNewObjects');
 						util.debug('getScript: ' + JSON.stringify(myObjects));
 					}	
-			
-					res.end(ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}));
+					
+					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					console.log(text2write);
+					res.end(text2write);
 				});
 			});
 		});	
@@ -813,6 +842,63 @@ var removeDomainAction = function(type,name,req,res)
 	return;
 }
 
+var googleAuthRoute = app.get('/auth/google', passport.authenticate('google'));
+
+var facebookAuthRoute = app.get('/auth/facebook', passport.authenticate('facebook'));
+
+var facebookCallbackRoute = app.get('/auth/facebook/callback', 
+		passport.authenticate('facebook',
+			{ successRedirect: '/account/facebook', failureRedirect: '/auth/facebook' }
+));
+
+var googleCallbackRoute = app.get('/auth/google/callback', 
+		passport.authenticate('google',
+			{ successRedirect: '/account/google', failureRedirect: '/auth/google' }
+));
+
+var accountFacebookRoute = app.get('/account/facebook',
+  ensureLoggedIn('/auth/facebook'),
+  function(req, res) {
+  	req.user._json.token = req.user.token;
+  	console.log(JSON.stringify(req.user));
+    res.end("<script>\nlocalStorage.setItem('token','"+ req.user.token + "');console.log('confirm executing');\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}else{parent.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}\nfunction receiveMessage(event){\n\nif(event.data == 'sendUser'){\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user) + "}),'*');}else{parent.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user)  + "}),'*');}}\nelse if(event.data=='closeWindow'){\nwindow.close();\n}\n};\n window.addEventListener('message', receiveMessage, false);\n </script>");
+  });
+
+var accountGoogleRoute = app.get('/account/google',
+  ensureLoggedIn('/auth/google'),
+  function(req, res) {
+  	req.user._json.token = req.user.token;
+  	console.log(JSON.stringify(req.user));
+    res.end("<script>\nlocalStorage.setItem('token','"+ req.user.token + "');console.log('confirm executing');\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}else{parent.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}\nfunction receiveMessage(event){\n\nif(event.data == 'sendUser'){\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user) + "}),'*');}else{parent.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user)  + "}),'*');}}\nelse if(event.data=='closeWindow'){\nwindow.close();\n}\n};\n window.addEventListener('message', receiveMessage, false);\n </script>");
+  });
+
+var checkLoginFacebookRoute = app.get('/checkLoginStatus/facebook',  
+  function(req, res) {
+  	console.log("checkLoginStatus facebook");
+  	if(req.user)
+  		res.end("<script>\nconsole.log('confirm executing');\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}else{parent.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}\nfunction receiveMessage(event){\n\nif(event.data == 'sendUser'){\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user)  + "}),'*');}else{parent.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user) + "}),'*');}}\nelse if(event.data=='closeWindow'){\nwindow.close();\n}\n};\n window.addEventListener('message', receiveMessage, false);\n </script>"); 
+  	else
+  		res.end("loggedOut")
+});
+
+var checkLoginGoogleRoute = app.get('/checkLoginStatus/google',  
+  function(req, res) {
+  	console.log("checkLoginStatus google");
+  	if(req.user)
+  		res.end("<script>\nconsole.log('confirm executing');\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}else{parent.postMessage(JSON.stringify({msgName:'loginComplete',msg:''}),'*');}\nfunction receiveMessage(event){\n\nif(event.data == 'sendUser'){\nif(window.opener){window.opener.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user)  + "}),'*');}else{parent.postMessage(JSON.stringify({msgName:'processUser',msg:" + JSON.stringify(req.user) + "}),'*');}}\nelse if(event.data=='closeWindow'){\nwindow.close();\n}\n};\n window.addEventListener('message', receiveMessage, false);\n </script>"); 
+  	else
+  		res.end("loggedOut")
+});
+
+var logoutRoute = app.get('/logout',
+  function(req, res) {
+    var token = req.user.token;
+    var userId = req.user.id;
+   
+	req.logout();
+	res.end("logged out successfully")
+  });
+
 var setupObject = function(searchKey,fieldIndex,objects,counter,req,newObject,callback)
 {
 try{
@@ -883,6 +969,8 @@ crossDomainRules = function () {
    return function (req, res, next) {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Pragma', 'no-cache');
       next();
    };
 };
@@ -912,10 +1000,13 @@ var debugPrint = function(text)
 }
 var server = connect.createServer(
 	connect.logger({ format: ':method :url' }),
-	connect.cookieParser(),
+	express.cookieParser(),
+	express.session({ secret: 'keyboard cat' }),
+	passport.initialize(),
+	passport.session(),
+	setRawBody,
 	//connect.session({ secret: 'test'}),
 	debugPrint("\n\n**cookieParser**\n\n"),
-	setRawBody,
 	debugPrint("\n\n**setRawBody**\n\n"),
 	crossDomainRules(),
 	debugPrint("\n\n**crossDomain**\n\n"),
@@ -928,6 +1019,14 @@ var server = connect.createServer(
 	getScriptRoute,
 	debugPrint("\n\n**getScript**\n\n"),
 	postGetScriptRoute,
+	accountFacebookRoute,
+	accountGoogleRoute,
+	facebookAuthRoute,
+	facebookCallbackRoute,
+	checkLoginFacebookRoute,
+	googleAuthRoute,
+	googleCallbackRoute,
+	checkLoginGoogleRoute,
 	debugPrint("\n\n**postGetScript**\n\n"),
 	getEntriesByTenantObjectIdRoute,
 	debugPrint("\n\n**getEntriesByTenantObjectId**\n\n"),

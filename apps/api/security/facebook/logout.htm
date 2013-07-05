@@ -1,0 +1,17 @@
+<script language="JavaScript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script>
+	console.log('logging out');
+	var URLPrefix ="api.local-concussionjs.com";
+	var token = localStorage.getItem("token");
+	
+	document.location = "http://m.facebook.com/logout.php?confirm=1&next=http://api.local-concussionjs.com/logout&access_token=" + token;
+
+	if(window.opener){
+		window.opener.postMessage(JSON.stringify({msgName:'loggedOut',msg:''}),'*');
+	}
+	else{
+		parent.postMessage(JSON.stringify({msgName:'loggedOut',msg:''}),'*');
+	}
+	
+	
+</script>

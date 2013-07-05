@@ -454,7 +454,7 @@ try{
             }
         });
 
-        $('head').append("<script type='text/javascript'><%=ejs.render(mainjs, {locals: {'dirname':dirname,'myObjects': myObjects,'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}).replace(/\n/g,"")%></script>");
+        $('body').append("<script type='text/javascript'><%=ejs.render(mainjs, {locals: {'dirname':dirname,'myObjects': myObjects,'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}).replace(/\n/g,"")%></script>");
      
 	<%
 	}%> 

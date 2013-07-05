@@ -106,7 +106,7 @@ function loginFacebook(){
 
 function logoutFacebook(){
   console.log('logout');
-  localStorage.setItem('userId',"");
+  localStorage.setItem('userId','');
   cjs.eraseCookie('userId');
   $('#masthead-icon-logout').unbind('click');		
   $('#cjsSecurityGateway').attr({'src':'http://<%=URLPrefix%>/security/facebook/logout.htm'});

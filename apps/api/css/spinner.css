@@ -1,0 +1,105 @@
+/* 
+ * This is a nice full CSS3 loader made with LESS 
+*/
+/* u can custom almost everything u need with these variables just bellow */
+/* but from here u'll have to understand what u'r dealing with */
+/* mixins */
+/* animations */
+.spin {
+  -webkit-animation: spin 750ms infinite linear;
+  -moz-animation: spin 750ms infinite linear;
+  animation: spin 750ms infinite linear;
+}
+@-webkit-keyframes spin {
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spin {
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+.rspin {
+  -webkit-animation: rspin 2250ms infinite linear;
+  -moz-animation: rspin 2250ms infinite linear;
+  animation: rspin 2250ms infinite linear;
+}
+@-webkit-keyframes rspin {
+  to {
+    -webkit-transform: rotate(-360deg);
+  }
+}
+@-moz-keyframes rspin {
+  to {
+    -moz-transform: rotate(-360deg);
+  }
+}
+/* let's style that thing */
+.loader {
+  background-color: #eeeeee;
+  border-radius: 100%;
+  position: relative;
+  height: 100px;
+  width: 100px;
+  overflow: hidden;
+}
+.loader .c {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -34% 0 0 -34%;
+  width: 68%;
+  height: 68%;
+  background-color: #ffffff;
+  border-radius: 100%;
+  z-index: 3;
+}
+.loader .d {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.loader .d .e {
+  z-index: 10;
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  margin: 0 0 0 -10px;
+  border-top: 20px solid #cccccc;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  height: 0;
+  width: 20px;
+  -webkit-transform: rotate(10deg);
+  -moz-transform: rotate(10deg);
+  border-radius: 5px 5px 0 0;
+}
+.loader .r {
+  z-index: 2;
+  position: absolute;
+  left: 50%;
+  top: -1px;
+  bottom: -1px;
+  margin-left: -5px;
+  background-color: #ffffff;
+  width: 10px;
+}
+.loader .r1 {
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+}
+.loader .r2 {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+}
+.loader .r3 {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+}
+.loader .r4 {
+  -webkit-transform: rotate(135deg);
+  -moz-transform: rotate(135deg);
+}

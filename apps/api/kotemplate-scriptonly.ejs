@@ -30,7 +30,6 @@ try{
 			}
 	// handle children
 	<%
-	
 	function handleChildren(myObject,counter,nextFunction)
 	{
 		
@@ -371,6 +370,11 @@ try{
         					currentIndex=$mvm.<%=objects[i].varname%>.read().length;
         					self.<%=objects[i].name%>_getRecords(null, function(){
 								$mvm.<%=objects[i].varname%>.read()[currentIndex].location("http://<%=testdriveURL%>/images/loading.gif");
+								var spinner = createSpinner();
+								spinner.setAttribute('id','spinner' + $mvm.<%=objects[i].varname%>.read()[currentIndex].id());
+								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).parent().append(spinner);
+								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
+								console.log($mvm.<%=objects[i].varname%>.read()[currentIndex].id() + " " + $("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).length);
 							});
 							<%=objects[i].varname%>_reset_form();
 							console.log("** currentIndex ** : " + currentIndex);
@@ -386,6 +390,8 @@ try{
     							success: function(result){
         							console.log(result);
         							$mvm.<%=objects[i].varname%>.read()[currentIndex].location(currentFileName);
+        							$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).show();
+        							$("#spinner" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
     							}
 							});
 						}
@@ -456,6 +462,41 @@ try{
 
         $('body').append("<script type='text/javascript'><%=ejs.render(mainjs, {locals: {'dirname':dirname,'myObjects': myObjects,'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}}).replace(/\n/g,"")%></script>");
      
+        function createSpinner()
+        {
+        	var wrapper = document.createElement('div');
+        	var div = document.createElement('div');
+			var spanC = document.createElement('span');
+			var spanDSpin = document.createElement('span');
+			var spanE = document.createElement('span');
+			var spanRR1 = document.createElement('span');
+			var spanRR2 = document.createElement('span');
+			var spanRR3 = document.createElement('span');
+			var spanRR4 = document.createElement('span');
+			
+			wrapper.setAttribute('style','inline-block');
+			wrapper.setAttribute('class','spinnerWrapper');
+			div.setAttribute('class','loader rspin');
+			spanC.setAttribute('class','c');
+			spanDSpin.setAttribute('class','d spin');
+			spanE.setAttribute('class','e');
+			spanRR1.setAttribute('class','r r1');
+			spanRR2.setAttribute('class','r r2');
+			spanRR3.setAttribute('class','r r3');
+			spanRR4.setAttribute('class','r r4');
+			
+			div.appendChild(spanC);
+			spanDSpin.appendChild(spanE);
+			div.appendChild(spanDSpin);
+			div.appendChild(spanRR1);
+			div.appendChild(spanRR2);
+			div.appendChild(spanRR3);
+			div.appendChild(spanRR4);
+			wrapper.appendChild(div);
+		
+			return wrapper;
+        }
+
 	<%
 	}%> 
 <%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

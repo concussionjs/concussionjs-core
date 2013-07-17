@@ -35,14 +35,14 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 	//cjs.prototype.debugPrint("parsing: " +  html);
 	var databind = pkg.knockout.filterNestedNodes(pkg.knockout.parseDatabinds(html));
 	var datacjs = pkg.cjs.filterNestedNodes(pkg.cjs.parseDatacjs(html));
-	cjs.prototype.debugPrint(datacjs.length);
+	cjs.prototype.debugPrint("data-cjs length " + datacjs.length);
 	for(var i=0;i<databind.length;i++)
 	{		
 		var directive = pkg.knockout.getDirective($(databind[i]).attr("data-bind"));
 		var construct = pkg.knockout.constructs[directive.toLowerCase()];
 		if(!construct)
 		{
-			throw new Error('InvalidDirective');
+			throw new Error(directive.toLowerCase() + ' is an InvalidDirective');
 		}
 		var obj = construct($(databind[i]),parent,prefix);
 		if(obj && !parent)
@@ -55,27 +55,31 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 
 		}					
 	}	
-	
+	var cjsSettings = null;
 	for(var i=0;i<datacjs.length;i++)
 	{		
-		var directives = $(datacjs[i]).attr("data-cjs").split(",");
+		var directives = $(datacjs[i]).attr("data-cjs").split(";");
 		var obj = {};
+		
 		for(var j=0;j<directives.length;j++)
 		{	
 			var directive = pkg.cjs.getDirective(directives[j]);
-			cjs.prototype.debugPrint("cjs directive");
+			cjs.prototype.debugPrint("cjs directive " + directive.toLowerCase());
 			var construct = pkg.cjs.constructs[directive.toLowerCase()];
 			cjs.prototype.debugPrint(construct);
 			if(!construct)
 			{
-				throw new Error('InvalidDirective');
+				throw new Error(directive.toLowerCase() + ' is an InvalidDirective');
 			}
 		
-			obj=$.extend({},obj,construct({"data-cjs":directives[j]}));
+			obj=$.extend(true,obj,construct({"data-cjs":directives[j]}));
 			cjs.prototype.debugPrint(JSON.stringify(obj));
 
 		}
-		objects[objects.length]={"cjs-settings":obj};
+		cjsSettings=$.extend(true,cjsSettings,obj);
+		//cjs.prototype.debugPrint(JSON.stringify(cjsSettings));
+		
+		//objects[objects.length]={"cjs-settings":obj};
 		/*if(obj && !parent)
 		{
 			if(!objectsCollection[obj.name])
@@ -85,7 +89,13 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 			}
 
 		}*/					
-	}	
+	}
+	if(cjsSettings)
+	{
+		cjs.prototype.debugPrint("prior to cjsSettings: " + JSON.stringify(cjsSettings));
+		objects[objects.length]={"cjs-settings":cjsSettings};	
+	}
+
 	cjs.prototype.debugPrint(JSON.stringify(objectsCollection));
 }
 
@@ -111,7 +121,8 @@ pkg = {
 		,
 		getParameter : function(token,prefix)
 		{
-			var tokens = token.split(",")[0].split(":");	
+			//.split(",")[0]
+			var tokens = token.split(":");	
 			if(tokens.length>0)
 			{	
 				tokens[1] = $.trim(tokens[1])
@@ -136,7 +147,7 @@ pkg = {
 		{
 			if(!token)
 			{
-				throw new Error('InvalidDirective');
+				throw new Error('Null Token');
 			}
 
 			var tokens = token.split(",")[0].split(":");
@@ -198,6 +209,12 @@ pkg = {
 				//obj.name = "login";
 				obj.appname = pkg.cjs.getParameter($(token).attr("data-cjs"));
 				cjs.prototype.debugPrint(JSON.stringify(obj));
+				return obj;
+			},
+			search: function(token,parent,prefix){
+				var obj = {};
+				cjs.prototype.debugPrint("token being processed " + JSON.stringify(token));
+				obj.searchTargets = pkg.cjs.getParameter($(token).attr("data-cjs"));
 				return obj;
 			}				
 		}	

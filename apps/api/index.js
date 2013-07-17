@@ -336,12 +336,36 @@ var readAction = function(objectName,req,res)
 	});
 }
 
+var searchRoute = app.get("/search/:objectName/:searchTerm", function(req,res){
+	searchAction(req.params.objectName,req.params.searchTerm,req,res);
+});
+
+var searchAction = function(objectName,searchTerm,req,res)
+{
+	nta.searchInstances(searchTerm,objectName, function(err,documents) {
+		//res.writeHeader(200);
+		res.end('' + JSON.stringify(documents));
+	});
+}
+
+var searchUserIdRoute = app.get("/search/:objectName/:id/:searchTerm/", function(req,res){
+	searchUserIdAction(req.params.objectName,req.params.id,req.params.searchTerm,req,res);
+});
+
+var searchUserIdAction = function(objectName, userId, searchTerm,req,res)
+{
+	nta.searchInstancesById(searchTerm,objectName, userId, function(err,documents) {
+		//res.writeHeader(200);
+		res.end('' + JSON.stringify(documents));
+	});
+}
+
+
+
+
 var getPageRoute = app.get("/getpage/:id/:pageName", function(req,res){
 	getPageAction(req.params.id,req.params.pageName,req,res);
 });
-
-
-
 
 var getPageAction = function(id,pageName,req,res)
 {
@@ -469,7 +493,8 @@ var postGetScriptAction = function(isparsed,req,res)
 					}	
 					
 					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
-					console.log(text2write);
+					if (nta.debug)
+						console.log(text2write);
 					res.end(text2write);
 				});
 			});
@@ -1018,6 +1043,7 @@ var server = connect.createServer(
 	debugPrint("\n\n**getPage**\n\n"),
 	getScriptRoute,
 	debugPrint("\n\n**getScript**\n\n"),
+	searchRoute,
 	postGetScriptRoute,
 	accountFacebookRoute,
 	accountGoogleRoute,

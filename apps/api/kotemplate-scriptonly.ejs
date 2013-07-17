@@ -6,11 +6,13 @@ try{
 	
 	objects = myObjects;
 	testdriveURL = URLPrefix; 
+	var tenantId = tenantId;
 	if(CJSsettings)
 	{
 		var objectNames = CJSsettings.objectName.split(",");
 		var securityKey = CJSsettings.securityKey;
 		var securityType = CJSsettings.securityType;
+		var searchTargets = CJSsettings.searchTargets.split(",");
 	}
 	else
 	{
@@ -170,8 +172,9 @@ try{
 	handleChildren(objects[0],0,handleChildren);
 
 	%>
-
-
+	<% if(tenantId && tenantId!=""){%>
+		cjs.createCookie("tenantId", "<%=tenantId%>");
+	<%}%>
 	function myViewModel()
 	{
 		var self = this;
@@ -349,10 +352,12 @@ try{
         }
 
         var id = cjs.readCookie("userId");
+        
         if(!id)
         {
         	id = cjs.readCookie("sessionId");
         }
+        
         if($("input:file") && $("input:file").length>0)
         {	
         	var currentFileName = "https://s3.amazonaws.com/cjs-uploads/<%=tenantId%>/" + id + "/" + $('#file')[0].files["0"].name
@@ -400,7 +405,7 @@ try{
 		}
 		else
 		{
-			 <%=objects[i].varname%>CreateJSON();
+			<%=objects[i].varname%>CreateJSON();
 			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
 					async:false,
 					data: "{\"<%=objects[i].name%>\":" + ko.toJSON($mvm.<%=objects[i].varname%>Form()) + "}",
@@ -419,18 +424,46 @@ try{
     }
     	 
     
-	self.<%=objects[i].varname%>.search = function() {
+	self.<%=objects[i].varname%>.search = function(searchTerm) {
 		//alert(self.<%=objects[i].name%>_search_term());
-		$.getJSON("http://<%=testdriveURL%>/<%=objects[i].name%>/search/"+self.<%=objects[i].varname%>_search_term(), function(allData) {
-            var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item) });
-            self.<%=objects[i].varname%>_search_results(mapped);
-			self.<%=objects[i].varname%>.read(mapped);
-        });
+		if(searchTerm=="")
+		{
+			if(cjs.readCookie("userId"))
+			{
+				self.<%=objects[i].name%>_getRecords(cjs.readCookie("userId"));
+			}
+			else
+			{
+				self.<%=objects[i].name%>_getRecords();
+			}
+		}
+		else
+		{
+			$.getJSON("http://<%=testdriveURL%>/search/id_" + cjs.readCookie("tenantId") + "_" + "<%=objects[i].varname%>" + "/" + searchTerm, function(allData) {
+            	var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
+            	//self.<%=objects[i].varname%>_search_results(mapped);
+				self.<%=objects[i].varname%>.read(mapped);
+        	});
+		}
     }
 	<%
 	}
 	%>
 	}
+
+	<% 	if(searchTargets)
+		{
+			for(var i=0;i<searchTargets.length;i++)
+			{
+	%>
+			$("#search").change(function(){
+           	 	console.log("searching for " + $("#search").val());
+            	$mvm.<%=searchTargets[i]%>.search($("#search").val());
+        	});
+	<%
+			}
+		}
+	%>
 
 	$mvm = new myViewModel();
 	ko.applyBindings($mvm);

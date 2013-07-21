@@ -48,7 +48,7 @@ passport.deserializeUser(function(obj, done) {
 
 var URLPrefix=process.env.CJS_WEB_URL;
 var files2Compile = ['/js/cjs-latest.js','/js/cjs-bootstrap.js', '/js/cjs-bootstrap-customLink.ejs']
-var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"}];
+var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",outputFileName:__dirname + "/js/cjs-bootstrap.js"},{templateFileName:__dirname + "/security/facebook/logout.ejs",outputFileName:__dirname + "/security/facebook/logout.htm"}];
 /*
 	reference:
 	var files2Localize=[{templateFileName:"concussion.ejs",outputFileName:"concussion.js"},{templateFileName:"loadEditorContent.ejs",outputFileName:"loadEditorContent.js"}];
@@ -348,7 +348,7 @@ var searchAction = function(objectName,searchTerm,req,res)
 	});
 }
 
-var searchUserIdRoute = app.get("/search/:objectName/:id/:searchTerm/", function(req,res){
+var searchUserIdRoute = app.get("/search/:objectName/:id/:searchTerm", function(req,res){
 	searchUserIdAction(req.params.objectName,req.params.id,req.params.searchTerm,req,res);
 });
 
@@ -1044,6 +1044,7 @@ var server = connect.createServer(
 	getScriptRoute,
 	debugPrint("\n\n**getScript**\n\n"),
 	searchRoute,
+	searchUserIdRoute,
 	postGetScriptRoute,
 	accountFacebookRoute,
 	accountGoogleRoute,

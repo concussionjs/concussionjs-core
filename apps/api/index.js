@@ -366,11 +366,16 @@ var getCountByMonthRoute = app.get("/getCountByMonth/:collectionName", function(
 
 var getCountByMonthAction = function(collectionName,req,res)
 {
+
+	var args = qs.parse(req.url.split('?')[1]);
+	var total = args.total;
+	var type = args.type;
 	nta.getCountByMonth(collectionName, function(err,documents) {
 		//res.writeHeader(200);
 		var results = {
 			graph:{	
 				"title": collectionName + " count by month",
+				"total": total,
 				"datasequences": [{
 					"title" : "X-" + collectionName,
 					"refreshEveryNSeconds" : 120,
@@ -378,6 +383,16 @@ var getCountByMonthAction = function(collectionName,req,res)
 				}]
 			}
 		}
+
+		if(args && args.type && args.type!="")
+		{
+			results.graph.type=type;
+		}
+		if(args && args.total && args.total!="")
+		{
+			results.graph.total=total;
+		}
+
 		res.end('' + JSON.stringify(results));
 	});
 }

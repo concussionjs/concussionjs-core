@@ -369,10 +369,15 @@ var getCountByMonthAction = function(collectionName,req,res)
 	nta.getCountByMonth(collectionName, function(err,documents) {
 		//res.writeHeader(200);
 		var results = {
-			"title" : collectionName + " report",
-			"refreshEveryNSeconds" : 120,
-			"datapoints" : JSON.parse(JSON.stringify(documents).replace(/_id/ig,"title"))
-		};
+			graph:{	
+				"title": collectionName + " count by month",
+				"datasequences": [{
+					"title" : "X-" + collectionName,
+					"refreshEveryNSeconds" : 120,
+					"datapoints" : JSON.parse(JSON.stringify(documents).replace(/_id/ig,"title"))
+				}]
+			}
+		}
 		res.end('' + JSON.stringify(results));
 	});
 }

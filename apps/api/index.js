@@ -360,7 +360,22 @@ var searchUserIdAction = function(objectName, userId, searchTerm,req,res)
 	});
 }
 
+var getCountByMonthRoute = app.get("/getCountByMonth/:collectionName", function(req,res){
+	getCountByMonthAction(req.params.collectionName,req,res);
+});
 
+var getCountByMonthAction = function(collectionName,req,res)
+{
+	nta.getCountByMonth(collectionName, function(err,documents) {
+		//res.writeHeader(200);
+		var results = {
+			"title" : collectionName + " report",
+			"refreshEveryNSeconds" : 120,
+			"datapoints" : JSON.parse(JSON.stringify(documents).replace(/_id/ig,"title"))
+		};
+		res.end('' + JSON.stringify(results));
+	});
+}
 
 
 var getPageRoute = app.get("/getpage/:id/:pageName", function(req,res){
@@ -1045,6 +1060,7 @@ var server = connect.createServer(
 	debugPrint("\n\n**getScript**\n\n"),
 	searchRoute,
 	searchUserIdRoute,
+	getCountByMonthRoute,
 	postGetScriptRoute,
 	accountFacebookRoute,
 	accountGoogleRoute,

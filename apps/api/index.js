@@ -390,7 +390,7 @@ var getCountByMonthAction = function(collectionName,req,res)
 		}
 		if(args && args.total && args.total!="")
 		{
-			results.graph.total=total;
+			results.graph.total=true;
 		}
 
 		res.end('' + JSON.stringify(results));

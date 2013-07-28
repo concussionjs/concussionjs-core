@@ -19,10 +19,13 @@ var util = require('util');
 var redis = require('redis');
 var AWS = require('aws-sdk');
 var s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+var route53 = new AWS.Route53({apiVersion: '2012-12-12'});
 var passport = require('passport');
+var mime = require('mime');
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 var FacebookStrategy = require('passport-facebook').Strategy;
-
+var s3bucketSuffix = ".s3-website-us-east-1.amazonaws.com";
+var hostedZoneId = "Z36J7ZXTJWEGZI"
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
@@ -783,6 +786,12 @@ var updateAction = function(objectName,tenantObjectId,id,req,res)
 }
 
 
+var uploadFileTenantOnlyRoute = app.post("/upload/:tenantId", function(req,res){
+	try{
+		uploadFileAction(req.params.tenantId,null,req,res);
+	}catch(e){console.log(e);}
+});
+
 var uploadFileRoute = app.post("/upload/:tenantId/:userId", function(req,res){
 	try{
 		uploadFileAction(req.params.tenantId,req.params.userId,req,res);
@@ -792,24 +801,37 @@ var uploadFileRoute = app.post("/upload/:tenantId/:userId", function(req,res){
 var uploadFileAction = function(tenantId, userId,req,res)
 {
 	try{
-	console.log("req.files: " + tenantId + " " + userId + " " + JSON.stringify(req.files));
+	console.log("req.files: " + process.env.CJS_WEB_URL.replace("api",tenantId) + " " + tenantId + " " + JSON.stringify(req.files));
 
 	var tmp_path = req.files["file-0"].path;
     // set where the file should actually exists - in this case it is in the "images" directory
     console.log(tmp_path);
     var target_path = '/tmp/' + req.files["file-0"].name;
-    console.log(target_path);
+    if(userId!=null)
+    {
+    	s3 = new AWS.S3({params: {Bucket: process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-","")}});
+    	var key = "cjs-uploads/" + userId + "/" + req.files["file-0"].name;
+    }
+    else
+    {
+    	s3 = new AWS.S3({params: {Bucket: process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-","")}});
+    	var key = req.files["file-0"].name;
+
+    }
+    console.log(target_path + " " + process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-",""));
  
 	AWS.config.update({
     	region: 'us-east-1'
 	});
 	
+	//AWS.S3({params: {Bucket: 'cjs-uploads'}});
 	fs.readFile(tmp_path,function(err, data){
 		if (err)
       		console.log(err)
     	else
       	{
-			s3.putObject({ ACL: 'public-read', Body:data,Key: tenantId + "/" + userId + "/" + req.files["file-0"].name} , function(err,data) {
+      		console.log(mime.lookup(req.files["file-0"].name));
+			s3.putObject({ ACL: 'public-read', ContentType: mime.lookup(req.files["file-0"].name),Body:data,Key: key}, function(err,data) {
     			if (err)
       				console.log(err)
     			else
@@ -831,6 +853,138 @@ var uploadFileAction = function(tenantId, userId,req,res)
     });*/
 	}catch(e){console.log(e);}
 } 
+
+var createBucketRoute = app.get("/createbucket/:bucketName", function(req,res){
+	try{
+		createBucketAction(req.params.bucketName,req,res);
+	}catch(e){console.log(e);}
+});
+
+var createBucketAction = function(bucketName,req,res)
+{
+	try{
+	 
+		AWS.config.update({
+    		region: 'us-east-1'
+		});
+	
+		s3.createBucket(
+			{ ACL: 'public-read',
+			Bucket: bucketName, 
+			} , function(err,data) {
+    		if (err)
+      			console.log(err)
+    		else
+    		{
+      			res.end("successfully create bucket " + bucketName);
+      		}
+  		});
+	}catch(e){console.log(e);}
+} 
+
+var getDNSNamesRoute = app.get("/getDNSNames/:recordName", function(req,res){
+try{
+		getDNSNamesAction(hostedZoneId,req.params.recordName,req,res);
+	}catch(e){console.log(e);}
+});
+
+var getDNSNamesAction = function(hostedZoneId,recordName,req,res)
+{
+	try{
+		route53.config.update({
+    		region: 'us-east-1'
+		});
+	
+		route53.listResourceRecordSets(
+			{HostedZoneId: hostedZoneId, StartRecordName:recordName, StartRecordType: "CNAME", MaxItems: "1"
+			} , function(err,data) {
+    		if (err){
+      			console.log(err);
+      			res.end(JSON.stringify(err));
+      		}
+    		else
+    		{
+      			res.end(JSON.stringify(data));
+      		}
+  		});
+	}catch(e){console.log(e);}
+}
+
+var enableWebConfigRoute = app.get("/enablewebconfig/:bucketName", function(req,res){
+	try{
+		enableWebConfigAction(req.params.bucketName,req,res);
+	}catch(e){console.log(e);}
+});
+
+
+
+var enableWebConfigAction = function(bucketName,req,res)
+{
+	try{
+	 
+		AWS.config.update({
+    		region: 'us-east-1'
+		});
+	
+		s3.putBucketWebsite(
+			{Bucket: bucketName,
+			 WebsiteConfiguration:{
+			 	IndexDocument:{Suffix:'index.htm'}
+			 }
+			} , function(err,data) {
+    		if (err)
+      			console.log(err)
+    		else
+    		{
+      			res.end("successfully enabled web config " + bucketName);
+      		}
+  		});
+	}catch(e){console.log(e);}
+}
+
+var addDNSRoute = app.get("/adddns/:dnsName", function(req,res){
+	try{
+		addDNSAction(req.params.dnsName,req,res);
+	}catch(e){console.log(e);}
+});
+
+var addDNSAction = function(dnsName,req,res)
+{
+	try{
+	 
+		route53.config.update({
+    		region: 'us-east-1'
+		});
+	
+		route53.changeResourceRecordSets(
+			{HostedZoneId: hostedZoneId,
+			 ChangeBatch:{
+			 	Changes:[
+			 		{
+			 			Action: "CREATE",
+			 			ResourceRecordSet:{
+			 				Name:dnsName,
+			 				Type: "CNAME",
+			 				TTL: 60,
+			 				ResourceRecords:[{
+			 					Value: dnsName + s3bucketSuffix
+			 				}]
+			 			}
+			 		}
+			 	]
+			 }
+			} , function(err,data) {
+    		if (err){
+      			console.log(err);
+      			res.end(JSON.stringify(err));
+      		}
+    		else
+    		{
+      			res.end("successfully add DNS entry for " + dnsName);
+      		}
+  		});
+	}catch(e){console.log(e);}
+}
 
 
 var updateWhereRoute = app.post('/updateWhere/:objectName',function(req,res){
@@ -1081,12 +1235,15 @@ var server = connect.createServer(
 	searchRoute,
 	searchUserIdRoute,
 	getCountByMonthRoute,
+	createBucketRoute,
+	enableWebConfigRoute,
 	postGetScriptRoute,
 	accountFacebookRoute,
 	accountGoogleRoute,
 	facebookAuthRoute,
 	facebookCallbackRoute,
 	checkLoginFacebookRoute,
+	getDNSNamesRoute,
 	googleAuthRoute,
 	googleCallbackRoute,
 	checkLoginGoogleRoute,
@@ -1102,6 +1259,7 @@ var server = connect.createServer(
 	updateRoute,
 	updateWhereRoute,
 	uploadFileRoute,
+	uploadFileTenantOnlyRoute,
 	customLinkRoute,
 	//generateRoutes,
 	nta.serveStaticFilesNoWriteHead,

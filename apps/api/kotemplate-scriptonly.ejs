@@ -360,7 +360,21 @@ try{
         
         if($("input:file") && $("input:file").length>0)
         {	
-        	var currentFileName = "https://s3.amazonaws.com/" + "<%=testdriveURL%>".replace("api","<%=tenantId%>").replace("local-","") + "/cjs-uploads/" + id + "/" + $('#file')[0].files["0"].name
+        	<% if(tenantId && tenantId!=""){%>
+        		var tenantId = "<%=tenantId%>";
+        	<%}else{%>
+        		var tenantId = "anonymous";
+        	<%}%>
+
+        	if(tenantId!='anonymous')
+        	{
+        		var currentFileName = "https://s3.amazonaws.com/" + "<%=testdriveURL%>".replace("api","<%=tenantId%>").replace("local-","") + "/cjs-uploads/" + id + "/" + $('#file')[0].files["0"].name
+			}
+			else
+			{
+				var currentFileName = "https://s3.amazonaws.com/cjs-uploads/" + id + "/" + $('#file')[0].files["0"].name	
+			}
+
 			var currentIndex;
 			$mvm.<%=objects[i].varname%>.location = ko.observable(currentFileName);
 			console.log($mvm.<%=objects[i].varname%>.location());
@@ -386,7 +400,7 @@ try{
 							console.log("** currentIndex ** : " + currentIndex);
 							
 							$.ajax({
-    							url: 'http://<%=testdriveURL%>/upload/<%=tenantId%>/' + id,
+    							url: 'http://<%=testdriveURL%>/upload/' + tenantId + '/' + id,
     							async:true,
     							data: data,
     							cache: false,

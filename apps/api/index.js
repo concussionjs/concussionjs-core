@@ -807,7 +807,13 @@ var uploadFileAction = function(tenantId, userId,req,res)
     // set where the file should actually exists - in this case it is in the "images" directory
     console.log(tmp_path);
     var target_path = '/tmp/' + req.files["file-0"].name;
-    if(userId!=null)
+   
+    if(tenantId=='anonymous')
+    {
+		s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+		var key = userId + "/" + req.files["file-0"].name;
+    }
+    else if(userId!=null)
     {
     	s3 = new AWS.S3({params: {Bucket: process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-","")}});
     	var key = "cjs-uploads/" + userId + "/" + req.files["file-0"].name;

@@ -387,32 +387,35 @@ try{
 						success: function(result) 
 						{
         					console.log(result);
-        					currentIndex=$mvm.<%=objects[i].varname%>.read().length;
+
+        					currentIndex=($mvm.<%=objects[i].varname%>.read()?$mvm.<%=objects[i].varname%>.read().length:0);
         					self.<%=objects[i].name%>_getRecords(null, function(){
 								$mvm.<%=objects[i].varname%>.read()[currentIndex].location("http://<%=testdriveURL%>/images/loading.gif");
 								var spinner = createSpinner();
 								spinner.setAttribute('id','spinner' + $mvm.<%=objects[i].varname%>.read()[currentIndex].id());
 								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).parent().append(spinner);
 								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
+								console.log("pre length")
 								console.log($mvm.<%=objects[i].varname%>.read()[currentIndex].id() + " " + $("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).length);
-							});
+							});	console.log("post length")
 							<%=objects[i].varname%>_reset_form();
 							console.log("** currentIndex ** : " + currentIndex);
-							
-							$.ajax({
-    							url: 'http://<%=testdriveURL%>/upload/' + tenantId + '/' + id,
-    							async:true,
-    							data: data,
-    							cache: false,
-    							contentType: false,
-    							processData: false,
-    							type: 'POST',
-    							success: function(result){
-        							console.log(result);
-        							$mvm.<%=objects[i].varname%>.read()[currentIndex].location(currentFileName);
-        							$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).show();
-        							$("#spinner" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
-    							}
+							createDNS("<%=testdriveURL%>".replace("api",tenantId).replace("local-",""),function(){	
+								$.ajax({
+    								url: 'http://<%=testdriveURL%>/upload/' + tenantId + '/' + id,
+    								async:true,
+    								data: data,
+    								cache: false,
+    								contentType: false,
+    								processData: false,
+    								type: 'POST',
+    								success: function(result){
+        								console.log(result);
+        								$mvm.<%=objects[i].varname%>.read()[currentIndex].location(currentFileName);
+        								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).show();
+        								$("#spinner" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
+    								}
+								});
 							});
 						}
         			});	
@@ -554,6 +557,38 @@ try{
 		
 			return wrapper;
         }
+
+        var checkIfDNSExists = function(dnsName,callback)
+		{
+			$.get('http://<%=testdriveURL%>/getDNSNames/'+dnsName, function(data){
+				callback(JSON.parse(data).ResourceRecordSets.length > 0 && JSON.parse(data).ResourceRecordSets[0].Name==dnsName+"." );
+			});
+
+			return;
+		}
+
+		var createDNS = function(dnsName, callback)
+		{
+			checkIfDNSExists(dnsName,function(doesExist){
+				if(!doesExist)
+				{
+					$.get('http://<%=testdriveURL%>/createbucket/'+dnsName, function(data){
+						console.log(data);
+						$.get('http://<%=testdriveURL%>/enablewebconfig/'+dnsName, function(data){
+							console.log(data);
+							$.get('http://<%=testdriveURL%>/adddns/'+dnsName, function(data){
+								console.log(data);
+								callback("success");
+							});
+						});
+					});
+				}
+				else
+				{
+					callback("exists");
+				}
+			});
+		}
 
 	<%
 	}%> 

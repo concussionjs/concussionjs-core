@@ -458,14 +458,14 @@ try{
 		{
 			if(cjs.readCookie("userId")!="")
 			{
-				$.getJSON("http://<%=testdriveURL%>/search/id_" + cjs.readCookie("tenantId") + "_" + "<%=objects[i].varname%>" + "/" + cjs.readCookie("userId") +"/" + searchTerm, function(allData) {
+				$.getJSON("http://<%=testdriveURL%>/search/id_<%=tenant_id%>_" + "<%=objects[i].varname%>" + "/" + cjs.readCookie("userId") +"/" + searchTerm, function(allData) {
             		var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
             		//self.<%=objects[i].varname%>_search_results(mapped);
 					self.<%=objects[i].varname%>.read(mapped);
         		});
 			}
 			else{
-				$.getJSON("http://<%=testdriveURL%>/search/id_" + cjs.readCookie("tenantId") + "_" + "<%=objects[i].varname%>" + "/" + searchTerm, function(allData) {
+				$.getJSON("http://<%=testdriveURL%>/search/id_<%=tenant_id%>_" + "<%=objects[i].varname%>" + "/" + searchTerm, function(allData) {
             		var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
             		//self.<%=objects[i].varname%>_search_results(mapped);
 					self.<%=objects[i].varname%>.read(mapped);

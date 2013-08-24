@@ -59,8 +59,6 @@ We have also provided an install script for those starting from a fresh OS insta
 *If you are installing the library in your current directory, run the above command without the '-g' option
 *Currently only supports Ubuntu
 
-Run it!
--------
 ### 1. Install ConcussionJS Core Platform with NPM
 
 From the shell:
@@ -168,8 +166,6 @@ We have also provided an install script for those starting from a fresh OS insta
 
 *Do NOT use the -g argument; -g is only used in conjunction with a global NPM install (install option 3)
 
-Run it!
--------
 ### 1. Clone ConcussionJS Core Platform into home directory (i.e., $HOME)
 
 From the shell:

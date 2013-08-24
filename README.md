@@ -62,15 +62,17 @@ From the shell:
 
 *The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin'). Without the -g option you will be installing the concussionjs-core libraries in the current directory*
 
-*__IMPORTANT NOTE__: You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
+*__IMPORTANT NOTE 1__: You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
+
+*__IMPORTANT NOTE 2__: `npm install -g` should install the concussionjs-core package in /usr/local/lib/node_modules/concussionjs-core 
 
 ### OPTIONAL Step 2. Install all linux package dependencies
 
-From CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS directory:
+From CONCUSSION_CORE_DIR/install/os_install/YOUR_OS directory:
 
 ```
-    $ cd CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS
-    $ sudo ./install.sh -g
+    $ cd CONCUSSION_CORE_DIR/install/os_install/YOUR_OS
+    $ sudo ./install.sh
 ```
 
 *Only Ubuntu currently supported
@@ -113,7 +115,7 @@ The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to
 
 cjs-proxy uses a Redis server to manage its configuration (and to share its state across the multiple workers). You can use the Redis server to change its configuration while it's running or simply check the health state of a backend.
 
-The config file is under CONCUSSIONJS_CORE_INSTALL_DIR/node_modules/concussionjs-proxy/config/cjs_config.json
+The config file is under CONCUSSIONJS_CORE_DIR/node_modules/concussionjs-proxy/config/cjs_config.json
 
 ```	
 	{
@@ -143,6 +145,15 @@ each backend (per worker)
 `dead' before retrying to proxy another request to it
 * __server.https__: SSL configuration (omit this section to disable HTTPS)
 * __redis__: Redis configuration (host & port)
+
+### 5. Run concussionJS install scripts
+
+From CONCUSSIONJS_CORE_DIR/install directory
+
+```
+    $ cd CONCUSSIONJS_CORE_DIR/install
+    $ sudo ./install.sh -g
+```
 
 Instructions to install from source  (Option 4 above)
 -----------------
@@ -194,19 +205,10 @@ From $HOME/concussionjs-core/install/os_install/YOUR_OS directory:
     $ cd $HOME/concussionjs-core/install/os_install/YOUR_OS
     $ sudo ./install.sh
 ```
-*Do NOT use the -g argument; -g is only used in conjunction with a global NPM install (install option 3)
+
 *Only Ubuntu currently supported 
 
-### 5. Run concussionJS install scripts
-
-From $HOME/concussionjs-core/install directory
-
-```
-    $ cd $HOME/concussionjs-core
-    $ sudo ./install.sh
-```
-
-### 6. Configuring the server (config.json)
+### 5. Configuring the server (config.json)
 
 The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to support the rate-limiting proxy configuration.
 
@@ -240,7 +242,7 @@ The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to
 * __google__: google authentication configuration (clientid)
 * __aws__: Amazon web services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
 
-### 7. Configure the cjs-proxy server (config.json)
+### 6. Configure the cjs-proxy server (config.json)
 
 cjs-proxy uses a Redis server to manage its configuration (and to share its state across the multiple workers). You can use the Redis server to change its configuration while it's running or simply check the health state of a backend.
 
@@ -274,6 +276,15 @@ each backend (per worker)
 `dead' before retrying to proxy another request to it
 * __server.https__: SSL configuration (omit this section to disable HTTPS)
 * __redis__: Redis configuration (host & port)
+
+### 7. Run concussionJS install script to import redis and mongo db records, and initiate servers
+
+From $HOME/concussionjs-core/install directory
+
+```
+    $ cd $HOME/concussionjs-core
+    $ sudo ./install.sh
+```
 
 The ConcussionJS Community's Mission
 =====================================

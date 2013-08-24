@@ -62,16 +62,18 @@ From the shell:
 
 *The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin'). Without the -g option you will be installing the concussionjs-core libraries in the current directory*
 
-*__IMPORTANT NOTE 1__: You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
+*__IMPORTANT NOTE 1__: 
+You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
 
-*__IMPORTANT NOTE 2__: `npm install -g` should install the concussionjs-core package in /usr/local/lib/node_modules/concussionjs-core 
+*__IMPORTANT NOTE 2__: 
+`npm install -g` should install the concussionjs-core package in /usr/local/lib/node_modules/concussionjs-core 
 
 ### OPTIONAL Step 2. Install all linux package dependencies
 
-From CONCUSSION_CORE_DIR/install/os_install/YOUR_OS directory:
+From CONCUSSIONJS_CORE_DIR/install/os_install/YOUR_OS directory:
 
 ```
-    $ cd CONCUSSION_CORE_DIR/install/os_install/YOUR_OS
+    $ cd CONCUSSIONJS_CORE_DIR/install/os_install/YOUR_OS
     $ sudo ./install.sh
 ```
 

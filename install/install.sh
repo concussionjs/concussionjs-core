@@ -2,6 +2,10 @@
 set -e
 
 root_dir=
+prefix=
+has_global_flag=
+has_debian_flag=
+has_no_args=
 
 function usage
 {
@@ -20,32 +24,36 @@ function set_root_dir_local
 
 function set_root_dir_prefix
 {
-        root_dir=$1
+        root_dir=$prefix
 }
 
-if [ "$1" = "" ]; then
-	set_root_dir_local
-fi
+while [ "$1" != "" ]; do
+	case $1 in
+    		-g | --global )	    	set_root_dir_global
+                            		has_global_flag="true"
+					;;
+    		-p | --prefix)	    	shift
+					has_no_args="true"
+					prefix=$1
+			    		set_root_dir_prefix
+			    		;;
+    		-h | --help )           usage
+                           		exit
+                            		;;
+		-d | --debian)		has_debian_flag="true"
+					set_root_dir_local
+					;;
+		*)			has_no_args="true"
+					set_root_dir_local
+					;;		
+	esac
+	shift
+done
 
-if [ "$1" = "-d" ]; then
-        set_root_dir_local
-fi
-
-
-case $1 in
-    -g | --global )	    set_root_dir_global
-                            ;;
-    -p | --prefix)	    shift
-			    set_root_dir_prefix
-			    ;;
-    -h | --help )           usage
-                            exit
-                            ;;
-esac
 pip install pymongo
 pip install redis
 make --directory $root_dir/install/mon install
-echo "starting concussionjs-core npm install"
+
 #Make cjs executable accessible globally
 chown -R concussed:concussed $root_dir/..
 
@@ -57,17 +65,17 @@ cp -f $root_dir/install/upstart_scripts/api.conf /etc/init
 cp -f $root_dir/install/upstart_scripts/samples.conf /etc/init
 cp -f $root_dir/install/upstart_scripts/redis-server.conf /etc/init
 
-if [ "$1" = "-g" ]; then
+if [ "$has_global_flag" = "true" ]; then
 	cp -f $root_dir/install/concussion_global.sh /etc/profile.d/concussion.sh	
 	cp -f $root_dir/install/upstart_scripts/cjs-proxy-global.conf /etc/init/cjs-proxy.conf
 fi
 
-if [ "$1" = "" ]; then
+if [ "$has_no_args" = "true" ]; then
 	sed -e "s;@HOME@;$root_dir;" $root_dir/install/concussion.sh > /etc/profile.d/concussion.sh
 	sed -e "s;@HOME@;$root_dir;" $root_dir/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
 fi
 
-if [ "$1" = "-d" ]; then
+if [ "$has_debian_flag" = "true" ]; then
 	sed -e "s;@HOME@;$root_dir;" $root_dir/install/concussion.sh > /etc/profile.d/concussion.sh
         ln -s $root_dir/bin/cli.py /usr/local/bin/cjs
         ln -s $root_dir/node_modules/concussionjs-proxy/bin/cjs-proxy /usr/local/bin/cjs-proxy

@@ -27,11 +27,13 @@ Include the public concussion.js javascript file in your HTML following the inst
     $ gdebi concussionjs-core-latest.deb
 ```
 
-###3. Build from source yourself
+###3. Install via NPM
 *Detailed instructions below*
 
+###4. Install from source
+*Detailed instructions below*
 
-Instructions to build from source  (Option 3 above)
+Instructions to install via NPM  (Option 3 above)
 -----------------
 
 ### Pre-requisites
@@ -49,12 +51,13 @@ Instructions to build from source  (Option 3 above)
 * openjdk-6-jre-headless
 
 We have also provided an install script for those starting from a fresh OS install. 
-* Navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
+* After installing via NPM following step 1 below, navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
 
 ```
 	$ sudo ./install.sh -g
 ```
 *If you are installing the library in your current directory, run the above command without the '-g' option
+*Currently only supports Ubuntu
 
 Run it!
 -------
@@ -125,6 +128,135 @@ The config file is under CONCUSSIONJS_CORE_INSTALL_DIR/node_modules/concussionjs
         	"host": "127.0.0.1"
     	}
 	}
+```
+
+* __server.accessLog__: location of the Access logs, the format is the same as
+nginx
+* __server.port__: Port to listen to (HTTP)
+* __server.workers__: Number of workers to be spawned (specify at least 1, the
+master process does not serve any request)
+* __server.maxSockets__: The maximum number of sockets which can be opened on
+each backend (per worker)
+* __server.deadBackendTTL__: The number of seconds a backend is flagged as
+`dead' before retrying to proxy another request to it
+* __server.https__: SSL configuration (omit this section to disable HTTPS)
+* __redis__: Redis configuration (host & port)
+
+Instructions to install from source  (Option 4 above)
+-----------------
+
+### Pre-requisites
+*Ubuntu 12.04 Linux or higher 
+    (Note:only configuration tested, though it will likely work on other OS's in the debian family)
+* git
+* mongodb
+* nodejs
+* npm
+* g++
+* build-essential
+* python-dev
+* python-pip
+* redis-server
+* openjdk-6-jre-headless
+
+We have also provided an install script for those starting from a fresh OS install. 
+* After step 3 below, navigate to the directory $HOME/concussionjs-core/install/os_install/YOUR_OS/, and run:
+
+```
+    $ sudo ./install.sh
+```
+
+*Do NOT use the -g argument; -g is only used in conjunction with a global NPM install 
+
+Run it!
+-------
+### 1. Clone ConcussionJS Core Platform into home directory (i.e., $HOME)
+
+From the shell:
+
+```
+    $ cd $HOME
+```
+
+```
+    $ git clone https://github.com/concussionjs/concussionjs-core
+```
+
+### 2. Run the `npm install` from the concussionjs-core directory to install all package dependencies
+
+```
+    $ cd $HOME/concussionjs-core
+```
+
+```
+    $ npm install
+```
+
+### 3. Link CLI and proxy executables to /usr/local/bin directory
+
+```
+    $ sudo ln -s $HOME/concussionjs-core/bin/cli.py /usr/local/bin/cjs
+```
+
+```
+    $ sudo ln -s $HOME/concussionjs-core/node_modules/cjs-proxy/bin/cjs-proxy /usr/local/bin/cjs-proxy
+```
+
+### 4. Configuring the server (config.json)
+
+The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to support the rate-limiting proxy configuration.
+
+```
+    {
+        "mongodb": {
+            "port": 27017,
+            "host": "127.0.0.1"
+        },
+        "redis": {
+            "port": 6379,
+            "host": "127.0.0.1"
+        },"facebook": {
+            "app_id":"",
+            "app_secret":""
+        },
+        "aws":{
+        "hosted_zone_id":"",
+        "bucket_name":"cjs_uploads",
+        "region":"us-east-1"
+        },
+        "google":{
+            "clientid": ""
+        }
+    }
+```
+
+* __mongodb__: MongoDB configuration (host & port)
+* __redis__: Redis configuration (host & port)
+* __facebook__: facebook authentication configuration (app id, app secret)
+* __google__: google authentication configuration (clientid)
+* __aws__: Amazon web services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
+
+### 5. Configure the cjs-proxy server (config.json)
+
+cjs-proxy uses a Redis server to manage its configuration (and to share its state across the multiple workers). You can use the Redis server to change its configuration while it's running or simply check the health state of a backend.
+
+The config file is under $HOME/concussionjs-core/node_modules/concussionjs-proxy/config/cjs_config.json
+
+``` 
+    {
+        "server": {
+            "debug": true,
+            "accessLog": "/var/log/hipache_access.log",
+            "port": 80,
+            "workers": 1,
+            "maxSockets": 100,
+            "deadBackendTTL": 30
+        },
+        "redis": {
+            "port": 6379,
+            "host": "127.0.0.1"
+        }
+    }
 ```
 
 * __server.accessLog__: location of the Access logs, the format is the same as

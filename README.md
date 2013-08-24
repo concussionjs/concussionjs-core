@@ -202,7 +202,7 @@ From your home directory:
 From $HOME/concussionjs-core/install/os_install/YOUR_OS directory:
 
 ```
-    $ cd $HOME/concussionjs-core/install/os_install/YOUR_OS
+    $ cd $HOME/concussionjs-core/install/os_installs/YOUR_OS
     $ sudo ./install.sh
 ```
 

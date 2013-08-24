@@ -66,5 +66,5 @@ mongoimport --db concussion_prod --collection cjs_objects --file $root_dir/concu
 #starting services
 service redis-server start
 service cjs-proxy start
-su - concussed -c "cjs app --restart api"
-su - concussed -c "cjs app --restart samples"
+su - concussed -c "cjs app --start api"
+su - concussed -c "cjs app --start samples"

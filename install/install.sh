@@ -40,17 +40,18 @@ chown -R concussed:concussed $root_dir
 rm -f $root_dir/concussionjs-core/node_modules/concussionjs-core
 ln -s $root_dir/concussionjs-core $root_dir/concussionjs-core/node_modules/concussionjs-core
 
-cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf /etc/init
 cp -f $root_dir/concussionjs-core/install/upstart_scripts/api.conf /etc/init
 cp -f $root_dir/concussionjs-core/install/upstart_scripts/samples.conf /etc/init
 cp -f $root_dir/concussionjs-core/install/upstart_scripts/redis-server.conf /etc/init
 
 if [ "$1" = "-g" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion_global.sh /etc/profile.d/concussion.sh	
+	cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy-global.conf /etc/init
 fi
 
 if [ "$1" = "" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion.sh /etc/profile.d	
+	cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf /etc/init
 fi
 
 chmod +x /etc/profile.d/concussion.sh

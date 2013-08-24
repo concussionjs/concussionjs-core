@@ -27,6 +27,11 @@ function set_root_dir_prefix
         root_dir=$prefix
 }
 
+if [ "$1" = "" ]; then
+	has_no_args="true"
+        set_root_dir_local
+fi
+
 while [ "$1" != "" ]; do
 	case $1 in
     		-g | --global )	    	set_root_dir_global
@@ -43,9 +48,6 @@ while [ "$1" != "" ]; do
 		-d | --debian)		has_debian_flag="true"
 					set_root_dir_local
 					;;
-		*)			has_no_args="true"
-					set_root_dir_local
-					;;		
 	esac
 	shift
 done

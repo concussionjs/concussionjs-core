@@ -6,7 +6,7 @@ ConcussionJS is a platform that enables you to create dynamic web applications w
 
 Build your first application < 5 minutes following the tutorial at http://www.concussionjs.com
 
-Run ConcussionJS platform one of three ways
+Run ConcussionJS platform one of four ways
 -----------------------------
 
 ###1. As a cloud platform (fastest to test)

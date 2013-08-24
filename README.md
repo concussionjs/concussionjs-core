@@ -146,7 +146,7 @@ each backend (per worker)
 * __server.https__: SSL configuration (omit this section to disable HTTPS)
 * __redis__: Redis configuration (host & port)
 
-### 5. Run concussionJS install scripts
+### 5. Run ConcussionJS install scripts
 
 From CONCUSSIONJS_CORE_DIR/install directory
 
@@ -277,7 +277,7 @@ each backend (per worker)
 * __server.https__: SSL configuration (omit this section to disable HTTPS)
 * __redis__: Redis configuration (host & port)
 
-### 7. Run concussionJS install script to import redis and mongo db records, and initiate servers
+### 7. Run ConcussionJS install script to import redis and mongo db records, and initiate servers
 
 From $HOME/concussionjs-core/install directory
 

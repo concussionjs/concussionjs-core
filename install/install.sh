@@ -46,12 +46,12 @@ cp -f $root_dir/concussionjs-core/install/upstart_scripts/redis-server.conf /etc
 
 if [ "$1" = "-g" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion_global.sh /etc/profile.d/concussion.sh	
-	cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy-global.conf /etc/init
+	cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy-global.conf /etc/init/cjs-proxy.conf
 fi
 
 if [ "$1" = "" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion.sh /etc/profile.d	
-	cp -f $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf /etc/init
+	sed -e "s;@HOME@;$HOME;" $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
 fi
 
 chmod +x /etc/profile.d/concussion.sh
@@ -64,7 +64,7 @@ mongoimport --db concussion_prod --collection apps --file $root_dir/concussionjs
 mongoimport --db concussion_prod --collection proxies --file $root_dir/concussionjs-core/install/mongodb_initialize/proxies.json --type json
 mongoimport --db concussion_prod --collection cjs_objects --file $root_dir/concussionjs-core/install/mongodb_initialize/cjs_objects.json --type json
 #starting services
-service redis-server restart
+service redis-server start
 service cjs-proxy start
-su - concussed -c "cjs app --start api"
-su - concussed -c "cjs app --start samples"
+su - concussed -c "cjs app --restart api"
+su - concussed -c "cjs app --restart samples"

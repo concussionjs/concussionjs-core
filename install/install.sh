@@ -3,6 +3,11 @@ set -e
 
 root_dir=
 
+function usage
+{
+    echo "usage: $0 [[-g | --global] | [-h | --help]]"
+}
+
 function set_root_dir_global
 {
 	root_dir=$(npm root -g)
@@ -10,7 +15,7 @@ function set_root_dir_global
 
 function set_root_dir_local
 {
-	root_dir=$home
+	root_dir=$HOME
 }
 
 if [ "$1" = "" ]; then
@@ -18,13 +23,11 @@ if [ "$1" = "" ]; then
 fi
 
 case $1 in
-    -g | --global )			set_root_dir_global
+    -g | --global )	    set_root_dir_global
                             ;;
     -h | --help )           usage
                             exit
-                            ;;    
-    *)						usage
-                            exit 1
+                            ;;
 esac
 
 make --directory $root_dir/concussionjs-core/install/mon install
@@ -42,11 +45,11 @@ cp -f $root_dir/concussionjs-core/install/upstart_scripts/api.conf /etc/init
 cp -f $root_dir/concussionjs-core/install/upstart_scripts/samples.conf /etc/init
 cp -f $root_dir/concussionjs-core/install/upstart_scripts/redis-server.conf /etc/init
 
-if [ $1 = "-g" ] || [ $1 = "--global" ]; then
+if [ "$1" = "-g" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion_global.sh /etc/profile.d/concussion.sh	
 fi
 
-if [ $1 = "" ]; then
+if [ "$1" = "" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion.sh /etc/profile.d	
 fi
 

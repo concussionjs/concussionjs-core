@@ -194,7 +194,7 @@ From your home directory:
 
 ```
     $ sudo ln -s $HOME/concussionjs-core/bin/cli.py /usr/local/bin/cjs
-    $ sudo ln -s $HOME/concussionjs-core/node_modules/cjs-proxy/bin/cjs-proxy /usr/local/bin/cjs-proxy
+    $ sudo ln -s $HOME/concussionjs-core/node_modules/concussionjs-proxy/bin/cjs-proxy /usr/local/bin/cjs-proxy
 ```
 
 ### OPTIONAL Step 4. Install all linux package dependencies

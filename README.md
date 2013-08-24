@@ -166,7 +166,7 @@ We have also provided an install script for those starting from a fresh OS insta
     $ sudo ./install.sh
 ```
 
-*Do NOT use the -g argument; -g is only used in conjunction with a global NPM install 
+*Do NOT use the -g argument; -g is only used in conjunction with a global NPM install (install option 3)
 
 Run it!
 -------

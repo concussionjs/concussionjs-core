@@ -79,7 +79,7 @@ From CONCUSSIONJS_CORE_DIR/install/os_install/YOUR_OS directory:
 
 ### 3. Configuring the server (config.json)
 
-The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to support the rate-limiting proxy configuration.
+The ConcussionJS Core Platform uses MongoDB for object persistence, and Redis to support the rate-limiting proxy configuration.
 
 ```
     {
@@ -107,9 +107,9 @@ The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to
 
 * __mongodb__: MongoDB configuration (host & port)
 * __redis__: Redis configuration (host & port)
-* __facebook__: facebook authentication configuration (app id, app secret)
-* __google__: google authentication configuration (clientid)
-* __aws__: Amazon web services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
+* __facebook__: Facebook authentication configuration (app id, app secret)
+* __google__: Google authentication configuration (clientid)
+* __aws__: Amazon Web Services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
 
 ### 4. Configure the cjs-proxy server (config.json)
 
@@ -210,7 +210,7 @@ From $HOME/concussionjs-core/install/os_install/YOUR_OS directory:
 
 ### 5. Configuring the server (config.json)
 
-The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to support the rate-limiting proxy configuration.
+The ConcussionJS Core Platform uses MongoDB for object persistence, and Redis to support the rate-limiting proxy configuration.
 
 ```
     {
@@ -238,9 +238,9 @@ The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to
 
 * __mongodb__: MongoDB configuration (host & port)
 * __redis__: Redis configuration (host & port)
-* __facebook__: facebook authentication configuration (app id, app secret)
-* __google__: google authentication configuration (clientid)
-* __aws__: Amazon web services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
+* __facebook__: Facebook authentication configuration (app id, app secret)
+* __google__: Google authentication configuration (clientid)
+* __aws__: Amazon Web Services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
 
 ### 6. Configure the cjs-proxy server (config.json)
 

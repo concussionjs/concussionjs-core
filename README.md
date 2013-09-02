@@ -69,7 +69,7 @@ From the shell:
 
 ### 2. Configuring the server (config.json)
 
-The ConcussionJS Core Platform uses a mongodb server for persistence
+The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to support the rate-limiting proxy configuration.
 
 ```
     {

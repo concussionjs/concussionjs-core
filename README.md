@@ -51,7 +51,9 @@ Instructions to build from source  (Option 3 above)
 We have also provided an install script for those starting from a fresh OS install. 
 * Navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
 
+```
 	$ sudo ./install.sh
+```
 
 Run it!
 -------
@@ -59,7 +61,9 @@ Run it!
 
 From the shell:
 
+```
     $ sudo npm install concusionjs-core -g
+```
 
 *The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin')*
 
@@ -67,12 +71,14 @@ From the shell:
 
 The ConcussionJS Core Platform uses a mongodb server for persistence
 
+```
     {
         "mongodb": {
             "port": 27017,
             "host": "127.0.0.1"
         }
     }
+```
 
  * __mongodb__: MongoDB configuration (host & port)
 
@@ -82,7 +88,8 @@ The ConcussionJS Core Platform uses a mongodb server for persistence
 cjs-proxy uses a Redis server to manage its configuration (and to share its state across the multiple workers). You can use the Redis server to change its configuration while it's running or simply check the health state of a backend.
 
 The config file is under CONCUSSIONJS_CORE_INSTALL_DIR/node_modules/concussionjs-proxy/config/cjs_config.json
-	
+
+```	
 	{
     	"server": {
         	"debug": true,
@@ -97,6 +104,7 @@ The config file is under CONCUSSIONJS_CORE_INSTALL_DIR/node_modules/concussionjs
         	"host": "127.0.0.1"
     	}
 	}
+```
 
 * __server.accessLog__: location of the Access logs, the format is the same as
 nginx

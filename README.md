@@ -8,11 +8,8 @@ Run ConcussionJS platform one of three ways
 ###1. As a cloud platform (fastest to test)
 Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
 
-###2. As a VirtualBox virtual machine
-Download the latest VirtualBox-based virtual appliance at http://www.concussionjs.com/concussionjs-core-latest.ova
-
-###3. As a self-installable Debian package
-* __Step 1__: Download http://www.concussionjs.com/concussionjs-core-latest.deb
+###2. As a self-installable Debian package
+* __Step 1__: Download http://testdrive.concussionjs.com/concussionjscore-0.0.1.deb
 
 * __Step 2__: Install gdebi install utility
 	
@@ -22,11 +19,11 @@ Download the latest VirtualBox-based virtual appliance at http://www.concussionj
 	
     $ gdebi concussionjs-core-latest.deb
 
-###4. Build from source yourself (experts only)
+###3. Build from source yourself (experts only)
 follow detailed instructions below 
 
 
-Build from source instructions (Option 4 above)
+Instructions to build from source  (Option 3 above)
 -----------------
 
 ### Pre-requisites

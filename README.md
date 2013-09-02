@@ -9,7 +9,7 @@ Run ConcussionJS platform one of three ways
 Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
 
 ###2. As a VirtualBox virtual machine
-Download the latest VirtualBox-based virtual appliance @ http://www.concussionjs.com/concussionjs-core-latest.ova
+Download the latest VirtualBox-based virtual appliance at http://www.concussionjs.com/concussionjs-core-latest.ova
 
 ###3. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjs-core-latest.deb

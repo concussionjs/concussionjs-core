@@ -1,9 +1,11 @@
 var jsdom = require('jsdom');
 var nta = require('concussion-core');
 var settings = require('./settings.js');
-var config = require('./config.js');
-var connect = require('connect');
 var fs = require('fs');
+var configFile = "../../config.json"
+var data = fs.readFileSync(configFile);
+config = JSON.parse(data);
+var connect = require('connect');
 var html = fs.readFileSync(__dirname + '/kotemplate.ejs', 'utf-8');
 var scriptonly = fs.readFileSync(__dirname + '/kotemplate-scriptonly.ejs', 'utf-8');
 var cjsutil = fs.readFileSync(__dirname + '/cjs-utilities.js','utf-8');
@@ -68,8 +70,8 @@ objects = [];
 nta.debug=false;
 
 redisClient = redis.createClient(
-    config().port,
-    config().host
+    config.redis.port,
+    config.redis.host
 );
 
 redisClient.on('error', function (err) {

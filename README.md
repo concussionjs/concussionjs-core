@@ -22,14 +22,16 @@ Download the latest VirtualBox-based virtual appliance at http://www.concussionj
 	
     $ gdebi concussionjs-core-latest.deb
 
-###4. Build from source yourself (experts only) -- folow detailed instructions below 
+###4. Build from source yourself (experts only)
+follow detailed instructions below 
 
 
 Build from source instructions (Option 4 above)
 -----------------
 
 ### Pre-requisites
-#### 1. Ubuntu 12.04 Linux or higher (only configuration tested, though it will likely work on other OS's versions in the debian family)
+#### 1. Ubuntu 12.04 Linux or higher 
+(Note:only configuration tested, though it will likely work on other OS's versions in the debian family)
 * git
 * mongodb
 * nodejs

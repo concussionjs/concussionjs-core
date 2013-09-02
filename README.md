@@ -1,10 +1,12 @@
-ConcussionJS Core Platform: a rapid web application development platform
+ConcussionJS Core Platform
 ===============================
-
+What is it?
+------------
 Run ConcussionJS platform one of three ways
 -----------------------------
 
-### 1. As a cloud platform (recommended)-- include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
+### 1. As a cloud platform (recommended)
+Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
 
 ### 2. As a VirtualBox virtual machine -- Download the latest VirtualBox-based virtual appliance @ http://www.concussionjs.com/concussionjs-core-latest.ova
 
@@ -17,7 +19,7 @@ Build from source instructions (Option 4 above)
 -----------------
 
 ### Pre-requisites
-## 1. Ubuntu 12.04 Linux or higher (only configuration tested, though it will likely work on other OS's versions in the debian family)
+#### 1. Ubuntu 12.04 Linux or higher (only configuration tested, though it will likely work on other OS's versions in the debian family)
 	+ git
 	+ mongodb
 	+ nodejs

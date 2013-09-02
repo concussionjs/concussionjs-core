@@ -2,6 +2,10 @@ ConcussionJS Core Platform
 ===============================
 What is it?
 ------------
+ConcussionJS is a platform that enables you to create dynamic web applications with only HTML and CSS. You provide the HTML, and the platform generates everything from the client-side code to the REST APIs necessary to support your application. 
+
+Build your first application < 5 minutes following the tutorial at http://www.concussionjs.com
+
 Run ConcussionJS platform one of three ways
 -----------------------------
 
@@ -15,7 +19,7 @@ Include the public concussion.js javascript file in your HTML following the inst
 	
     $ apt-get install gdebi
 
-* __Step 3__: Use dgebi to install the Debian package
+* __Step 3__: Use gdebi to install the Debian package
 	
     $ gdebi concussionjs-core-latest.deb
 

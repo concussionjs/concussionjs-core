@@ -13,7 +13,7 @@ Run ConcussionJS platform one of three ways
 Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
 
 ###2. As a self-installable Debian package
-* __Step 1__: Download http://testdrive.concussionjs.com/concussionjscore-0.0.1.deb
+* __Step 1__: Download http://www.concussionjs.com/concussionjscore-0.0.1.deb
 
 * __Step 2__: Install gdebi install utility
 

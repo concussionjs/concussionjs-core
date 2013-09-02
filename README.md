@@ -30,8 +30,8 @@ Build from source instructions (Option 4 above)
 -----------------
 
 ### Pre-requisites
-#### 1. Ubuntu 12.04 Linux or higher 
-(Note:only configuration tested, though it will likely work on other OS's versions in the debian family)
+*Ubuntu 12.04 Linux or higher 
+	(Note:only configuration tested, though it will likely work on other OS's versions in the debian family)
 * git
 * mongodb
 * nodejs
@@ -43,7 +43,8 @@ Build from source instructions (Option 4 above)
 * redis-server
 * openjdk-6-jre-headless
 
-### 1b. We have provide an install script for those starting from a fresh OS install. Navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
+We have also provided an install script for those starting from a fresh OS install. 
+* Navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
 
 	$ sudo ./install.sh
 

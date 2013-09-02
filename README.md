@@ -76,12 +76,16 @@ The ConcussionJS Core Platform uses a mongodb server for persistence
         "mongodb": {
             "port": 27017,
             "host": "127.0.0.1"
-        }
+        },
+        "redis": {
+        	"port": 6379,
+        	"host": "127.0.0.1"
+    	}
     }
 ```
 
- * __mongodb__: MongoDB configuration (host & port)
-
+* __mongodb__: MongoDB configuration (host & port)
+* __redis__: Redis configuration (host & port)
 
 ### 3. Configure the cjs-proxy server (config.json)
 

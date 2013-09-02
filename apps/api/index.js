@@ -1,5 +1,5 @@
 var jsdom = require('jsdom');
-var nta = require('concussion-core');
+var nta = require('concussionjs-core');
 var settings = require('./settings.js');
 var fs = require('fs');
 var configFile = "../../config.json"

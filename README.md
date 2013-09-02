@@ -50,7 +50,7 @@ We have also provided an install script for those starting from a fresh OS insta
 
 Run it!
 -------
-### 1. Install it
+### 1. Install ConcussionJS Core Platform with NPM
 
 From the shell:
 

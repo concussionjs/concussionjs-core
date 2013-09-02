@@ -16,15 +16,19 @@ Include the public concussion.js javascript file in your HTML following the inst
 * __Step 1__: Download http://testdrive.concussionjs.com/concussionjscore-0.0.1.deb
 
 * __Step 2__: Install gdebi install utility
-	
+
+```	
     $ apt-get install gdebi
+```
 
 * __Step 3__: Use gdebi to install the Debian package
-	
+
+```	
     $ gdebi concussionjs-core-latest.deb
+```
 
 ###3. Build from source yourself (experts only)
-follow detailed instructions below 
+*Detailed instructions below*
 
 
 Instructions to build from source  (Option 3 above)

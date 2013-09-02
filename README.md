@@ -18,7 +18,7 @@ Download the latest VirtualBox-based virtual appliance at http://www.concussionj
 	
 	$ apt-get install gdebi
 
-*__Step 3__: Use dgebi to install the Debian package
+* __Step 3__: Use dgebi to install the Debian package
 	
 	$ gdebi concussionjs-core-latest.deb
 

@@ -5,20 +5,20 @@ What is it?
 Run ConcussionJS platform one of three ways
 -----------------------------
 
-* __1. As a cloud platform__ (fastest to test)
+###1. As a cloud platform (fastest to test)
 Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
 
-* __2. As a VirtualBox virtual machine__
+###2. As a VirtualBox virtual machine
 Download the latest VirtualBox-based virtual appliance @ http://www.concussionjs.com/concussionjs-core-latest.ova
 
-* __3. As a self-installable Debian package__
-** __Step 1__: Download http://www.concussionjs.com/concussionjs-core-latest.deb
-** __Step 2__: Install gdebi install utility
+###3. As a self-installable Debian package
+* __Step 1__: Download http://www.concussionjs.com/concussionjs-core-latest.deb
+* __Step 2__: Install gdebi install utility
 	$ apt-get install gdebi
-** __Step 3__: Use dgebi to install the ConcussionJS core platform
+*__Step 3__: Use dgebi to install the ConcussionJS core platform
 	$ gdebi concussionjs-core-latest.deb
 
-* 4. Build from source yourself (experts only) -- folow detailed instructions below 
+###4. Build from source yourself (experts only) -- folow detailed instructions below 
 
 
 Build from source instructions (Option 4 above)

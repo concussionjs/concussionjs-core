@@ -74,21 +74,21 @@ The ConcussionJS Core Platform uses a mongodb server for persistence
 cjs-proxy uses a Redis server to manage its configuration (and to share its state across the multiple workers). You can use the Redis server to change its configuration while it's running or simply check the health state of a backend.
 
 The config file is under CONCUSSIONJS_CORE_INSTALL_DIR/node_modules/concussionjs-proxy/config/cjs_config.json
-
-  {
-    "server": {
-        "debug": true,
-        "accessLog": "/var/log/hipache_access.log",
-        "port": 80,
-        "workers": 1,
-        "maxSockets": 100,
-        "deadBackendTTL": 30
-    },
-    "redis": {
-        "port": 6379,
-        "host": "127.0.0.1"
-    }
-}
+	
+	{
+    	"server": {
+        	"debug": true,
+        	"accessLog": "/var/log/hipache_access.log",
+        	"port": 80,
+        	"workers": 1,
+        	"maxSockets": 100,
+        	"deadBackendTTL": 30
+    	},
+    	"redis": {
+        	"port": 6379,
+        	"host": "127.0.0.1"
+    	}
+	}
 
 * __server.accessLog__: location of the Access logs, the format is the same as
 nginx

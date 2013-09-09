@@ -16,10 +16,34 @@ apt-get -y install openjdk-6-jre-headless
 pip install pymongo
 pip install redis
 
-if [ "$1" = "-g" ]; then
-	$(npm root -g)/concussionjs-core/install/install.sh
-fi
-if [ "$1" = "" ]; then
-	$(npm root)/concussionjs-core/install/install.sh
+function usage
+{
+    echo "usage: $0 [[-g | --global] | [-h | --help]]"
+}
 
+function install_global
+{
+	$(npm root -g)/concussionjs-core/install/install.sh
+}
+
+function install_local
+{
+	$(npm root)/concussionjs-core/install/install.sh
+}
+
+if [ "$1" = "" ]; then
+	install_local
 fi
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -g | --global )			install_global
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;    
+        *)						usage
+								exit 1
+    esac
+    shift
+done

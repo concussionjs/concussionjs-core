@@ -80,12 +80,26 @@ The ConcussionJS Core Platform uses mongodb for object persistence, and Redis to
         "redis": {
         	"port": 6379,
         	"host": "127.0.0.1"
-    	}
+    	},"facebook": {
+            "app_id":"",
+            "app_secret":""
+        },
+        "aws":{
+        "hosted_zone_id":"",
+        "bucket_name":"cjs_uploads",
+        "region":"us-east-1"
+        },
+        "google":{
+            "clientid": ""
+        }
     }
 ```
 
 * __mongodb__: MongoDB configuration (host & port)
 * __redis__: Redis configuration (host & port)
+* __facebook__: facebook authentication configuration (app id, app secret)
+* __google__: google authentication configuration (clientid)
+* __aws__: Amazon web services S3 (bucket_name, region) and route53 (hosted_zone_id) configuration
 
 ### 3. Configure the cjs-proxy server (config.json)
 

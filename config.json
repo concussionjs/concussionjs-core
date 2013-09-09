@@ -7,4 +7,16 @@
         	"port": 6379,
         	"host": "127.0.0.1"
     }
+    ,"facebook": {
+    		"app_id":"",
+    		"app_secret":""
+    },
+    "aws":{
+    	"hosted_zone_id":"",
+    	"bucket_name":"cjs_uploads",
+    	"region":"us-east-1"
+    },
+    "google":{
+    		"clientid": ""
+    }
 }

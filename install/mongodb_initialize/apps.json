@@ -1,2 +1,2 @@
-{ "_id" : { "$oid" : "50d748a41f30a54285a28d48" }, "port" : 8105, "name" : "api",}
+{ "_id" : { "$oid" : "50d748a41f30a54285a28d48" }, "port" : 8105, "name" : "api"}
 { "_id" : { "$oid" : "50d7f90a1f30a542cb385573" }, "port" : 8106, "name" : "samples"}

@@ -27,7 +27,7 @@ Include the public concussion.js javascript file in your HTML following the inst
     $ gdebi concussionjs-core-latest.deb
 ```
 
-###3. Build from source yourself (experts only)
+###3. Build from source yourself
 *Detailed instructions below*
 
 
@@ -66,6 +66,8 @@ From the shell:
 ```
 
 *The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin')*
+
+*__IMPORTANT NOTE__: You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
 
 ### 2. Configuring the server (config.json)
 

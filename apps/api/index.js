@@ -20,28 +20,32 @@ var app = express();
 var util = require('util');
 var redis = require('redis');
 var AWS = require('aws-sdk');
-var s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+var s3 = new AWS.S3({params: {Bucket: config.aws.bucket_name}});
 var route53 = new AWS.Route53({apiVersion: '2012-12-12'});
 var passport = require('passport');
-var mime = require('mime');
+var mime = require('mime');  
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var s3bucketSuffix = ".s3-website-us-east-1.amazonaws.com";
-var hostedZoneId = "Z36J7ZXTJWEGZI"
-passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://"+process.env.CJS_WEB_URL+"/auth/facebook/callback"
-  },
-  function(token, tokenSecret, profile, done) {
-	console.log("login successful");
-	var user = profile;
-	var credentials = {};
-	user.token = token;
-	user.tokenSecret = tokenSecret;
-	done(null,user);
-  }
-));
+var hostedZoneId = config.aws.hosted_zone_id;
+
+if(config.facebook && config.facebook.app_id && config.facebook.app_secret)
+{
+	passport.use(new FacebookStrategy({
+    	clientID: config.facebook.app_id,
+    	clientSecret: config.facebook.app_secret,
+    	callbackURL: "http://"+process.env.CJS_WEB_URL+"/auth/facebook/callback"
+  	},
+  	function(token, tokenSecret, profile, done) {
+		console.log("login successful");
+		var user = profile;
+		var credentials = {};
+		user.token = token;
+		user.tokenSecret = tokenSecret;
+		done(null,user);
+  	}
+	));
+}
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -812,13 +816,13 @@ var uploadFileAction = function(tenantId, userId,req,res)
    
     if(tenantId=='anonymous')
     {
-		s3 = new AWS.S3({params: {Bucket: 'cjs-uploads'}});
+		s3 = new AWS.S3({params: {Bucket: config.aws.bucket_name}});
 		var key = userId + "/" + req.files["file-0"].name;
     }
     else if(userId!=null)
     {
     	s3 = new AWS.S3({params: {Bucket: process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-","")}});
-    	var key = "cjs-uploads/" + userId + "/" + req.files["file-0"].name;
+    	var key = config.aws.bucket_name + "/" + userId + "/" + req.files["file-0"].name;
     }
     else
     {
@@ -829,7 +833,7 @@ var uploadFileAction = function(tenantId, userId,req,res)
     console.log(target_path + " " + process.env.CJS_WEB_URL.replace("api",tenantId).replace("local-",""));
  
 	AWS.config.update({
-    	region: 'us-east-1'
+    	region: config.aws.region
 	});
 	
 	//AWS.S3({params: {Bucket: 'cjs-uploads'}});
@@ -873,7 +877,7 @@ var createBucketAction = function(bucketName,req,res)
 	try{
 	 
 		AWS.config.update({
-    		region: 'us-east-1'
+    		region: config.aws.region
 		});
 	
 		s3.createBucket(
@@ -900,7 +904,7 @@ var getDNSNamesAction = function(hostedZoneId,recordName,req,res)
 {
 	try{
 		route53.config.update({
-    		region: 'us-east-1'
+    		region: config.aws.region
 		});
 	
 		route53.listResourceRecordSets(
@@ -931,7 +935,7 @@ var enableWebConfigAction = function(bucketName,req,res)
 	try{
 	 
 		AWS.config.update({
-    		region: 'us-east-1'
+    		region: config.aws.region
 		});
 	
 		s3.putBucketWebsite(
@@ -961,7 +965,7 @@ var addDNSAction = function(dnsName,req,res)
 	try{
 	 
 		route53.config.update({
-    		region: 'us-east-1'
+    		region: config.aws.region
 		});
 	
 		route53.changeResourceRecordSets(

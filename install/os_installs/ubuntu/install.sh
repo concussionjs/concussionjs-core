@@ -15,6 +15,11 @@ apt-get -y install redis-server
 apt-get -y install openjdk-6-jre-headless
 pip install pymongo
 pip install redis
-$(npm root -g)/concussionjs-core/install/install.sh
 
+if [ "$1" = "-g" ]; then
+	$(npm root -g)/concussionjs-core/install/install.sh
+fi
+if [ "$1" = "" ]; then
+	$(npm root)/concussionjs-core/install/install.sh
 
+fi

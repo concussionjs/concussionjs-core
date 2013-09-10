@@ -41,7 +41,15 @@ cp -f $(root_dir)/concussionjs-core/install/upstart_scripts/cjs-proxy.conf /etc/
 cp -f $(root_dir)/concussionjs-core/install/upstart_scripts/api.conf /etc/init
 cp -f $(root_dir)/concussionjs-core/install/upstart_scripts/samples.conf /etc/init
 cp -f $(root_dir)/concussionjs-core/install/upstart_scripts/redis-server.conf /etc/init
-cp -f $(root_dir)/concussionjs-core/install/concussion.sh /etc/profile.d
+
+if [ $1 = "-g" | $1 = "--global" ]; then
+	cp -f $(root_dir)/concussionjs-core/install/concussion_global.sh /etc/profile.d/concussion.sh	
+fi
+
+if [ $1 = "" ]; then
+	cp -f $(root_dir)/concussionjs-core/install/concussion.sh /etc/profile.d	
+fi
+
 chmod +x /etc/profile.d/concussion.sh
 su - concussed -c /etc/profile.d/concussion.sh
 /etc/init.d/redis-server stop

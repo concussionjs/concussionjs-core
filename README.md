@@ -36,7 +36,7 @@ Instructions to build from source  (Option 3 above)
 
 ### Pre-requisites
 *Ubuntu 12.04 Linux or higher 
-	(Note:only configuration tested, though it will likely work on other OS's versions in the debian family)
+	(Note:only configuration tested, though it will likely work on other OS's in the debian family)
 * git
 * mongodb
 * nodejs
@@ -52,8 +52,9 @@ We have also provided an install script for those starting from a fresh OS insta
 * Navigate to the directory CONCUSSION_CORE_INSTALL_DIR/install/os_install/YOUR_OS/, and run:
 
 ```
-	$ sudo ./install.sh
+	$ sudo ./install.sh -g
 ```
+*If you are installing the library in your current directory, run the above command without the '-g' option
 
 Run it!
 -------
@@ -65,7 +66,7 @@ From the shell:
     $ sudo npm install concusionjs-core -g
 ```
 
-*The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin')*
+*The '-g' option will make the 'cjs' and 'cjs-proxy' bin-script available system-wide (usually linked from '/usr/local/bin'). Without the -g you will be installing the concussionjs-core libraries in the current directory*
 
 *__IMPORTANT NOTE__: You have to install the library with the '-g' extension because the libraries have dependencies to the global npm root directory*
 
@@ -163,7 +164,7 @@ As the community grows and platform matures, the goal is to support increasingly
 * Run on-demand and on-premises
 * Operate on-line and off-line
 * Deploy as both a multi-tenant and single-tenant solution
-* Deploy as a self-installable package, a virtual appliance, an AWS image, and even be run without deploying anything at all (e.g., a hosted JavaScript include * freely available backend services)
+* Deploy as a self-installable package, a virtual appliance, an AWS image, and even be run without deploying anything at all (e.g., a hosted JavaScript include + freely available backend services)
 * Support apps for native mobile, web mobile, tablet, desktop, and, eventually, TV and larger formats
 * Incrementally scale at all layers of the stack
 * Provide application QA, integrity verification, and remediation

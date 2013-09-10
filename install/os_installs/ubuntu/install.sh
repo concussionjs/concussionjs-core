@@ -28,7 +28,7 @@ function install_global
 
 function install_local
 {
-	$(npm root)/concussionjs-core/install/install.sh
+	$home/concussionjs-core/install/install.sh
 }
 
 if [ "$1" = "" ]; then

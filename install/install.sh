@@ -10,7 +10,7 @@ function set_root_dir_global
 
 function set_root_dir_local
 {
-	root_dir=$(npm root)
+	root_dir=$home
 }
 
 if [ "$1" = "" ]; then

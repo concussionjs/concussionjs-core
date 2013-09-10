@@ -25,8 +25,7 @@ case $1 in
                             ;;    
     *)						usage
                             exit 1
-    esac
-done
+esac
 
 make --directory $root_dir/concussionjs-core/install/mon install
 #echo "starting concussionjs-core npm install"

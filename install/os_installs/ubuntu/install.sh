@@ -23,7 +23,7 @@ function usage
 
 function install_global
 {
-	$(npm root -g)/concussionjs-core/install/install.sh
+	$(npm root -g)/concussionjs-core/install/install.sh -g
 }
 
 function install_local

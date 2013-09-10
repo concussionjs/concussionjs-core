@@ -17,17 +17,15 @@ if [ "$1" = "" ]; then
 	set_root_dir_local
 fi
 
-while [ "$1" != "" ]; do
-    case $1 in
-        -g | --global )			set_root_dir_global
-                                ;;
-        -h | --help )           usage
-                                exit
-                                ;;    
-        *)						usage
-								exit 1
+case $1 in
+    -g | --global )			set_root_dir_global
+                            ;;
+    -h | --help )           usage
+                            exit
+                            ;;    
+    *)						usage
+                            exit 1
     esac
-    shift
 done
 
 make --directory $root_dir/concussionjs-core/install/mon install

@@ -10,7 +10,30 @@ Run ConcussionJS platform one of four ways
 -----------------------------
 
 ###1. As a cloud platform (fastest to test)
-Include the public concussion.js javascript file in your HTML following the instructions at http://www.concussionjs.com/ in the "Getting Started" section
+Include the public concussion.js javascript file in any HTML file following the instructions below
+
+* __Step 1__: Include the concussion.js javascript file in an HTML file (this could be running directly off your desktop -- no need for even a webserver)
+![include cjs](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addcjs.png)
+
+* __Step 2__: Add the ConcussionJS attributes to your HTML page. It uses the same syntax as KnockoutJS
+![add attr](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addattributes.png)
+
+* __Step 3__: Load your HTML page in a browser, preferably Chrome or Safari (should work on others, but tested mostly on aforementioned). You'll know it worked if you see the Concussion Admin banner in the upper right.
+*Note: The Concussion Admin banner only appears when you use it as an anonymous developer -- if you register on www.concussionjs.com via Google or Facebook the banner won't be displayed*
+![load page](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-loadpage.png)
+
+* __Step 4__: Click on the Concussion Admin banner to go to the administration page to add records
+![click admin](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-clickadmin.png)
+
+* __Step 5__: Click "New" button on the admin page to create a new record
+![click new](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-admin.png)
+
+* __Step 6__: Set the field values for your new record and hit save. Then create 2 or 3 more records the same way
+![set values](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addrecord.png)
+
+* __Step 7__: Reload your HTML field to see the page populated with your newly created records
+![see results](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-results.png)
+
 
 ###2. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjscore-0.0.1.deb
@@ -26,6 +49,15 @@ Include the public concussion.js javascript file in your HTML following the inst
 ```	
     $ gdebi concussionjs-core-latest.deb
 ```
+
+* __Step 4__: Check to see if install is working by verifying that the sample applicaton is working
+
+Got to: http://samples.local-concussionjs.com/contacts.html
+
+![My image](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-testinstall.png)
+
+__Note__ : It may take up to 5 minutes for the startup routine to complete
+
 
 ###3. Install via NPM
 *Detailed instructions below*
@@ -154,6 +186,14 @@ From CONCUSSIONJS_CORE_DIR/install directory
     $ cd CONCUSSIONJS_CORE_DIR/install
     $ sudo ./install.sh -g
 ```
+
+### 6. Check to see if install is working by verifying that the sample applicaton is working
+
+Got to: http://samples.local-concussionjs.com/contacts.html
+
+![My image](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-testinstall.png)
+
+__Note__ : It may take up to 5 minutes for the startup routine to complete
 
 Instructions to install from source  (Option 4 above)
 -----------------
@@ -286,7 +326,7 @@ From $HOME/concussionjs-core/install directory
     $ sudo ./install.sh
 ```
 
-### 8. Check to see if the sample applicaton is active
+### 8. Check to see if install is working by verifying that the sample applicaton is working
 
 Got to: http://samples.local-concussionjs.com/contacts.html
 

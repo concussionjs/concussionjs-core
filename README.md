@@ -9,8 +9,7 @@ Build your first application < 5 minutes following the tutorial at http://www.co
 Run ConcussionJS platform one of four ways
 -----------------------------
 
-###1. As a cloud platform (fastest to test)
-Include the public concussion.js javascript file in any HTML file following the instructions below
+###1. As a cloud platform (best way to start)
 
 * __Step 1__: Include the concussion.js javascript file in any of your HTML files. The file could reside on your file system (i.e., no need for a webserver). The simpler the HTML file the better to start off.
 ![include cjs](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addcjs.png)

@@ -12,7 +12,7 @@ Run ConcussionJS platform one of four ways
 ###1. As a cloud platform (fastest to test)
 Include the public concussion.js javascript file in any HTML file following the instructions below
 
-* __Step 1__: Include the concussion.js javascript file in an HTML file (this could be running directly off your desktop -- no need for even a webserver)
+* __Step 1__: Include the concussion.js javascript file in any of your HTML files. The file could reside on your file system (i.e., no need for a webserver). The simpler the HTML file the better to start off.
 ![include cjs](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addcjs.png)
 
 * __Step 2__: Add the ConcussionJS attributes to your HTML page. It uses the same syntax as KnockoutJS

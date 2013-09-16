@@ -286,6 +286,14 @@ From $HOME/concussionjs-core/install directory
     $ sudo ./install.sh
 ```
 
+### 8. Check to see if the sample applicaton is active
+
+Got to: http://samples.local-concussionjs.com/contacts.html
+
+![My image](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-testinstall.png)
+
+__Note__ : It may take up to 5 minutes for the startup routine to complete
+
 The ConcussionJS Community's Mission
 =====================================
 

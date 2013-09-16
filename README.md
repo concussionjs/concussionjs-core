@@ -18,21 +18,23 @@ Run ConcussionJS platform one of four ways
 ![add attr](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addattributes.png)
 
 * __Step 3__: Load your HTML page in a browser, preferably Chrome or Safari (should work on others, but tested mostly on aforementioned). You'll know it worked if you see the Concussion Admin banner in the upper right.
+
 *Note: The Concussion Admin banner only appears when you use it as an anonymous developer -- if you register on www.concussionjs.com via Google or Facebook the banner won't be displayed*
 ![load page](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-loadpage.png)
 
 * __Step 4__: Click on the Concussion Admin banner to go to the administration page to add records
 ![click admin](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-clickadmin.png)
 
-* __Step 5__: Click "New" button on the admin page to create a new record
+* __Step 5__: Click the "New" button on the admin page to create a new record
 ![click new](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-admin.png)
 
 * __Step 6__: Set the field values for your new record and hit save. Then create 2 or 3 more records the same way
 ![set values](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addrecord.png)
 
-* __Step 7__: Reload your HTML field to see the page populated with your newly created records
+* __Step 7__: Reload your HTML file to see the page populated with your newly created records
 ![see results](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-results.png)
 
+### VOILA -- now you have database backed, dynamic web page without the headaches of traditional web development
 
 ###2. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjscore-0.0.1.deb

@@ -29,7 +29,8 @@ case $1 in
                             exit
                             ;;
 esac
-
+pip install pymongo
+pip install redis
 make --directory $root_dir/concussionjs-core/install/mon install
 #echo "starting concussionjs-core npm install"
 #npm --prefix $HOME/concussionjs-core install $HOME/concussionjs-core

@@ -22,6 +22,11 @@ if [ "$1" = "" ]; then
 	set_root_dir_local
 fi
 
+if [ "$1" = "-d" ]; then
+        set_root_dir_local
+fi
+
+
 case $1 in
     -g | --global )	    set_root_dir_global
                             ;;

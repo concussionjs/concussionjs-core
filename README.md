@@ -42,13 +42,13 @@ Run ConcussionJS platform one of four ways
 * __Step 2__: Install gdebi install utility
 
 ```	
-    $ apt-get install gdebi
+    $ apt-get install gdebi-core
 ```
 
 * __Step 3__: Use gdebi to install the Debian package
 
 ```	
-    $ gdebi concussionjs-core.deb
+    $ sudo gdebi concussionjs-core.deb
 ```
 
 * __Step 4__: Check to see if install is working by verifying that the sample applicaton is working

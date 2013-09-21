@@ -37,7 +37,7 @@ Run ConcussionJS platform one of four ways
 ### VOILA -- now you have database backed, dynamic web page without the headaches of traditional web development
 
 ###2. As a self-installable Debian package
-* __Step 1__: Download http://www.concussionjs.com/concussionjscore-0.0.1.deb
+* __Step 1__: Download http://www.concussionjs.com/concussionjs-core.deb
 
 * __Step 2__: Install gdebi install utility
 
@@ -48,7 +48,7 @@ Run ConcussionJS platform one of four ways
 * __Step 3__: Use gdebi to install the Debian package
 
 ```	
-    $ gdebi concussionjs-core-latest.deb
+    $ gdebi concussionjs-core.deb
 ```
 
 * __Step 4__: Check to see if install is working by verifying that the sample applicaton is working

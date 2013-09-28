@@ -368,7 +368,7 @@ try{
 
         	if(tenantId!='anonymous')
         	{
-        		var currentFileName = "https://s3.amazonaws.com/" + "<%=testdriveURL%>".replace("api","<%=tenantId%>").replace("local-","") + "/cjs-uploads/" + id + "/" + $('#file')[0].files["0"].name
+        		var currentFileName = "https://s3.amazonaws.com/" + "<%=testdriveURL%>".replace("api","<%=tenantId%>").replace("local-","") + "/cjs_uploads/" + id + "/" + $('#file')[0].files["0"].name
 			}
 			else
 			{

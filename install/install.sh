@@ -15,7 +15,12 @@ function set_root_dir_global
 
 function set_root_dir_local
 {
-	root_dir=$HOME
+	root_dir=$(pwd)
+}
+
+function set_root_dir_prefix
+{
+        root_dir=$1
 }
 
 if [ "$1" = "" ]; then
@@ -30,6 +35,9 @@ fi
 case $1 in
     -g | --global )	    set_root_dir_global
                             ;;
+    -p | --prefix)	    shift
+			    set_root_dir_prefix
+			    ;;
     -h | --help )           usage
                             exit
                             ;;
@@ -57,14 +65,14 @@ fi
 
 if [ "$1" = "" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion.sh /etc/profile.d	
-	sed -e "s;@HOME@;$HOME;" $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
+	sed -e "s;@HOME@;$root_dir;" $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
 fi
 
 if [ "$1" = "-d" ]; then
 	cp -f $root_dir/concussionjs-core/install/concussion.sh /etc/profile.d
         ln -s $root_dir/concussionjs-core/bin/cli.py /usr/local/bin/cjs
         ln -s $root_dir/concussionjs-core/node_modules/concussionjs-proxy/bin/cjs-proxy /usr/local/bin/cjs-proxy
-        sed -e "s;@HOME@;$HOME;" $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
+        sed -e "s;@HOME@;$root_dir;" $root_dir/concussionjs-core/install/upstart_scripts/cjs-proxy.conf > /etc/init/cjs-proxy.conf
 fi
 
 chmod +x /etc/profile.d/concussion.sh

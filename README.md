@@ -215,7 +215,8 @@ Instructions to install from source  (Option 4 above)
 
 We have also provided an install script for those starting from a fresh OS install. Follow optional step 4
 
-### 1. Clone ConcussionJS Core Platform into home directory (i.e., $HOME)
+### 1. Clone ConcussionJS Core Platform into your target directory (e.g., $HOME)
+*NOTE: rest of the examples below assume $HOME as the base directory, but you could clone the project into another location; just remember to replace $HOME in the steps below with whatever your base directory is*
 
 From your home directory:
 
@@ -224,7 +225,7 @@ From your home directory:
     $ git clone https://github.com/concussionjs/concussionjs-core
 ```
 
-### 2. Run the `npm install` from the concussionjs-core directory to install all package dependencies
+### 2. Run the `npm install` from your concussionjs-core install directory to install all package dependencies
 
 ```
     $ cd $HOME/concussionjs-core
@@ -320,12 +321,20 @@ each backend (per worker)
 
 ### 7. Run ConcussionJS install script to import Redis and MongoDB records, and initiate servers
 
-From $HOME/concussionjs-core/install directory
+From $HOME/concussionjs-core directory
 
 ```
-    $ cd $HOME/concussionjs-core/install
-    $ sudo ./install.sh
+    $ cd $HOME/concussionjs-core
+    $ sudo ./install/install.sh
 ```
+
+As an alternative, you could specify a prefix folder so that you can run the install script from any directory you'd like; above example must be run from the concussionjs-core folder. From the example, that would be $HOME/concussionjs-core
+
+```
+    $ cd $HOME/concussionjs-core
+    $ sudo ./install/install.sh --prefix $HOME/concussionjs_core
+```
+
 
 ### 8. Check to see if install is working by verifying that the sample applicaton is working
 

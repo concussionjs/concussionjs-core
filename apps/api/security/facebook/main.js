@@ -149,7 +149,7 @@ function receiveMessage(event)
 	for(var i=0;i<objects.length;i++)
 	{
 	%>
-		$mvm.<%=objects[i].name%>_getRecords(userId);
+		$cjs.<%=objects[i].name%>_getRecords(userId);
 	<%
 	}	
 	%>			
@@ -166,7 +166,7 @@ function receiveMessage(event)
 	for(var i=0;i<objects.length;i++)
 	{
 	%>
-		$mvm.<%=objects[i].name%>_getRecords();
+		$cjs.<%=objects[i].name%>_getRecords();
 	<%
 	}	
 	%>			

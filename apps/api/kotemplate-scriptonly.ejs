@@ -1,4 +1,4 @@
-$('head').append("<script type='text/javascript'>var $mvm;</script>");
+$('head').append("<script type='text/javascript'>var $cjs;</script>");
 $('head').append("<link rel='stylesheet' href='http://<%=URLPrefix%>/css/spinner.css'>");
 //$(function(){
 <%
@@ -91,19 +91,8 @@ try{
 					}
 					%>
 						this.remove = function() {
-    					   //alert(ko.toJSON(self) + " \n\n" + ko.toJSON(this) + " bday:" + this.birthday());
-    					   	$.ajax("http://<%=testdriveURL%>/delete/instances/"+this.id(), {
-    					   		data: '',
-								type: "get", 
-								dataType: "text",
-								success: function(result)
-								{
-									/*$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=myObject.name%>", function(allData) {
-										var mapped = $.map(allData, function(item) { return new <%=myObject.name%>(item) });
-										$mvm.<%=myObject.varname%>.read(mapped);
-									});*/
-    					   			$mvm.<%=myObject.name%>_getRecords();
-								}
+							$cjs.<%=myObject.varname%>.delete (this.id(), function(result){
+								$cjs.<%=myObject.name%>_getRecords();
 							});
 						}
 
@@ -113,17 +102,8 @@ try{
 							{%>
 								self.<%=securityKey%>=cjs.readCookie("<%=securityKey%>");
 							<%}%>
-       						$.ajax("http://<%=testdriveURL%>/update/instances/<%=myObject.name%>/" + this.id() , {
-							data: ko.toJSON(self),
-							type: "post", dataType: "text",
-							success: function(result) 
-							{ 
-								/*$.getJSON("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=myObject.name%>", function(allData) {
-									var mapped = $.map(allData, function(item) { return new <%=myObject.name%>(item) });
-									$mvm.<%=myObject.varname%>.read(mapped);
-								});*/
-								$mvm.<%=myObject.name%>_getRecords();
-        				   	}
+       						$cjs.<%=myObject.varname%>.update(this.id(),ko.toJSON(self),function(result){
+       							$cjs.<%=myObject.name%>_getRecords();
        						});
     					}	
 						
@@ -246,11 +226,13 @@ try{
 				data:'',
 				success:function(data){
 					var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
-        			self.<%=objects[i].varname%>.read(mapped);
+        			
         			if(callback)
         			{
-        				callback();
+        				callback(data);
         			}
+        			else
+        				self.<%=objects[i].varname%>.read(mapped);
 				}			
 			});
 		}
@@ -261,11 +243,13 @@ try{
 				data:'',
 				success:function(data){
 					var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
-        			self.<%=objects[i].varname%>.read(mapped);
+        			
         			if(callback)
         			{
-        				callback();
+        				callback(data);
         			}
+        			else
+        				self.<%=objects[i].varname%>.read(mapped);
 				}			
 			});
 		}
@@ -279,6 +263,11 @@ try{
 			data:'',
 			success:function(data){
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
+        		if(callback)
+        		{
+        			callback(data);
+        		}
+        		else
         			self.<%=objects[i].varname%>.read(mapped);
 			}			
 		});
@@ -301,7 +290,7 @@ try{
 
     var <%=objects[i].varname%>CreateJSON = function(){
     	//console.log("in CreateJSON");
-	$mvm.<%=objects[i].varname%>Form({
+	$cjs.<%=objects[i].varname%>Form({
 		<%
 		if(securityKey){
 		%>
@@ -323,7 +312,84 @@ try{
 
 	}
     
-    self.<%=objects[i].varname%>.read=ko.observableArray([]);
+    self.<%=objects[i].varname%>.read =ko.observableArray([]);
+    
+    self.<%=objects[i].varname%>.readRecords = function(callback){
+    	<%
+		if(securityKey)
+		{%>
+    		self.<%=objects[i].name%>_getRecords(cjs.readCookie("<%=securityKey%>"), function(jsonArray){
+    			callback(jsonArray);
+    		})
+    	<%
+    	}
+    	else
+    	{%>
+    		self.<%=objects[i].name%>_getRecords(null, function(jsonArray){
+    			callback(jsonArray);
+    		})
+    	<%}%>
+    }
+    
+    self.<%=objects[i].varname%>.createRecord = function(jsonObject, callback){
+    		jsonObject.tenant_object_id="<%=objects[i].name%>"
+    		<%
+    			if(securityKey!="")
+    			{
+    		%>		
+    			<%=securityKey%>=cjs.readCookie("<%=securityKey%>")
+    		<%
+    			}
+    		%>
+
+			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
+				async:false,
+				data: "{\"<%=objects[i].name%>\":" + jsonObject + "}",
+				type: "post",
+				dataType: "text",
+				success: function(result) 
+				{
+        			callback(result);
+				}
+        	});
+	}
+
+
+    self.<%=objects[i].varname%>.delete = function(id,callback){
+    	$.ajax("http://<%=testdriveURL%>/delete/instances/"+id, {
+    		data: '',
+			type: "get", 
+			dataType: "text",
+			success: function(result)
+			{
+    			callback(result);
+    			//$cjs.<%=objects[i].name%>_getRecords();
+			}
+		});
+    }
+
+    self.<%=objects[i].varname%>.update = function(id,jsonObject,callback){
+    	jsonObject.tenant_object_id="<%=objects[i].name%>"
+    	jsonObject.id = id;
+    	<%
+    		if(securityKey!="")
+    		{
+    	%>		
+    	<%=securityKey%>=cjs.readCookie("<%=securityKey%>")
+    	<%
+    		}
+    	%>
+
+    	$.ajax("http://<%=testdriveURL%>/update/instances/<%=objects[i].name%>/" + id , {
+			data: jsonObject,
+			type: "post", dataType: "text",
+			success: function(result) 
+			{ 
+				callback(result);
+				//$cjs.<%=objects[i].name%>_getRecords();
+        	}
+       	});
+    }     
 
     <%
     for(var j=0;j<objects[i].fields.length;j++)
@@ -335,14 +401,9 @@ try{
 		}
 	}
 	%>
+
     self.<%=objects[i].varname%>.create = function() {
     	var patt = new RegExp("<%=objects[i].varname%>Form","g");
-        //alert(ko.toJSON(self)); 
-        //console.log("self b " + $mvm.<%=objects[i].varname%>Form());
-       
-        //alert(ko.toJSON(self)); 
-        //console.log("self ja " + ko.toJSON($mvm.<%=objects[i].varname%>Form()));
-        //console.log("self a" + ko.toJSON($mvm.<%=objects[i].varname%>.read()));
         var data = new FormData();
         if($("input:file") && $("input:file").length>0)
         {
@@ -376,27 +437,27 @@ try{
 			}
 
 			var currentIndex;
-			$mvm.<%=objects[i].varname%>.location = ko.observable(currentFileName);
-			console.log($mvm.<%=objects[i].varname%>.location());
+			$cjs.<%=objects[i].varname%>.location = ko.observable(currentFileName);
+			console.log($cjs.<%=objects[i].varname%>.location());
 
 			<%=objects[i].varname%>CreateJSON();
     				$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
-						data: "{\"<%=objects[i].name%>\":" + ko.toJSON($mvm.<%=objects[i].varname%>Form()) + "}",
+						data: "{\"<%=objects[i].name%>\":" + ko.toJSON($cjs.<%=objects[i].varname%>Form()) + "}",
 						type: "post",
 						dataType: "text",
 						success: function(result) 
 						{
         					console.log(result);
 
-        					currentIndex=($mvm.<%=objects[i].varname%>.read()?$mvm.<%=objects[i].varname%>.read().length:0);
+        					currentIndex=($cjs.<%=objects[i].varname%>.read()?$cjs.<%=objects[i].varname%>.read().length:0);
         					self.<%=objects[i].name%>_getRecords(null, function(){
-								$mvm.<%=objects[i].varname%>.read()[currentIndex].location("http://<%=testdriveURL%>/images/loading.gif");
+								$cjs.<%=objects[i].varname%>.read()[currentIndex].location("http://<%=testdriveURL%>/images/loading.gif");
 								var spinner = createSpinner();
-								spinner.setAttribute('id','spinner' + $mvm.<%=objects[i].varname%>.read()[currentIndex].id());
-								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).parent().append(spinner);
-								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
+								spinner.setAttribute('id','spinner' + $cjs.<%=objects[i].varname%>.read()[currentIndex].id());
+								$("#" + $cjs.<%=objects[i].varname%>.read()[currentIndex].id()).parent().append(spinner);
+								$("#" + $cjs.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
 								console.log("pre length")
-								console.log($mvm.<%=objects[i].varname%>.read()[currentIndex].id() + " " + $("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).length);
+								console.log($cjs.<%=objects[i].varname%>.read()[currentIndex].id() + " " + $("#" + $cjs.<%=objects[i].varname%>.read()[currentIndex].id()).length);
 							});	console.log("post length")
 							<%=objects[i].varname%>_reset_form();
 							console.log("** currentIndex ** : " + currentIndex);
@@ -411,9 +472,9 @@ try{
     								type: 'POST',
     								success: function(result){
         								console.log(result);
-        								$mvm.<%=objects[i].varname%>.read()[currentIndex].location(currentFileName);
-        								$("#" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).show();
-        								$("#spinner" + $mvm.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
+        								$cjs.<%=objects[i].varname%>.read()[currentIndex].location(currentFileName);
+        								$("#" + $cjs.<%=objects[i].varname%>.read()[currentIndex].id()).show();
+        								$("#spinner" + $cjs.<%=objects[i].varname%>.read()[currentIndex].id()).hide();
     								}
 								});
 							});
@@ -423,23 +484,33 @@ try{
 		else
 		{
 			<%=objects[i].varname%>CreateJSON();
-			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
-					async:false,
-					data: "{\"<%=objects[i].name%>\":" + ko.toJSON($mvm.<%=objects[i].varname%>Form()) + "}",
-					type: "post",
-					dataType: "text",
-					success: function(result) 
-					{
-        				self.<%=objects[i].name%>_getRecords();
-						<%=objects[i].varname%>_reset_form();
-					}
+        	self.<%=objects[i].varname%>.createRecord(ko.toJSON($cjs.<%=objects[i].varname%>Form()), function(){
+        		self.<%=objects[i].name%>_getRecords();
+				<%=objects[i].varname%>_reset_form();
         	});
+
+
 		}
         
 
        
     }
-    	 
+    
+    self.<%=objects[i].varname%>.searchRecords= function(searchTerm, userId, callback){
+    	var url = "";
+    	if(userId && userId!="")
+    	{
+    		url="http://<%=testdriveURL%>/search/id_<%=tenantId%>_" + "<%=objects[i].varname%>" + "/" + userId +"/" + searchTerm;
+    	}
+    	else
+    	{
+    		url="http://<%=testdriveURL%>/search/id_<%=tenantId%>_" + "<%=objects[i].varname%>" + "/" + searchTerm;	
+    	}
+
+    	$.getJSON(url, function(allData) {
+            callback(allData);
+        });
+    }	 
     
 	self.<%=objects[i].varname%>.search = function(searchTerm) {
 		//alert(self.<%=objects[i].name%>_search_term());
@@ -456,21 +527,11 @@ try{
 		}
 		else
 		{
-			if(cjs.readCookie("userId")!="")
-			{
-				$.getJSON("http://<%=testdriveURL%>/search/id_<%=tenantId%>_" + "<%=objects[i].varname%>" + "/" + cjs.readCookie("userId") +"/" + searchTerm, function(allData) {
-            		var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
-            		//self.<%=objects[i].varname%>_search_results(mapped);
-					self.<%=objects[i].varname%>.read(mapped);
-        		});
-			}
-			else{
-				$.getJSON("http://<%=testdriveURL%>/search/id_<%=tenantId%>_" + "<%=objects[i].varname%>" + "/" + searchTerm, function(allData) {
-            		var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
-            		//self.<%=objects[i].varname%>_search_results(mapped);
-					self.<%=objects[i].varname%>.read(mapped);
-        		});
-			}
+			self.<%=objects[i].varname%>.searchRecords(searchTerm,cjs.readCookie("userId"),function(allData){
+            	var mapped = $.map(allData, function(item) { return new <%=objects[i].name%>(item.obj) });
+            	//self.<%=objects[i].varname%>_search_results(mapped);
+				self.<%=objects[i].varname%>.read(mapped);
+        	});
 		}
     }
 	<%
@@ -485,21 +546,21 @@ try{
 	%>
 			$("#search").change(function(){
            	 	console.log("searching for " + $("#search").val());
-            	$mvm.<%=searchTargets[i]%>.search($("#search").val());
+            	$cjs.<%=searchTargets[i]%>.search($("#search").val());
         	});
 	<%
 			}
 		}
 	%>
 
-	$mvm = new myViewModel();
-	ko.applyBindings($mvm);
+	$cjs = new myViewModel();
+	ko.applyBindings($cjs);
 <%
 	for(var i=0;i<objects.length;i++)
 	{
 	%>
-		$mvm.<%=objects[i].name%>_getRecords();
-		console.log("self " + ko.toJSON($mvm));
+		$cjs.<%=objects[i].name%>_getRecords();
+		console.log("self " + ko.toJSON($cjs));
 	<%
 	}	
 %>	

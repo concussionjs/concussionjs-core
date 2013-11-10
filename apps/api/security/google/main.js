@@ -148,7 +148,7 @@ function setUserIdCallback(obj)
 	for(var i=0;i<objects.length;i++)
 	{
 	%>
-	$mvm.<%=objects[i].name%>_getRecords(userId);
+	$cjs.<%=objects[i].name%>_getRecords(userId);
 	<%
 	}	
 	%>			
@@ -182,7 +182,7 @@ var googleLogout= function(){
 		for(var i=0;i<objects.length;i++)
 		{
 	%>
-		$mvm.<%=objects[i].name%>_getRecords();
+		$cjs.<%=objects[i].name%>_getRecords();
 	<%
 		}	
 	%>

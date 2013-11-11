@@ -313,6 +313,14 @@ try{
 	}
     
     self.<%=objects[i].varname%>.read =ko.observableArray([]);
+
+    self.<%=objects[i].varname%>.read.last = function(){
+    	return ko.observableArray([self.<%=objects[i].varname%>.read()[self.<%=objects[i].varname%>.read().length-1]]);
+    }
+    
+    self.<%=objects[i].varname%>.read.first = function(){
+    	return ko.observableArray([self.<%=objects[i].varname%>.read()[0]]);
+    }
     
     self.<%=objects[i].varname%>.readRecords = function(callback){
     	<%

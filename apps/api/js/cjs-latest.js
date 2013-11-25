@@ -7,8 +7,7 @@ var cjs = function(){
 
 };
 var debug = false;
-var objects = [];
-var objectsCollection = {};
+
 cjs.prototype.debugPrint = function(message)
 {
 	if(!debug)
@@ -18,8 +17,8 @@ cjs.prototype.debugPrint = function(message)
 }
 
 cjs.prototype.inferObjects = function( html ) {
-	objects=[];
-	objectsCollection={};
+	var objects=[];
+	var objectsCollection={};
 	this.parseHTML(html,null,null,objects,objectsCollection);
 	cjs.prototype.debugPrint("objects " + JSON.stringify(objects));
 	return objects;
@@ -166,15 +165,6 @@ pkg = {
 			return $(dom).filter(function(){return window.$(this).parents("[data-cjs]").length==0})
 		}
 		,
-		processPeers : function(dom,parent,prefix,objects,objectsCollection)
-		{
-			if(dom.length>1)
-				for(i=1;i<dom.length;i++)
-				{
-					parseHTML(dom[i],parent,prefix,objectsCollection);
-				}
-		}
-		,
 		constructs : {
 			securitytype: function(token,parent,prefix){
 			// do nothing
@@ -268,15 +258,6 @@ pkg = {
 		{
 			return $(dom).filter(function(){return window.$(this).parents("[data-bind]").length==0})
 		}
-		,
-		processPeers : function(dom,parent,prefix,objects,objectsCollection)
-		{
-			if(dom.length>1)
-				for(i=1;i<dom.length;i++)
-				{
-					parseHTML(dom[i],parent,prefix,objects,objectsCollection);
-				}
-		}	
 		,
 		constructs : {
 		attr: function(token,parent,prefix,objects,objectsCollection){

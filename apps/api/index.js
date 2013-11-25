@@ -64,6 +64,7 @@ var files2Localize=[{templateFileName:__dirname + "/js/cjs-bootstrap.ejs",output
 */
 
 var files2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-compiled.js'],outputFileName:'concussion.js'}
+var files2ConcatenateDebug={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest.js','/js/cjs-bootstrap.js'],outputFileName:'concussion-debug.js'}
 var customLinkFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js','/js/cjs-bootstrap-customLink-compiled.ejs'],outputFileName:'customLink.ejs'}
 
 localizeFiles(files2Localize);
@@ -114,6 +115,7 @@ function compileFiles(fileArray)
 	else{
 		console.log("initiating creation of concussion.js");	
 		concatenateFiles(files2Concatenate.inputFileNames, files2Concatenate.outputFileName);
+		concatenateFiles(files2ConcatenateDebug.inputFileNames, files2ConcatenateDebug.outputFileName);
 		concatenateFiles(customLinkFiles2Concatenate.inputFileNames, customLinkFiles2Concatenate.outputFileName);		
 	}
 }
@@ -196,6 +198,7 @@ function escapeSpecialCharacters(text)
 
 addNewObjects = function(objects,callback)
 {
+	var retObjects=[];
 	if (nta.debug)
 		util.debug('addNewObjects: inside addNewObjects xx' + objects.length + " " + JSON.stringify(objects));
 	for (var i = 0; i < objects.length; i++)
@@ -203,22 +206,34 @@ addNewObjects = function(objects,callback)
 		
 		if(objects[i])
 		{
-		if (nta.debug)
-			util.debug('addNewObjects: ' + objects[i].name);
+		if (!nta.debug)
+			util.debug('\n\n\n***before addNewObjects: ' + objects[i].name + ' length: ' + objects[i].fields.length);
 		try {
 		//var currentObj = objects[i];
 		//var currentName = '' + currentObj.name;
-		processObject(objects[i]);
-		if (nta.debug)
-			util.debug('addNewObjects: currentName' + objects[i].name + ' ' + objects[i].fields.length + " " + JSON.stringify(objects[i]));
-		
+		if(i == objects.length-1)
+		{	
+			processObject(objects[i], function(object,callback){
+				callback((retObjects[retObjects.length]=object));
+				if (!nta.debug)
+					util.debug('\n\n\n***after addNewObjects: currentName' + object.name + ' length:' + object.fields.length + " " + JSON.stringify(object));
+			},callback);
+		}
+		else
+		{
+			processObject(objects[i], function(object){
+				retObjects[retObjects.length]=object;
+				if (!nta.debug)
+					util.debug('\n\n\n***after addNewObjects: currentName' + object.name + ' length:' + object.fields.length + " " + JSON.stringify(object));
+			});
+		}
+
 		}catch (e) {console.error('addNewObjects:big error', e);}
 	}
 }
-callback();
 };
 
-processObject = function(object)
+processObject = function(object, callback,callback2)
 {
 	if ((""+object).search('_search') < 0)
 		{
@@ -232,8 +247,8 @@ processObject = function(object)
 				console.error('Error when getting entries in addNewObjects, err:', err);
 				return;
 			}
-			if (nta.debug)
-				util.debug('addNewObjects: result ' + JSON.stringify(result) + " currentName: " + object.name);
+			if (!nta.debug)
+				util.debug('\n***addNewObjects: result ' + JSON.stringify(result) + " currentName: " + object.name);
 			if (result.length>0)
 			{
 				object.fields = dedupe(result[0].fields.concat(object.fields));
@@ -243,6 +258,7 @@ processObject = function(object)
 							console.error('addNewObjects err: ', err);
 						}
 				});
+				callback(object,callback2);
 				return;
 			}
 			else
@@ -252,7 +268,7 @@ processObject = function(object)
 				nta.createEntry(object, 'cjs_objects', function(msg) {
 						if (nta.debug)
 							util.debug('add new ', msg);
-						//callback();
+						callback(object,callback2);
 				});
 			}
 
@@ -512,7 +528,7 @@ var postGetScriptAction = function(isparsed,req,res)
 
 	if(isparsed && isparsed.toLowerCase()=="true")
 	{
-		if (nta.debug)
+		if (!nta.debug)
 			util.debug("isparsed html: " + html)
 		
 		var myObjects = JSON.parse(html);
@@ -529,15 +545,15 @@ var postGetScriptAction = function(isparsed,req,res)
 					util.debug('getScript: setSession ' +  ((tenantId)?tenantId:id) + ' ' + JSON.stringify(myObjects) + " " + myObjects[0].name);
 				}
 
-				addNewObjects(myObjects, function() {
+				addNewObjects(myObjects, function(myObjects2) {
 					if (!nta.debug)
 					{
 						util.debug('getScript: addNewObjects');
-						util.debug('getScript: ' + JSON.stringify(myObjects));
+						util.debug('getScript: myObjects2' + JSON.stringify(myObjects2));
 					}	
 					
-					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
-					if (nta.debug)
+					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe([myObjects2]),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					if (!nta.debug)
 						console.log(text2write);
 					res.end(text2write);
 				});
@@ -548,7 +564,7 @@ var postGetScriptAction = function(isparsed,req,res)
 	{
 		parse.runGenerateStructureHTML(html, function(myObjects) {
 			var myName = myObjects[0].name;
-			if(nta.debug)
+			if(!nta.debug)
 				util.debug("myName:" + myName + " length " + myObjects.length + " json " + JSON.stringify(myObjects));
 			setSessionId(myObjects, 'id_' + id, 0, function(myObjects) {
 				if ( nta.debug)

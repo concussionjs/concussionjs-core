@@ -4,11 +4,11 @@
 
 	
 var cjs = function(){
-};
-var debug = true;
-var objects=[];
-var objectsCollection={};
 
+};
+var debug = false;
+var objects = [];
+var objectsCollection = {};
 cjs.prototype.debugPrint = function(message)
 {
 	if(!debug)
@@ -19,9 +19,9 @@ cjs.prototype.debugPrint = function(message)
 
 cjs.prototype.inferObjects = function( html ) {
 	objects=[];
-	objectsCollection={}
-	this.parseHTML(html);
-	cjs.prototype.debugPrint(JSON.stringify(objects));
+	objectsCollection={};
+	this.parseHTML(html,null,null,objects,objectsCollection);
+	cjs.prototype.debugPrint("objects " + JSON.stringify(objects));
 	return objects;
 }
 
@@ -31,8 +31,9 @@ cjs.prototype.compare = function(answer,sample){
 	return this.findNameInList(answer,sample)
 }
 
-cjs.prototype.parseHTML = function (html, parent, prefix){
-	//cjs.prototype.debugPrint("parsing: " +  html);
+cjs.prototype.parseHTML = function (html, parent, prefix,objects,objectsCollection){
+	cjs.prototype.debugPrint("at top of parse " + JSON.stringify(objectsCollection));
+	cjs.prototype.debugPrint("parsing: " +  $.trim(html));
 	var databind = pkg.knockout.filterNestedNodes(pkg.knockout.parseDatabinds(html));
 	var datacjs = pkg.cjs.filterNestedNodes(pkg.cjs.parseDatacjs(html));
 	cjs.prototype.debugPrint("data-cjs length " + datacjs.length);
@@ -44,16 +45,21 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 		{
 			throw new Error(directive.toLowerCase() + ' is an InvalidDirective');
 		}
-		var obj = construct($(databind[i]),parent,prefix);
+		var obj = construct($(databind[i]),parent,prefix,objects,objectsCollection);
+		cjs.prototype.debugPrint("obj output " +  JSON.stringify(obj));
+		cjs.prototype.debugPrint("parent output " +  JSON.stringify(parent));
 		if(obj && !parent)
 		{
+			cjs.prototype.debugPrint("BEFORE SETTING COLLECTION");
 			if(!objectsCollection[obj.name])
-			{
+			{	
 				objectsCollection[obj.name]=obj;			
+				pkg.cjs.objectsCollection = objectsCollection;
 				objects[objects.length]=obj;
+				cjs.prototype.debugPrint("CONFIRMED COLLECTION SET " + JSON.stringify(objectsCollection));
 			}
-
-		}					
+		}
+		cjs.prototype.debugPrint("After if " + JSON.stringify(objectsCollection));				
 	}	
 	var cjsSettings = null;
 	for(var i=0;i<datacjs.length;i++)
@@ -76,19 +82,7 @@ cjs.prototype.parseHTML = function (html, parent, prefix){
 			cjs.prototype.debugPrint(JSON.stringify(obj));
 
 		}
-		cjsSettings=$.extend(true,cjsSettings,obj);
-		//cjs.prototype.debugPrint(JSON.stringify(cjsSettings));
-		
-		//objects[objects.length]={"cjs-settings":obj};
-		/*if(obj && !parent)
-		{
-			if(!objectsCollection[obj.name])
-			{
-				objectsCollection[obj.name]=obj;			
-				objects[objects.length]=obj;
-			}
-
-		}*/					
+		cjsSettings=$.extend(true,cjsSettings,obj);		
 	}
 	if(cjsSettings)
 	{
@@ -172,12 +166,12 @@ pkg = {
 			return $(dom).filter(function(){return window.$(this).parents("[data-cjs]").length==0})
 		}
 		,
-		processPeers : function(dom,parent,prefix)
+		processPeers : function(dom,parent,prefix,objects,objectsCollection)
 		{
 			if(dom.length>1)
 				for(i=1;i<dom.length;i++)
 				{
-					parseHTML(dom[i],parent,prefix);
+					parseHTML(dom[i],parent,prefix,objectsCollection);
 				}
 		}
 		,
@@ -275,30 +269,34 @@ pkg = {
 			return $(dom).filter(function(){return window.$(this).parents("[data-bind]").length==0})
 		}
 		,
-		processPeers : function(dom,parent,prefix)
+		processPeers : function(dom,parent,prefix,objects,objectsCollection)
 		{
 			if(dom.length>1)
 				for(i=1;i<dom.length;i++)
 				{
-					parseHTML(dom[i],parent,prefix);
+					parseHTML(dom[i],parent,prefix,objects,objectsCollection);
 				}
 		}	
 		,
 		constructs : {
-		attr: function(token,parent,prefix){
+		attr: function(token,parent,prefix,objects,objectsCollection){
 			// do nothing
 		},
-		click: function(token,parent,prefix){
+		click: function(token,parent,prefix,objects,objectsCollection){
 			// do nothing
 		},
-		foreach: function(token,parent,prefix){
+		foreach: function(token,parent,prefix,objects,objectsCollection){
+			cjs.prototype.debugPrint(JSON.stringify(objectsCollection));
 			var obj = {};
 			obj.name = pkg.knockout.getObjectName(pkg.knockout.getParameter($(token).attr("data-bind")));
 			obj.type = "array";
 			obj.children = [];
+			
+			
 			if(objectsCollection[obj.name])
 				obj = objectsCollection[obj.name];
-			cjs.prototype.parseHTML($(token)[0].innerHTML,obj);
+			cjs.prototype.debugPrint("obj " + JSON.stringify(obj) + " objectsCollection " + JSON.stringify(objectsCollection));
+			cjs.prototype.parseHTML($(token)[0].innerHTML,obj,objects,objectsCollection);
 			if(parent)
 			{
 				if(!parent.children)
@@ -309,7 +307,8 @@ pkg = {
 			else
 				return obj;
 		},
-		text:function(token,parent,prefix){
+		text:function(token,parent,prefix,objects,objectsCollection){
+			console.log("text parent " + JSON.stringify(parent));
 			if(parent)
 			{
 				if(parent.fields)
@@ -331,7 +330,7 @@ pkg = {
 				return null;
 			}
 		},
-		value:function(token,parent,prefix){
+		value:function(token,parent,prefix,objects,objectsCollection){
 			if(parent)
 			{
 				if(parent.fields)
@@ -355,14 +354,14 @@ pkg = {
 				return null;
 			}
 		},
-		submit: function(token,parent,prefix){			
+		submit: function(token,parent,prefix,objects,objectsCollection){			
 			var obj = {};
 			obj.name = pkg.knockout.getObjectName(pkg.knockout.getParameter($(token).attr("data-bind")));
 			obj.type = "array";
 			obj.children = [];
 			if(objectsCollection[obj.name])
 				obj = objectsCollection[obj.name];
-			cjs.prototype.parseHTML($(token)[0].innerHTML,obj,obj.name);
+			cjs.prototype.parseHTML($(token)[0].innerHTML,obj,obj.name,objects,objectsCollection);
 			if(parent)
 			{
 				if(!parent.children)
@@ -380,15 +379,9 @@ pkg = {
 cjs.prototype.dedupe = function(arr)
 {
 	var arrTrackDupes = [];
-	/*if(arr.length>0)
-	{
-
-	}*/
-	
 	var retArr = [];
 	for (var i = 0; i < arr.length; i++)
 	{
-		//cjs.prototype.debugPrint("testParse: ",arr[i].name, " ",retArr.length, " ",arrTrackDupes.indexOf(arr[i].name));
 		if (arrTrackDupes.indexOf(arr[i].name) == -1)
 		{
 			arrTrackDupes[arrTrackDupes.length] = arr[i].name;

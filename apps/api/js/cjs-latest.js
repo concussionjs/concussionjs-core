@@ -1,4 +1,4 @@
-/*! cjs v@0.0.1 concussionjs.com | concusionjs.com/license */
+/*! cjs v@0.0.1 www.concussionjs.com | api.concussionjs.com/LICENSE */
 
 (function(window,undefined){
 

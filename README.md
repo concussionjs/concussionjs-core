@@ -62,7 +62,7 @@ Let's assume that your starting with the following HTML
     </body>
 ```
 
-Your API would be auto-generated / customized based on the objects you declare, in this case the generated API would be built around the contacts objects and single property "name"
+Your API would be auto-generated / customized based on the objects you declare. In this case the generated API would be built around the contacts objects and its single property, "name"
 
 ``` 
     $cjs.contacts.readRecords(function(records){

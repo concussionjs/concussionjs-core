@@ -44,6 +44,8 @@ The JavaScript API provides the following methods:
 
 *YOUR_OBJECT_NAME.readRecords(callback)*
 
+*YOUR_OBJECT_NAME.queryRecords(query,callback)*
+
 *YOUR_OBJECT_NAME.createRecord(jsonObject, callback)*
 
 *YOUR_OBJECT_NAME.update(jsonObject, callback)*
@@ -67,6 +69,14 @@ Your API would be auto-generated / customized based on the objects you declare. 
 ``` 
     $cjs.contacts.readRecords(function(records){
         // will print out JSON of returned contacts array
+        console.log(JSON.stringify(records));
+    });
+```
+
+``` 
+    $cjs.contacts.queryRecords(query,function(records){
+        // will print out JSON of returned contacts array based on query
+        // query is passed in as a JSON object, i.e., {name:"some name"}
         console.log(JSON.stringify(records));
     });
 ```

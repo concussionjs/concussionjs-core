@@ -46,9 +46,9 @@ The JavaScript API provides the following methods:
 
 *YOUR_OBJECT_NAME.createRecord(jsonObject, callback)*
 
-*YOUR_OBJECT_NAME.updateRecord(jsonObject, callback)*
+*YOUR_OBJECT_NAME.update(jsonObject, callback)*
 
-*YOUR_OBJECT_NAME.deleteRecord(callback)*
+*YOUR_OBJECT_NAME.delete(callback)*
 
 *Example:*
 
@@ -79,14 +79,14 @@ Your API would be auto-generated / customized based on the objects you declare. 
 ```
 
 ```    
-    $cjs.contacts.updateRecord({name:"John Doe"},objectId,function(result){
+    $cjs.contacts.update({name:"John Doe"},objectId,function(result){
         // will print out the message from the call to update the record
         console.log(result);
     })
 ```
 
 ```
-    $cjs.contacts.deleteRecord(objectId,function(result){
+    $cjs.contacts.delete(objectId,function(result){
         // will print out the message from the call to delete record
         console.log(result);
     })

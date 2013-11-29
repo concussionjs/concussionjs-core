@@ -338,6 +338,16 @@ try{
     		})
     	<%}%>
     }
+
+    self.<%=objects[i].varname%>.queryRecords = function(query,callback){
+    	$.ajax("http://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>/?" + JSON.stringify(query), {
+				async:false,
+				success: function(result) 
+				{
+        			callback(result);
+				}
+        });
+    }
     
     self.<%=objects[i].varname%>.createRecord = function(jsonObject, callback){
     		jsonObject.tenant_object_id="<%=objects[i].name%>"
@@ -493,8 +503,7 @@ try{
 		else
 		{
 			<%=objects[i].varname%>CreateJSON();
-        	self.<%=objects[i].varname%>.createRecord(ko.toJSON($cjs.<%=objects[i].varname%>Form()), function(){
-        		self.<%=objects[i].name%>_getRecords();
+        	self.<%=objects[i].varname%>.createRecord($cjs.<%=objects[i].varname%>Form(), function(){
 				<%=objects[i].varname%>_reset_form();
         	});
 

@@ -598,7 +598,13 @@ var getEntriesByTenantObjectIdAction = function(objectName,req,res)
 	var where={};
 	if(req.url.split('?').length > 1)
 	{
-		where = qs.parse(req.url.split('?')[1]);
+		try{
+			where = JSON.parse(decodeURIComponent(req.url.split("?")[1]));
+		}catch(e){util.debug(e);}
+		//if(!where)
+		//{
+		//	where = qs.parse(req.url.split('?')[1]);
+    	//}
     	util.debug("where: " + JSON.stringify(where));
 	}
 	else

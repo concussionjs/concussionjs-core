@@ -289,7 +289,7 @@ pkg = {
 				return obj;
 		},
 		text:function(token,parent,prefix,objects,objectsCollection){
-			console.log("text parent " + JSON.stringify(parent));
+			
 			if(parent)
 			{
 				if(parent.fields)
@@ -488,14 +488,12 @@ cjs.prototype.eraseCookie = function(name) {
 
 cjs.prototype.synchSessionVariables = function(objectName,value)
 {
-	console.log("synching " + value + " with api " + $("#synchSessionVariables"));
+	
 	if($("#synchSessionVariables").length>0)
 	{
-		console.log("Has iframe for synching variables");
 		$("#synchSessionVariables").attr({"src":"http://<%=CJS_WEB_URL%>/setSessionVariables.html?" + objectName + "=" + value});
 	}
 	else{
-		console.log("No iframe for synching variables");
 		$("body").append("<iframe id='synchSessionVariables' style='visibility:hidden'></iframe>");
 		cjs.prototype.synchSessionVariables(value);
 	}

@@ -352,31 +352,32 @@ try{
 
 			$.ajax("http://<%=testdriveURL%>/createInstance/<%=objects[i].name%>", {
 				async:false,
-				data: "{\"<%=objects[i].name%>\":" + jsonObject + "}",
+				data: "{\"<%=objects[i].name%>\":" + ko.toJSON(jsonObject) + "}",
 				type: "post",
 				dataType: "text",
 				success: function(result) 
 				{
+        			self.<%=objects[i].name%>_getRecords();
         			callback(result);
 				}
         	});
 	}
 
 
-    self.<%=objects[i].varname%>.delete = function(id,callback){
+    self.<%=objects[i].varname%>.deleteRecord = function(id,callback){
     	$.ajax("http://<%=testdriveURL%>/delete/instances/"+id, {
     		data: '',
 			type: "get", 
 			dataType: "text",
 			success: function(result)
 			{
+    			self.<%=objects[i].name%>_getRecords();
     			callback(result);
-    			//$cjs.<%=objects[i].name%>_getRecords();
 			}
 		});
     }
 
-    self.<%=objects[i].varname%>.update = function(id,jsonObject,callback){
+    self.<%=objects[i].varname%>.updateRecord = function(id,jsonObject,callback){
     	jsonObject.tenant_object_id="<%=objects[i].name%>"
     	jsonObject.id = id;
     	<%
@@ -393,8 +394,8 @@ try{
 			type: "post", dataType: "text",
 			success: function(result) 
 			{ 
+				self.<%=objects[i].name%>_getRecords();
 				callback(result);
-				//$cjs.<%=objects[i].name%>_getRecords();
         	}
        	});
     }     

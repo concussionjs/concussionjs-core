@@ -36,6 +36,62 @@ Run ConcussionJS platform one of four ways
 
 ### VOILA -- now you have database backed, dynamic web page without the headaches of traditional web development
 
+### Supporting JavaScript API ###
+
+ConcussionJS also offers a JavaScript API to support your development.
+
+The JavaScript API provides the following methods:
+
++YOUR_OBJECT_NAME.readRecords(callback)
+
++YOUR_OBJECT_NAME.createRecord(jsonObject, callback)
+
++YOUR_OBJECT_NAME.updateRecord(jsonObject, callback)
+
++YOUR_OBJECT_NAME.deleteRecord(callback)
+
+*Example:*
+
+Let's assume that your starting with the following HTML
+
+```
+    <body>
+        <div data-bind="foreach:contacts.read">
+            <div data-bind="text:name"></div>
+        </div>
+    </body>
+```
+
+Your API would be auto-generated / customized based on the objects you declare, in this case the generated API would be built around the contacts objects and single property "name"
+
+``` 
+    $cjs.contacts.readRecords(function(records){
+        // will print out JSON of returned contacts array
+        console.log(JSON.stringify(records));
+    });
+```
+
+```    
+    $cjs.contacts.createRecord({name:"John Doe"},function(result){
+        // will print out the message from the call to create the record
+        console.log(result);
+    })
+```
+
+```    
+    $cjs.contacts.updateRecord({name:"John Doe"},objectId,function(result){
+        // will print out the message from the call to update the record
+        console.log(result);
+    })
+```
+
+```
+    $cjs.contacts.deleteRecord(objectId,function(result){
+        // will print out the message from the call to delete record
+        console.log(result);
+    })
+```
+
 ###2. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjs-core.deb
 

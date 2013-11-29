@@ -42,13 +42,13 @@ ConcussionJS also offers a JavaScript API to support your development.
 
 The JavaScript API provides the following methods:
 
-+YOUR_OBJECT_NAME.readRecords(callback)
+*YOUR_OBJECT_NAME.readRecords(callback)
 
-+YOUR_OBJECT_NAME.createRecord(jsonObject, callback)
+*YOUR_OBJECT_NAME.createRecord(jsonObject, callback)
 
-+YOUR_OBJECT_NAME.updateRecord(jsonObject, callback)
+*YOUR_OBJECT_NAME.updateRecord(jsonObject, callback)
 
-+YOUR_OBJECT_NAME.deleteRecord(callback)
+*YOUR_OBJECT_NAME.deleteRecord(callback)
 
 *Example:*
 

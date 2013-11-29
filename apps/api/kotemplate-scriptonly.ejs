@@ -364,7 +364,7 @@ try{
 	}
 
 
-    self.<%=objects[i].varname%>.deleteRecord = function(id,callback){
+    self.<%=objects[i].varname%>.delete = function(id,callback){
     	$.ajax("http://<%=testdriveURL%>/delete/instances/"+id, {
     		data: '',
 			type: "get", 
@@ -377,7 +377,7 @@ try{
 		});
     }
 
-    self.<%=objects[i].varname%>.updateRecord = function(id,jsonObject,callback){
+    self.<%=objects[i].varname%>.update = function(id,jsonObject,callback){
     	jsonObject.tenant_object_id="<%=objects[i].name%>"
     	jsonObject.id = id;
     	<%

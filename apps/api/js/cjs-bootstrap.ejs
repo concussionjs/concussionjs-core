@@ -8,9 +8,9 @@ window.onload = function(){
 				var sessionId = cjs.readCookie("sessionId");
 				var error;
 
-				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid="+sessionId,JSON.stringify(cjs.inferObjects(page.html)),function(result){
+				$.post("https://<%=CJS_WEB_URL%>/postGetScript/true/?sid="+sessionId,JSON.stringify(cjs.inferObjects(page.html)),function(result){
 						eval(result);							
-						$("body").append("<a href=\"#\" onclick=\"window.open(\'http://<%=CJS_WEB_URL%>/admin.html?id=" + sessionId + "\');\"> <img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"http://<%=CJS_WEB_URL%>/concussion_admin.png\" alt=\"Fork me on GitHub\"> </a>");
+						$("body").append("<a href=\"#\" onclick=\"window.open(\'https://<%=CJS_WEB_URL%>/admin.html?id=" + sessionId + "\');\"> <img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://<%=CJS_WEB_URL%>/concussion_admin.png\" alt=\"Fork me on GitHub\"> </a>");
 					});
 			});
 }

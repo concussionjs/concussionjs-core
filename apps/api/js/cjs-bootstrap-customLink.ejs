@@ -12,7 +12,7 @@ window.onload = function(){
 				}
 				//console.log($.stringify(cjs.inferObjects(page.html)));
 				//console.log("countme: " + (countme++));
-				$.post("http://<%=CJS_WEB_URL%>/postGetScript/true/?sid=" + id + "&tenantId=<%=tenantId%>",JSON.stringify(cjs.inferObjects(page.html)),function(result){
+				$.post("https://<%=CJS_WEB_URL%>/postGetScript/true/?sid=" + id + "&tenantId=<%=tenantId%>",JSON.stringify(cjs.inferObjects(page.html)),function(result){
 						//console.log(result);
 						eval(result);							
 					});

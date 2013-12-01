@@ -796,9 +796,9 @@ var updateRoute = app.post("/update/:objectName/:tenantObjectId/:id", function(r
 var updateAction = function(objectName,tenantObjectId,id,req,res)
 {
 	res.writeHeader(200);
-	updatedRow = JSON.parse(('' + req.rawBody).replace('_id', '_id_mock'));
+	updatedRow = JSON.parse(('' + req.rawBody).replace(/_id/ig, '_id_mock'));
     updatedRow.tenant_object_id = tenantObjectId;
-
+ 
 	nta.updateEntry(id, updatedRow, objectName, function(err,documents) {
 		if (err)
 		{
@@ -806,6 +806,7 @@ var updateAction = function(objectName,tenantObjectId,id,req,res)
 		}
 		else
 		{
+			console.log("after updateEntry " + JSON.stringify(documents));
 			res.end('success');
 		}
 	});
@@ -1032,7 +1033,21 @@ var updateWhereAction = function(objectName,req,res)
 	res.writeHeader(200);
 	
 	updatedRow = JSON.parse(('' + req.rawBody).replace('_id', '_id_mock'));
-	var where = qs.parse(req.url.split('?')[1]);
+	var where = {};
+
+	if(req.url.split('?').length > 1)
+	{
+		try{
+			where = JSON.parse(decodeURIComponent(req.url.split("?")[1]));
+		}catch(e){util.debug(e);
+			where = qs.parse(req.url.split('?')[1]);
+		}
+	
+    	util.debug("where: " + JSON.stringify(where));
+	}
+	else
+		util.debug("req.url.split <= 1");
+
 	if (nta.debug)
 			util.debug(JSON.stringify(where));
 	

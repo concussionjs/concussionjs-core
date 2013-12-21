@@ -235,6 +235,7 @@ try{
 			//?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
 			$.ajax(
 				{url:"https://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
+				async:false,
 				dataType:"json",
 				data:'',
 				success:function(data){
@@ -252,6 +253,7 @@ try{
 		else{
 			$.ajax(
 				{url:"https://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>?<%=securityKey%>="+userId,
+				async:false,
 				dataType:"json",
 				data:'',
 				success:function(data){
@@ -259,7 +261,7 @@ try{
         			
         			if(callback)
         			{
-        				callback(data);
+        				callback(data,mapped);
         			}
         			else
         				self.<%=objects[i].varname%>.read(mapped);
@@ -278,7 +280,7 @@ try{
 				var mapped = $.map(data, function(item) { return new <%=objects[i].name%>(item) });
         		if(callback)
         		{
-        			callback(data);
+        			callback(data,mapped);
         		}
         		else
         			self.<%=objects[i].varname%>.read(mapped);
@@ -328,11 +330,25 @@ try{
     self.<%=objects[i].varname%>.read =ko.observableArray([]);
 
     self.<%=objects[i].varname%>.read.last = function(){
-    	return ko.observableArray([self.<%=objects[i].varname%>.read()[self.<%=objects[i].varname%>.read().length-1]]);
+    	if(self.<%=objects[i].varname%>.read().length==0)
+    	{
+    		return ko.observableArray([]);
+    		self.<%=objects[i].name%>_getRecords();
+    	}
+    	else
+    		return ko.observableArray([self.<%=objects[i].varname%>.read()[self.<%=objects[i].varname%>.read().length-1]]);
+    	
+
     }
     
     self.<%=objects[i].varname%>.read.first = function(){
-    	return ko.observableArray([self.<%=objects[i].varname%>.read()[0]]);
+    	if(self.<%=objects[i].varname%>.read().length==0)
+    	{
+    		return ko.observableArray([]);
+    		self.<%=objects[i].name%>_getRecords();
+    	}
+    	else
+    		return ko.observableArray([self.<%=objects[i].varname%>.read()[0]]);
     }
     
     self.<%=objects[i].varname%>.readRecords = function(callback){

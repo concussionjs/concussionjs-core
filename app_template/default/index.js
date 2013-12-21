@@ -1,6 +1,6 @@
 var http = require("http")
 var connect = require("connect")
-var nta = require("concussion-core")
+var nta = require("concussionjs-core")
 var settings = require("./settings.js");
 var url;
 

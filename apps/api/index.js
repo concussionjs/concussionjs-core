@@ -199,7 +199,7 @@ function escapeSpecialCharacters(text)
 addNewObjects = function(objects,callback)
 {
 	var retObjects=[];
-	if (nta.debug)
+	if (!nta.debug)
 		util.debug('addNewObjects: inside addNewObjects xx' + objects.length + " " + JSON.stringify(objects));
 	for (var i = 0; i < objects.length; i++)
 	{
@@ -214,7 +214,8 @@ addNewObjects = function(objects,callback)
 		if(i == objects.length-1)
 		{	
 			processObject(objects[i], function(object,callback){
-				callback((retObjects[retObjects.length]=object));
+				retObjects[retObjects.length]=object;
+				callback(retObjects);
 				if (!nta.debug)
 					util.debug('\n\n\n***after addNewObjects: currentName' + object.name + ' length:' + object.fields.length + " " + JSON.stringify(object));
 			},callback);
@@ -552,8 +553,8 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: myObjects2' + JSON.stringify(myObjects2));
 					}	
 					
-					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe([myObjects2]),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
-					if (!nta.debug)
+					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					if (nta.debug)
 						console.log(text2write);
 					res.end(text2write);
 				});
@@ -609,9 +610,15 @@ var getEntriesByTenantObjectIdAction = function(objectName,req,res)
 	}
 	else
 		util.debug("req.url.split <= 1");
-    nta.getEntriesByTenantObjectId(objectName, where, "instances", function(err,documents) {
-		res.end(JSON.stringify(documents));
-	});
+
+	if(where._id)
+		nta.getEntryById(where._id,"instances", function(err,documents) {
+			res.end(JSON.stringify(documents));
+		});
+	else	
+    	nta.getEntriesByTenantObjectId(objectName, where, "instances", function(err,documents) {
+			res.end(JSON.stringify(documents));
+		});
 	
 	return;
 }
@@ -788,7 +795,7 @@ var deleteAction = function(objectName,id,req,res)
 }
 
 var updateRoute = app.post("/update/:objectName/:tenantObjectId/:id", function(req,res){
-	if(nta.debug)
+	if(!nta.debug)
 		util.debug("updateRoute " + req.rawBody);
 	updateAction(req.params.objectName,req.params.tenantObjectId,req.params.id,req,res);
 });
@@ -796,9 +803,9 @@ var updateRoute = app.post("/update/:objectName/:tenantObjectId/:id", function(r
 var updateAction = function(objectName,tenantObjectId,id,req,res)
 {
 	res.writeHeader(200);
-	updatedRow = JSON.parse(('' + req.rawBody).replace(/_id/ig, '_id_mock'));
+	updatedRow = JSON.parse(('' + req.rawBody).replace('"_id"', '\"id\"'));
     updatedRow.tenant_object_id = tenantObjectId;
- 
+ 	console.log("before update entry: " + JSON.stringify(updatedRow));
 	nta.updateEntry(id, updatedRow, objectName, function(err,documents) {
 		if (err)
 		{
@@ -806,8 +813,7 @@ var updateAction = function(objectName,tenantObjectId,id,req,res)
 		}
 		else
 		{
-			console.log("after updateEntry " + JSON.stringify(documents));
-			res.end('success');
+			res.end("success");
 		}
 	});
 

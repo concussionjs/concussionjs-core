@@ -7,12 +7,19 @@ try{
 	objects = myObjects;
 	testdriveURL = URLPrefix; 
 	var tenantId = tenantId;
+	console.log("myObjects KnockOut: " + JSON.stringify(myObjects))
+	
+
 	if(CJSsettings)
 	{
+		console.log("before split 1");
 		var objectNames = CJSsettings.objectName.split(",");
+		console.log("after split 1");
 		var securityKey = CJSsettings.securityKey;
 		var securityType = CJSsettings.securityType;
+		console.log("before split 2");
 		var searchTargets = CJSsettings.searchTargets.split(",");
+		console.log("after split 2");
 	}
 	else
 	{
@@ -36,10 +43,12 @@ try{
 	function handleChildren(myObject,counter,nextFunction)
 	{
 		
-		if(!myObject)
+		if(!myObject || !myObject.name)
 			return;
+		console.log("before split 3 " + JSON.stringify(myObject));
 
 		myObject.varname=myObject.name.split("_")[2];
+		console.log("after split 3");
 		if(myObject.name.search("_search")>-1)
 		{
 			console.log("inside handleChildren where myObject.name contains _search");
@@ -162,7 +171,11 @@ try{
 	//console.log("myViewModel: ", objects.length);
 	for(var i=0;i<objects.length;i++)
 	{
+		console.log("before split 4");
+		if(!objects[i] || !objects[i].name)
+			continue;
 		objects[i].varname=objects[i].name.split("_")[2];
+		console.log("after split 4");
 		//console.log("tee: ", objects[i], " ", objects[i].type, " ", objects[i].fields.length);
 		if(objects[i].varname.search("_search")>-1)
 			continue;
@@ -686,9 +699,8 @@ $cjs.Object=function(){
 				success: function(result) 
 				{ 
 					if(callback)
-						callback(result);
-					else
-						console.log("save result: " + JSON.stringify(result));
+						callback("success");
+					
         		}
        		});
 		}
@@ -703,9 +715,8 @@ $cjs.Object=function(){
         			mySelf._id=JSON.parse(result)[0]._id;
         
         			if(callback)
-        				callback(result);
-        			else
-        				console.log("save result: " + JSON.stringify(result));
+        				callback($.extend(mySelf,JSON.parse(result)));
+        			$.extend(mySelf,JSON.parse(result));
 
 				}
     		});
@@ -713,14 +724,17 @@ $cjs.Object=function(){
 	}
 	this.query=function(query,callback){
 		var mySelf = this;
+		if(typeof query == "string")
+		{
+			query={"_id":query};
+		}
 		$.ajax("https://<%=testdriveURL%>/getEntriesByTenantObjectId/"+ mySelf.tenant_object_id+"/?" + JSON.stringify(query), {
 				async:false,
 				success: function(result) 
 				{
 					if(callback)
-        				callback(JSON.parse(result));
-        			else
-        				console.log(JSON.stringify(result));
+        				callback($.extend(JSON.parse(result),mySelf));
+        			$.extend(mySelf,JSON.parse(result));
 				}
         });
 	}
@@ -729,6 +743,7 @@ $cjs.Object=function(){
 		if(mySelf._id || id)
 		{
 			$.ajax("https://<%=testdriveURL%>/delete/instances/"+(id?id:mySelf._id), {
+    			async:false,
     			data: '',
 				type: "get", 
 				dataType: "text",
@@ -737,13 +752,24 @@ $cjs.Object=function(){
 					if(callback)
     					callback(result);
     				else
-    					console.log(JSON.stringify(result));
+    					console.log("result " + JSON.stringify(result));
 				}
 			});
 		}
 		else
 		{
-			callback("Delete failed. Objects _id property was not set")
+			var error={};
+			error.result="failed"
+			error.message=("Delete failed. Objects _id property was not set");
+			
+			if(callback)
+			{
+				callback(error);
+			}
+			else
+			{
+				console.log("error " + JSON.stringify(error));
+			}
 		}
 	}
 
@@ -763,7 +789,7 @@ $cjs.Object=function(){
 		if(callback)
 			callback(resultsArr);
 		else
-			console.log("deleteByQuery results " + JSON.stringify(resultsArr));
+			return resultsArr;
 	}
 
 };

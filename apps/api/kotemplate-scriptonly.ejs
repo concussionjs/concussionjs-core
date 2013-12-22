@@ -232,7 +232,6 @@ try{
 		{%>
 		if(!userId)
 		{
-			//?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
 			$.ajax(
 				{url:"https://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>?<%=securityKey%>="+cjs.readCookie("<%=securityKey%>"),
 				async:false,
@@ -246,7 +245,7 @@ try{
         				callback(data);
         			}
         			else
-        				self.<%=objects[i].varname%>.read(mapped);
+        				self.<%=objects[i].varname%>.readArray(mapped);
 				}			
 			});
 		}
@@ -264,7 +263,7 @@ try{
         				callback(data,mapped);
         			}
         			else
-        				self.<%=objects[i].varname%>.read(mapped);
+        				self.<%=objects[i].varname%>.readArray(mapped);
 				}			
 			});
 		}
@@ -274,6 +273,7 @@ try{
 		{%>
 		$.ajax(
 			{url:"https://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>",
+			async:false,
 			dataType:"json",
 			data:'',
 			success:function(data){
@@ -283,7 +283,7 @@ try{
         			callback(data,mapped);
         		}
         		else
-        			self.<%=objects[i].varname%>.read(mapped);
+        			self.<%=objects[i].varname%>.readArray(mapped);
 			}			
 		});
 		<%}%>
@@ -326,29 +326,68 @@ try{
 
 
 	}
+    self.<%=objects[i].varname%>.readArray = ko.observableArray([]);
     
-    self.<%=objects[i].varname%>.read =ko.observableArray([]);
-
-    self.<%=objects[i].varname%>.read.last = function(){
-    	if(self.<%=objects[i].varname%>.read().length==0)
-    	{
-    		return ko.observableArray([]);
-    		self.<%=objects[i].name%>_getRecords();
-    	}
-    	else
-    		return ko.observableArray([self.<%=objects[i].varname%>.read()[self.<%=objects[i].varname%>.read().length-1]]);
+    self.<%=objects[i].varname%>.read = function(query){
     	
-
-    }
-    
-    self.<%=objects[i].varname%>.read.first = function(){
-    	if(self.<%=objects[i].varname%>.read().length==0)
+    	if(query)
     	{
-    		return ko.observableArray([]);
-    		self.<%=objects[i].name%>_getRecords();
+    		self.<%=objects[i].varname%>.queryRecords(query,function(results){
+    			var mapped = $.map(results, function(item) { 
+    				var x= new <%=objects[i].name%>(item);
+    				return x; 
+    			});
+    			self.<%=objects[i].varname%>.readArray(mapped);
+    		});
+    		return self.<%=objects[i].varname%>.readArray;
     	}
     	else
-    		return ko.observableArray([self.<%=objects[i].varname%>.read()[0]]);
+    	{
+    		self.<%=objects[i].name%>_getRecords();
+    		return self.<%=objects[i].varname%>.readArray;
+    	}
+    }
+
+    self.<%=objects[i].varname%>.read.last = function(query){
+    	
+    	if(self.<%=objects[i].varname%>.readArray().length==0)
+    	{
+    		if(query)
+    		{
+    			self.<%=objects[i].varname%>.queryRecords(query,function(results){
+    				var mapped = $.map(results, function(item) { return new <%=objects[i].name%>(item) });
+    				self.<%=objects[i].varname%>.readArray(mapped);
+    			});
+    		}
+    		else
+    			self.<%=objects[i].name%>_getRecords();
+    		return ko.observableArray([self.<%=objects[i].varname%>.readArray()[self.<%=objects[i].varname%>.readArray().length-1]]);
+    	}
+    	else
+    		return ko.observableArray([self.<%=objects[i].varname%>.readArray()[self.<%=objects[i].varname%>.readArray().length-1]]);	   	
+    }
+    		
+    
+    self.<%=objects[i].varname%>.read.first = function(query){
+    	if(self.<%=objects[i].varname%>.readArray().length==0)
+    	{
+    		if(query)
+    		{
+    			self.<%=objects[i].varname%>.queryRecords(query,function(results){
+    				var mapped = $.map(results, function(item) { return new <%=objects[i].name%>(item) });
+    				self.<%=objects[i].varname%>.readArray(mapped);
+    			});
+    		}
+    		else
+    		{
+    			self.<%=objects[i].name%>_getRecords();
+    		}
+    		return ko.observableArray([self.<%=objects[i].varname%>.readArray()[0]]);
+    	}
+    	else
+    	{	
+    		return ko.observableArray([self.<%=objects[i].varname%>.readArray()[0]]);
+    	}
     }
     
     self.<%=objects[i].varname%>.readRecords = function(callback){
@@ -369,7 +408,15 @@ try{
     }
 
     self.<%=objects[i].varname%>.queryRecords = function(query,callback){
+    	<%
+		if(securityKey)
+		{%>
+			query.userId=cjs.readCookie("<%=securityKey%>");
+		<%
+		}%>
+
     	$.ajax("https://<%=testdriveURL%>/getEntriesByTenantObjectId/<%=objects[i].name%>/?" + JSON.stringify(query), {
+				dataType:"json",
 				async:false,
 				success: function(result) 
 				{
@@ -603,13 +650,13 @@ try{
 	$cjs = new myViewModel();
 	ko.applyBindings($cjs);
 <%
-	for(var i=0;i<objects.length;i++)
-	{
-	%>
-		$cjs.<%=objects[i].name%>_getRecords();
-		console.log("self " + ko.toJSON($cjs));
-	<%
-	}	
+	//for(var i=0;i<objects.length;i++)
+	//{
+	//%>
+	//	$cjs.<%=objects[i].name%>_getRecords();
+	//	console.log("self " + ko.toJSON($cjs));
+	//<%
+	//}	
 %>	
 	<% 
 	var securityTypes = (securityType&&securityType!="")?securityType.split(' '):[];

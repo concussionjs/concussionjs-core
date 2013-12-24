@@ -120,7 +120,7 @@ function compileFiles(fileArray)
 	}
 }
 
-function concatenateFiles(fileArray,output)
+function concatenateFiles(fileArray,output, optionalString)
 {
 	var contents="";
 	var fileName="";
@@ -137,7 +137,7 @@ function concatenateFiles(fileArray,output)
 			if(nta.debug)
 				console.log(contents);
 			
-			fs.writeFile(output,contents,function(err){
+			fs.writeFile(output,(optionalString?contents+"\n"+optionalString:contents),function(err){
 				if(err)
 				{
 					console.error(err);
@@ -502,6 +502,31 @@ var postGetScriptRoute = app.all("/postGetScript/:isparsed",function(req,res){
 	postGetScriptAction(req.params.isparsed,req,res);
 });
 
+
+var generateProdScript = function(tenantId,script)
+{
+	if(tenantId)
+		{	
+			nta.getEntriesWhere({'key': tenantId},'cjs_users', function(err,objects) {
+				if (nta.debug)
+					util.debug('getScript: ' + JSON.stringify(objects));
+				if (objects && objects.length > 0)
+				{
+					var prodFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js'],outputFileName:'prod/' + tenantId + '.js'}
+					concatenateFiles(prodFiles2Concatenate.inputFileNames, prodFiles2Concatenate.outputFileName,script);
+				}
+				else
+				{
+					util.debug("no matching tenant id found");
+				}
+			});
+		}
+		else
+		{
+			util.debug("null tenant id provided");
+		}
+}
+
 var postGetScriptAction = function(isparsed,req,res)
 {
 	//res.writeHeader(200);
@@ -553,10 +578,12 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: myObjects2' + JSON.stringify(myObjects2));
 					}	
 					
-					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					var renderedHTML = ejs.render(scriptonly, {locals: {'prod':false,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					var renderedHTMLProd = ejs.render(scriptonly, {locals: {'prod':true,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
 					if (nta.debug)
-						console.log(text2write);
-					res.end(text2write);
+						console.log(renderedHTML);
+					res.end(renderedHTML);
+					generateProdScript(tenantId,renderedHTMLProd);
 				});
 			});
 		});	
@@ -579,8 +606,9 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: addNewObjects');
 						util.debug('getScript: ' + JSON.stringify(myObjects));
 					}	
-				
-					res.end(ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}}));
+					var renderedHTML = ejs.render(scriptonly, {locals: {'myObjects': dedupe(myObjects),'URLPrefix':URLPrefix}});
+					res.end(renderedHTML);
+					generateProdScript(tenantId,renderedHTML);
 				});
 			});
 		});

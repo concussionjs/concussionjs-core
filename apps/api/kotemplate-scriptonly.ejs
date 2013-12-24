@@ -1,5 +1,12 @@
+<% if(prod){%>
+$(document).ready(function(){
+<%}%>	
 $('head').append("<script type='text/javascript'>var $cjs;</script>");
 $('head').append("<link rel='stylesheet' href='https://<%=URLPrefix%>/css/spinner.css'>");
+
+
+
+
 
 <%
 try{
@@ -648,7 +655,9 @@ try{
 	%>
 
 	$cjs = new myViewModel();
-	ko.applyBindings($cjs);
+		
+		ko.applyBindings($cjs);
+
 <%
 	//for(var i=0;i<objects.length;i++)
 	//{
@@ -977,5 +986,8 @@ $cjs.User=function()
 	}
 }
 
+<%if(prod){%>
+});
+<%}%>	
 
 <%}catch(error){console.log("\n\n\n***",error.stack," ",error.message,"****\n\n\n");}%>

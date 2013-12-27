@@ -297,7 +297,7 @@ pkg = {
 					var name = pkg.knockout.getParameter($(token).attr("data-bind"),prefix);
 					if(name && name != "")
 					{
-						(parent.fields[parent.fields.length]={}).name=name;
+						(parent.fields[parent.fields.length]={}).name=name.split("()")[0];
 						parent.fields=cjs.prototype.dedupe(parent.fields);
 					}
 				}
@@ -306,7 +306,7 @@ pkg = {
 					parent.fields=[];
 					var name = pkg.knockout.getParameter($(token).attr("data-bind"),prefix);
 					if(name && name!="")
-						(parent.fields[0]={}).name=name;
+						(parent.fields[0]={}).name=name.split("()")[0];
 				}
 				return null;
 			}
@@ -319,7 +319,7 @@ pkg = {
 					var name = 	pkg.knockout.getParameter($(token).attr("data-bind"),prefix);
 					if(name && name!="")
 					{
-						(parent.fields[parent.fields.length]={}).name=name;
+						(parent.fields[parent.fields.length]={}).name=name.split("()")[0];
 						parent.fields=cjs.prototype.dedupe(parent.fields);	
 					}
 				}
@@ -329,7 +329,7 @@ pkg = {
 					var name = pkg.knockout.getParameter($(token).attr("data-bind"),prefix);
 					if(name && name!="")
 					{
-						(parent.fields[0]={}).name=name;
+						(parent.fields[0]={}).name=name.split("()")[0];
 					}
 				}
 				return null;

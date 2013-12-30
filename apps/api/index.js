@@ -214,7 +214,8 @@ addNewObjects = function(objects,callback)
 		if(i == objects.length-1)
 		{	
 			processObject(objects[i], function(object,callback){
-				callback((retObjects[retObjects.length]=object));
+				retObjects[retObjects.length]=object;
+				callback(retObjects);
 				if (!nta.debug)
 					util.debug('\n\n\n***after addNewObjects: currentName' + object.name + ' length:' + object.fields.length + " " + JSON.stringify(object));
 			},callback);
@@ -552,7 +553,7 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: myObjects2' + JSON.stringify(myObjects2));
 					}	
 					
-					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe([myObjects2]),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					var text2write = ejs.render(scriptonly, {locals: {'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
 					if (!nta.debug)
 						console.log(text2write);
 					res.end(text2write);

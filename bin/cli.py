@@ -150,9 +150,11 @@ def createApp(apps,name,template):
 	startApp(apps,name)
 
 def resetVersion(apps, name,version):
-	applocation = nexteraappsdir + '/' + nameArr[0]+":"+version
+	applocation = nexteraappsdir + '/' + name+":"+version
 	appdir = "{0}{1}:{2}".format(homedir,platformdir,version)
 	app = apps.find_one({"name":name+":"+version})
+	templates = db.templates
+	setting = templates.find_one({"name":"settings.js"})
 	my_id = str(app["_id"])
 	FILE = open(applocation + "/settings.js","w")
 	FILE.writelines(setting["content"].replace("{0}",my_id).replace("{1}",name+":"+version))
@@ -271,9 +273,9 @@ def application_crud(args):
 			print writeFail("App {0} does not exist".format(args.create))
 	elif not args.resetVersion == "":
 		apps = db.apps
-		if checkIfExists(apps,"name",args.resetVersion):
+		if checkIfExists(apps,"name",args.resetVersion+":"+args.versionNumber):
 			resetVersion(apps,args.resetVersion,args.versionNumber)
-			print writeOKGreen("A new version of app {0} was successfully created".format(args.resetVersion))
+			print writeOKGreen("App {0}'s settings.js files was reset".format(args.resetVersion+":"+args.versionNumber))
 		else:
 			print writeFail("App {0} does not exist".format(args.resetVersion))
 	elif not args.delete == "":

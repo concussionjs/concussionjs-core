@@ -344,7 +344,18 @@ var customLinkAction = function(objectName,customLinkName,req,res)
 	else
 	{
 		if(validateArg[0])
-		{	
+		{
+			var CJS_WEB_URL;
+			var version;
+			if(settings().name && settings().name.split(":").length>1)
+			{
+				CJS_WEB_URL = process.env.CJS_WEB_URL + "/" + settings().name.split(":")[1];	
+			}
+			else
+			{
+				CJS_WEB_URL=process.env.CJS_WEB_URL;
+			}	
+
 			nta.getEntriesWhere({'key': validateArg[0]},'cjs_users', function(err,objects) {
 				if (nta.debug)
 					util.debug('getScript: ' + JSON.stringify(objects));
@@ -353,7 +364,7 @@ var customLinkAction = function(objectName,customLinkName,req,res)
 					fs.readFile(__dirname + '/customLink.ejs','utf-8', function(err,data){
 						if(err) throw err;
 						res.setHeader("Content-Type", 'text/plain');
-						res.end(ejs.render(data, {locals: {'CJS_WEB_URL':URLPrefix, 'tenantId':validateArg[0]}}));
+						res.end(ejs.render(data, {locals: {'CJS_WEB_URL':CJS_WEB_URL, 'tenantId':validateArg[0]}}));
 					});
 				}
 				else

@@ -106,9 +106,14 @@ function compileFiles(fileArray)
 	
 	if(fileName)
 	{
-		console.log(fileName);
-		exec(" java -jar " + __dirname + "/compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".","-compiled.")
+		console.log("compileFiles: " + fileName + " dirname " + __dirname);
+		exec("java -jar compiler.jar --js " + __dirname + "/" + fileName + " --js_output_file " + __dirname + "/" + fileName.replace(".","-compiled.")
 			, function (error, stdout, stderr) {
+				if(error)
+				{
+					console.log("error: " + error);
+				}
+					console.log(stdout + stderr);
 				compileFiles(fileArray);
 			});
 	}
@@ -158,7 +163,21 @@ function localizeFile(fileName,output,callback,arg)
 	if(nta.debug)
 		console.log(fileName, " ",output);
 	contents = fs.readFileSync(fileName,'utf-8');
-	contentsOutput = ejs.render(contents, {locals: {'CJS_WEB_URL': process.env.CJS_WEB_URL,'cjsutil':cjsutil}})
+	
+	var CJS_WEB_URL;
+	var version;
+	if(settings().name && settings().name.split(":").length>1)
+	{
+		CJS_WEB_URL = process.env.CJS_WEB_URL + "/" + settings().name.split(":")[1];	
+	}
+	else
+	{
+		CJS_WEB_URL=process.env.CJS_WEB_URL;
+	}	
+	
+	console.log("localize " + settings().id + " " + settings().name + " " + CJS_WEB_URL)
+
+	contentsOutput = ejs.render(contents, {locals: {'CJS_WEB_URL': CJS_WEB_URL,'cjsutil':cjsutil}})
 	
 	if(nta.debug)
 		console.log(contentsOutput);
@@ -577,9 +596,13 @@ var postGetScriptAction = function(isparsed,req,res)
 						util.debug('getScript: addNewObjects');
 						util.debug('getScript: myObjects2' + JSON.stringify(myObjects2));
 					}	
-					
-					var renderedHTML = ejs.render(scriptonly, {locals: {'prod':false,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
-					var renderedHTMLProd = ejs.render(scriptonly, {locals: {'prod':true,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					var version=null;
+					if(s.name && s.name.split(":").length>1)
+					{
+						version = s.name.split(":")[1];
+					}
+					var renderedHTML = ejs.render(scriptonly, {locals: {'version':version,'prod':false,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
+					var renderedHTMLProd = ejs.render(scriptonly, {locals: {'version':version,'prod':true,'tenantId':tenantId,'dirname':__dirname, 'myObjects': dedupe(myObjects2),'URLPrefix':URLPrefix, 'CJSsettings':CJSsettings}});
 					if (nta.debug)
 						console.log(renderedHTML);
 					res.end(renderedHTML);

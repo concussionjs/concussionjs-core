@@ -18,6 +18,8 @@ connection = Connection("localhost")
 db = connection.concussion_prod
 nexteraappsdir = os.environ['CJS_APPS']
 apptemplatedir = os.environ['CJS_APPS_TEMPLATES']
+homedir = "/home/concussed/"
+platformdir = "concussionjs-core"
 cjsWebURL = os.environ['CJS_WEB_URL']
 cjsWebDomain = os.environ['CJS_WEB_DOMAIN']
 MY_URL = '107.20.230.20'
@@ -151,6 +153,7 @@ def createAppVersion(apps,name,version):
 	#print template
 	nameArr = name.split(":")
 	applocation = nexteraappsdir + '/' + nameArr[0]+":"+version
+	appdir = "{0}{1}:{2}".format(homedir,platformdir,version)
 	ports = db.ports
 	port = find_open_ports(ports)
 	#print "after find_open_ports"
@@ -162,27 +165,50 @@ def createAppVersion(apps,name,version):
 	#print "my_id: ",my_id
 	redisClient.rpush(('frontend:'+name+'.' + cjsWebDomain+":"+version),'localsamples')
 	redisClient.rpush(('frontend:'+name+'.' + cjsWebDomain+":"+version),('http://localhost:'+str(port)))
-	proxies.insert({"destinationport":port,"destination":MY_URL,"url":"/"+name})
+	proxies.insert({"destinationport":port,"destination":MY_URL,"url":"/"+name+":"+version})
 	#print "after insert and before copytree ",apptemplatedir, " ",template," ",applocation
-	shutil.copytree(nexteraappsdir + "/" + name,applocation,symlinks=True, ignore=None)	
+	#shutil.copytree(nexteraappsdir + "/" + name,applocation,symlinks=True, ignore=None)	
+	shutil.copytree(nexteraappsdir+"/..",appdir,symlinks=True, ignore=None)	
 	#print "after copytree"
+	command = "ln -s " + appdir + "/apps/" + name + " " + applocation
+	call(command,shell=True)
+	current_dir = os.getcwd()
+	os.chdir(appdir)
+	command = "git pull origin master;git checkout v{0}".format(version)
+	call(command,shell=True)
+	os.chdir(current_dir)
 	templates = db.templates
 	setting = templates.find_one({"name":"settings.js"})
 	#print setting
 	#print applocation
 	FILE = open(applocation + "/settings.js","w")
-	FILE.writelines(setting["content"].replace("{0}",my_id).replace("{1}",name))
+	FILE.writelines(setting["content"].replace("{0}",my_id).replace("{1}",name+":"+version))
 	FILE.close()
 	ports.insert({"port":port})
 	startApp(apps,name+":"+version)
 
 def deleteApp(apps,name):
-        applocation = nexteraappsdir + '/' + name
-        stopApp(apps,name)
+	applocation = nexteraappsdir + '/' + name
+	stopApp(apps,name)
 	apps.remove({"name":name})
 	proxies = db.proxies
 	proxies.remove({"url":"/"+name})
 	shutil.rmtree(applocation,ignore_errors=True)
+
+def deleteAppVersion(apps,name,version):
+	if version == "":
+		writeFail("--versionName not specified")
+		return
+
+	applocation = homedir+platformdir+name+":"+version
+	platformlocation = homedir+platformdir+":"+version
+	stopApp(apps,name+":"+version)
+	apps.remove({"name":name+":"+version})
+	proxies = db.proxies
+	proxies.remove({"url":"/"+name+":"+version})
+	redisClient.delete(('frontend:'+name+'.' + cjsWebDomain+":"+version))
+	shutil.rmtree(applocation,ignore_errors=True)
+	shutil.rmtree(platformlocation,ignore_errors=True)
 
 def startApp(apps,name):
 	app_location = nexteraappsdir + '/' + name
@@ -246,6 +272,19 @@ def application_crud(args):
                         print writeOKGreen("App {0} was deleted".format(app_name))
                 else:
                         print writeFail("App {0} does not exist".format(app_name))
+	elif not args.deleteVersion == "":
+		app_name = ""
+		if args.deleteVersion == "":
+			app_name = raw_input('Please enter an app name: ')
+			apps=db.apps
+		else:
+			app_name = args.deleteVersion
+			apps = db.apps
+		if checkIfExists(apps,"name",app_name+":"+args.versionNumber):
+			deleteAppVersion(apps,app_name,args.versionNumber)
+			print writeOKGreen("App {0} was deleted".format(app_name+":"+args.versionNumber))
+		else:
+			print writeFail("App {0} does not exist".format(app_name+":"+args.versionNumber))
 	elif not args.start == "":
 		app_name = ""
                 if args.start == "":
@@ -341,6 +380,7 @@ def main():
 	parser.add_argument('--create',"-c",type=str,default="",help="Use this option to create ConcussionJS objects, either users or applications")
 	parser.add_argument('--version',"-v",type=str,default="",help="Use this option to create a version of a ConcussionJS application")
 	parser.add_argument('--delete',"-d",type=str,default="",help="Use this option to delete ConcussionJS objects, either users or applications")
+	parser.add_argument('--deleteVersion',"-e",type=str,default="",help="Use this option to delete a version of a ConcussionJS application")
 	parser.add_argument('--update',"-u",type=str,default="",help="Use this option to update ConcussionJS objects, either users or applications")
 	parser.add_argument('--start',"-s",type=str,default="",help="Use this option to start an app. This will only work with the 'app' positional argument")
 	parser.add_argument('--stop',"-t",type=str,default="",help="Use this option to stop an app. This will only work with the 'app' positional argument")

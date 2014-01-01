@@ -12,7 +12,11 @@ $('head').append("<link rel='stylesheet' href='https://<%=URLPrefix%>/css/spinne
 try{
 	
 	objects = myObjects;
-	testdriveURL = URLPrefix; 
+	if(version)
+		testdriveURL = URLPrefix + "/" + version;
+	else
+		testdriveURL = URLPrefix
+	
 	var tenantId = tenantId;
 	console.log("myObjects KnockOut: " + JSON.stringify(myObjects))
 	

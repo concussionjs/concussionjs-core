@@ -149,6 +149,15 @@ def createApp(apps,name,template):
 	ports.insert({"port":port})
 	startApp(apps,name)
 
+def resetVersion(apps, name,version):
+	applocation = nexteraappsdir + '/' + nameArr[0]+":"+version
+	appdir = "{0}{1}:{2}".format(homedir,platformdir,version)
+	app = apps.find_one({"name":name+":"+version})
+	my_id = str(app["_id"])
+	FILE = open(applocation + "/settings.js","w")
+	FILE.writelines(setting["content"].replace("{0}",my_id).replace("{1}",name+":"+version))
+	FILE.close()
+
 def createAppVersion(apps,name,version):
 	#print template
 	nameArr = name.split(":")
@@ -260,6 +269,13 @@ def application_crud(args):
 			print writeOKGreen("A new version of app {0} was successfully created".format(args.create))
 		else:
 			print writeFail("App {0} does not exist".format(args.create))
+	elif not args.resetVersion == "":
+		apps = db.apps
+		if checkIfExists(apps,"name",args.resetVersion):
+			resetVersion(apps,args.resetVersion,args.versionNumber)
+			print writeOKGreen("A new version of app {0} was successfully created".format(args.resetVersion))
+		else:
+			print writeFail("App {0} does not exist".format(args.resetVersion))
 	elif not args.delete == "":
 		app_name = ""
                 if args.delete == "":
@@ -379,6 +395,7 @@ def main():
 	parser.add_argument('user',type=str,nargs='?',default=argparse.SUPPRESS,help="Use 'user' argument to add,delete or update your ConcussionJS users")
 	parser.add_argument('--create',"-c",type=str,default="",help="Use this option to create ConcussionJS objects, either users or applications")
 	parser.add_argument('--version',"-v",type=str,default="",help="Use this option to create a version of a ConcussionJS application")
+	parser.add_argument('--resetVersion',"-i",type=str,default="",help="Reset version of ConcussionJS application")
 	parser.add_argument('--delete',"-d",type=str,default="",help="Use this option to delete ConcussionJS objects, either users or applications")
 	parser.add_argument('--deleteVersion',"-e",type=str,default="",help="Use this option to delete a version of a ConcussionJS application")
 	parser.add_argument('--update',"-u",type=str,default="",help="Use this option to update ConcussionJS objects, either users or applications")

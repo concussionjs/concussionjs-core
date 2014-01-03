@@ -125,7 +125,7 @@ function compileFiles(fileArray)
 	}
 }
 
-function concatenateFiles(fileArray,output, optionalString)
+function concatenateFiles(fileArray,output, optionalString,callback)
 {
 	var contents="";
 	var fileName="";
@@ -150,6 +150,8 @@ function concatenateFiles(fileArray,output, optionalString)
 				else
 				{
 					console.log(output + " written successfully");
+					if(callback)
+						callback();
 				}
 			});
 			break;
@@ -543,7 +545,17 @@ var generateProdScript = function(tenantId,script)
 				if (objects && objects.length > 0)
 				{
 					var prodFiles2Concatenate={inputFileNames:['/js/jquery-latest.js','/js/knockout-latest.js','/js/cjs-latest-compiled.js'],outputFileName:'prod/' + tenantId + '.js'}
-					concatenateFiles(prodFiles2Concatenate.inputFileNames, prodFiles2Concatenate.outputFileName,script);
+					concatenateFiles(prodFiles2Concatenate.inputFileNames, prodFiles2Concatenate.outputFileName,script,function(){
+						exec("s3cmd sync -r -P " + __dirname + "/prod/ s3://www.concussionjs.com/prod/"
+							, function (error, stdout, stderr) {
+							if(error)
+							{
+								console.log("error: " + error);
+							}
+							else
+								console.log(stdout + stderr);
+						});
+					});
 				}
 				else
 				{

@@ -98,7 +98,7 @@ var accessToken;
  function render() {
     gapi.signin.render('customBtn', {
       'callback': 'signinCallback',
-      'clientid': '895398398018.apps.googleusercontent.com',
+      'clientid': '53629484411.apps.googleusercontent.com',
       'cookiepolicy': 'single_host_origin',
       'requestvisibleactions': 'http://schemas.google.com/AddActivity',
       'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/userinfo.profile'

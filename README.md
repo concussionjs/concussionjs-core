@@ -136,7 +136,7 @@ Instructions to install via NPM  (Option 3 above)
 -----------------
 
 ### Pre-requisites
-*Ubuntu 12.04 Linux or higher 
+* Ubuntu 12.04 Linux or higher 
 	(Note:only configuration tested, though it will likely work on other OS's in the debian family)
 * git
 * mongodb

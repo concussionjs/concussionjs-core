@@ -9,7 +9,7 @@ Build your first application < 5 minutes following the tutorial at http://www.co
 Run ConcussionJS platform one of four ways
 -----------------------------
 
-###1. As a cloud platform (best way to start)
+### 1. As a cloud platform (best way to start)
 
 * __Step 1__: Include the concussion.js javascript file in any of your HTML files. The file could reside on your file system (i.e., no need for a webserver). The simpler the HTML file the better to start off.
 ![include cjs](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addcjs.png)
@@ -102,7 +102,7 @@ Your API would be auto-generated / customized based on the objects you declare. 
     })
 ```
 
-###2. As a self-installable Debian package
+### 2. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjs-core.deb
 
 * __Step 2__: Install gdebi install utility

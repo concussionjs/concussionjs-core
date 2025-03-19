@@ -8,8 +8,16 @@ Build your first application < 5 minutes following the tutorial at http://www.co
 
 Run ConcussionJS platform one of four ways
 -----------------------------
-
 ### 1. As a cloud platform (best way to start)
+
+### 2. As a self-installable Debian package
+
+### 3. Install via NPM
+
+### 4. Install from source
+
+
+## 1. As a cloud platform (best way to start)
 
 * __Step 1__: Include the concussion.js javascript file in any of your HTML files. The file could reside on your file system (i.e., no need for a webserver). The simpler the HTML file the better to start off.
 ![include cjs](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-addcjs.png)
@@ -34,7 +42,7 @@ Run ConcussionJS platform one of four ways
 * __Step 7__: Reload your HTML file to see the page populated with your newly created records
 ![see results](https://s3.amazonaws.com/www.concussionjs.com/img/screenshot-results.png)
 
-### VOILA -- now you have database backed, dynamic web page without the headaches of traditional web development
+### Voila -- now you have database backed, dynamic web page without the headaches of traditional web development
 
 ### Supporting JavaScript API ###
 
@@ -102,7 +110,7 @@ Your API would be auto-generated / customized based on the objects you declare. 
     })
 ```
 
-### 2. As a self-installable Debian package
+## 2. As a self-installable Debian package
 * __Step 1__: Download http://www.concussionjs.com/concussionjs-core.deb
 
 * __Step 2__: Install gdebi install utility
@@ -125,19 +133,12 @@ Got to: http://samples.local-concussionjs.com/contacts.html
 
 __Note__ : It may take up to 5 minutes for the startup routine to complete
 
-
-###3. Install via NPM
-*Detailed instructions below*
-
-###4. Install from source
-*Detailed instructions below*
-
-Instructions to install via NPM  (Option 3 above)
+## 3. Instructions to install via NPM
 -----------------
 
 ### Pre-requisites
 * Ubuntu 12.04 Linux or higher 
-	(Note:only configuration tested, though it will likely work on other OS's in the debian family)
+(Note:only configuration tested, though it will likely work on other OS's in the debian family)
 * git
 * mongodb
 * nodejs
@@ -262,7 +263,7 @@ Got to: http://samples.local-concussionjs.com/contacts.html
 
 __Note__ : It may take up to 5 minutes for the startup routine to complete
 
-Instructions to install from source  (Option 4 above)
+## 4. Instructions to install from source
 -----------------
 
 ### Pre-requisites
